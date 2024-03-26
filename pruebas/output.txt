@@ -1,0 +1,1 @@
+Este texto se escribirá en el archivo output.txt

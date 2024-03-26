@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Volumes/1TB/Dropbox/00_42Barcelona/42Barcelona/C5/webserv/pruebas",
+      "program": "/Volumes/1TB/Dropbox/00_42Barcelona/42Barcelona/C5/webserv/pruebas/build/Debug/outDebug"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "CPP",
+      "program": "${workspaceFolder}/pruebas/a.out",
+      "args": [],
+      "stopOnEntry": false,
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
