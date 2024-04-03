@@ -3,79 +3,78 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: vduchi <vduchi@student.42barcelona.com>    +#+  +:+       +#+         #
+#    By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/08/28 10:03:28 by vduchi            #+#    #+#              #
-#    Updated: 2024/03/12 15:32:04 by vduchi           ###   ########.fr        #
+#    Updated: 2024/04/03 12:06:21 by nmota-bu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-#=-=-=-=-=-=-=- COLORS DEFINITION =-=-=-=-=-=-=-=-=-#
-
-DEL_LINE		=	\033[2K
-ITALIC			=	\033[3m
-BOLD			=	\033[1m
-DEF_COLOR		=	\033[0;39m
-GRAY			=	\033[0;90m
-RED				=	\033[0;91m
-GREEN			=	\033[0;92m
-YELLOW			=	\033[0;93m
-BLUE			=	\033[0;94m
-MAGENTA			=	\033[0;95m
-CYAN			=	\033[0;96m
-WHITE			=	\033[0;97m
-BLACK			=	\033[0;99m
-ORANGE			=	\033[38;5;209m
-BROWN			=	\033[38;2;184;143;29m
-DARK_GRAY		=	\033[38;5;234m
-MID_GRAY		=	\033[38;5;245m
-DARK_GREEN		=	\033[38;2;75;179;82
-DARK_YELLOW		=	\033[38;5;143m
+# ═══ NAMES ═══════════════════════════════════════════════════════════════════#
 
 NAME		=	webserv
 
-SRCS_DIR	=	src
-INCS_DIR	=	inc
-OBJS_DIR	=	.objs
-DEPS_DIR	=	.deps
 
-SRCS		=	src/main.cpp
-OBJS		=	$(patsubst $(SRCS_DIR)/%, $(OBJS_DIR)/%, $(SRCS:.cpp=.o))
-DEPS		=	$(patsubst $(SRCS_DIR)/%, $(OBJS_DIR)/%, $(SRCS:.cpp=.d))
+# ═══ COMPILATE ═══════════════════════════════════════════════════════════════#
 
-CPPFLAGS	+=	-Wall -Werror -Wextra -std=c++98 -pedantic-errors $(addprefix -I , $(INCS_DIR))
-CPPFLAGS	+=	-MMD -MP -MF $(DEPS_DIR)/$*.d
+CFLAGS	= -Wall -Wextra -Werror -std=c++98 -pedantic-errors -g3
+# FSANIT	= -fsanitize=address
+CC		= c++
+INC		= -I inc
+RM		= rm -rf
 
-CXX			=	c++
-RM			=	rm -rf
-MKDIR		=	mkdir -p
-MAKE		=	make --no-print-directory
+# ═══ DIRECTORIES ═════════════════════════════════════════════════════════════#
 
-$(OBJS_DIR)/%.o		:	$(SRCS_DIR)/%.cpp
-	@$(CXX) $(CPPFLAGS) -c $< -o $@
-	@echo "$(YELLOW)$(patsubst $(SRCS_DIR)/%,%, $<)	\tcompiled!$(DEF_COLOR)"
+SRC		= $(wildcard src/*.cpp)
+OBJS_D	= objs
+OBJ		= $(SRC:src/%.cpp=$(OBJS_D)/%.o)
 
-all		:	directories $(NAME)
+UNAME	:= $(shell uname)
 
-$(NAME)	:	$(OBJS)
-	@$(CXX) $^ -o $@
-	@echo "$(GREEN)Executable $@ compiled!$(DEF_COLOR)"
+$(OBJS_D)/%.o:src/%.cpp
+			@mkdir -p $(OBJS_D)
+			$(CC) $(CFLAGS) $(INC) -o $@ -c $<
 
-directories:
-	@$(MKDIR)	$(OBJS_DIR)
-	@$(MKDIR)	$(DEPS_DIR)
+$(NAME):	$(OBJ)
+			@printf "$(CYAN)Compiling $(MAGENTA)$(NAME)$(RESET)\n"
+			$(CC) $(CFLAGS) $(FSANIT) $(OBJ) -o $(NAME)
+			@printf "$(DONE)DONE$(RESET)\n"
 
-clean	:
-	@$(RM)	$(OBJS_DIR)
-	@$(RM)	$(DEPS_DIR)
-	@$(RM)	$(OBJS) $(DEPS)
+all:		$(NAME)
 
-fclean	:	clean
-	@$(RM) $(NAME)
-	@echo "$(BLUE)$(NAME) cleaned!$(DEF_COLOR)"
+clean:
+			$(RM) $(OBJS_D)
+			@printf "$(DEL)Cleaning objs$(RESET)\n"
 
-re		:	fclean all
+fclean: 	clean
+			$(RM) $(NAME)
+			@printf "$(DEL)Deleted Everything$(RESET)\n"
 
-.PHONY: all clean fclean re
+re: fclean all
 
--include $(DEPS)
+show:
+	@printf "$(GREEN)"
+	@printf "UNAME	: $(MAGENTA)$(UNAME)$(GREEN)\n"
+	@printf "NAME  	: $(MAGENTA)$(NAME)$(GREEN)\n"
+	@printf "CC	: $(MAGENTA)$(CC)$(GREEN)\n"
+	@printf "CFLAGS	: $(MAGENTA)$(CFLAGS)$(GREEN)\n"
+	@printf "INCLUDES: $(MAGENTA)$(INC)$(GREEN)\n"
+	@printf "SRC	: $(MAGENTA)$(SRC)$(GREEN)\n"
+	@printf "OBJ	: $(MAGENTA)[$(OBJS_D)] ➟ $(OBJ)$(RESET)\n\n"
+
+.PHONY: all test re show leaks
+
+# ═══ COLORS ══════════════════════════════════════════════════════════════════#
+
+RED			=\033[0;31m
+GREEN		=\033[0;32m
+YELLOW		=\033[0;33m
+BLUE 		=\033[0;34m
+MAGENTA		=\033[0;35m
+ORANGE		=\033[38;5;214m
+WHITE		=\033[0;37m
+CYAN		=\033[1;36m
+RESET		=\x1B[0m
+
+DONE		=\x1B[42m\x1B[1;30m
+DEL			=\x1B[41m\x1B[1m\x1B[37m
