@@ -6,46 +6,42 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/04/03 12:10:42 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/03 19:07:49 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServer.hpp"
 
-// static int outError(int idx)
-// {
-// 	std::cout << RED;
-// 	idx == 1 ? std::cout << "Too many arguments!" << std::endl : std::cout << "";
-// 	idx == 2 ? std::cout << "File is not a configuration file!" << std::endl : std::cout << "";
-// 	idx == 3 ? std::cout << "File error!" << std::endl : std::cout << "";
-// 	std::cout << CYAN;
-// 	std::cout << "Usage: ./webserv [config file]" << RESET << std::endl;
-// 	return EXIT_FAILURE;
-// }
+void checkFile(char *arg)
+{
+	std::string name(arg);
+	if (name.compare(name.length() - 4, 4, ".cnf") || name.find(".cnf", name.find(".cnf") + 4) != std::string::npos)
+		throw std::runtime_error("File is not a configuration file!");
+	std::ifstream in(arg);
+	if (!in.good())
+		throw std::runtime_error("File error!");
+}
 
-// static int checkFile(char *arg)
-// {
-// 	std::string name(arg);
-// 	if (name.compare(name.length() - 4, 4, ".cnf") || name.find(".cnf", name.find(".cnf") + 4) != std::string::npos)
-// 		return outError(2);
-// 	std::ifstream in(arg);
-// 	if (!in.good())
-// 		return outError(3);
-// 	return EXIT_SUCCESS;
-// }
+void check_arg(int argc, char **argv)
+{
+	if (argc != 2)
+		throw std::runtime_error("Usage: ./webserv [config file]");
+	else
+		checkFile(argv[1]);
+}
 
 int main(int argc, char **argv)
 {
-	(void)argc;
-	(void)argv;
-	// switch (argc)
-	// {
-	// case 1:
-	// 	return outError(0);
-	// case 2:
-	// 	return checkFile(argv[1]);
-	// default:
-	// 	return outError(1);
-	// }
-	return start();
+	try
+	{
+		check_arg(argc, argv);
+		// start();
+		std::cout << "start\n";
+	}
+	catch (const std::exception &e)
+	{
+		std::cerr << e.what() << std::endl;
+		return EXIT_FAILURE;
+	}
+	return EXIT_SUCCESS;
 }
