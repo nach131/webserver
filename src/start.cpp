@@ -6,11 +6,11 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/03 12:16:24 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/09 15:48:46 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "WebServer.hpp"
+#include "../inc/ClientParsing.hpp"
 
 // Cabeceras específicas de sockets en sistemas tipo Unix
 // #include <sys/types.h>
@@ -90,7 +90,10 @@ int start()
 			continue; // Continuar con el siguiente intento de aceptar conexiones
 		}
 
-		std::cout << "Mensaje del cliente: " << buffer << std::endl;
+//		std::cout << "Mensaje del cliente: " << buffer << std::endl;
+		ClientParsing pars(buffer);
+		std::cout << GREEN << "Method: " << pars.getMethod() << " Path: " << pars.getPath();
+		std::cout << " Protocol: " << pars.getProt() << RESET << std::endl;
 
 		std::string header = "HTTP/1.1 200 OK\r\n";
 		header += "Content-Type: text/html\r\n";

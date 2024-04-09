@@ -6,13 +6,13 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/04/03 19:52:16 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/09 15:06:01 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "WebServer.hpp"
+#include "../inc/ClientParsing.hpp"
 
-void check_arg(int argc, char **argv)
+void checkArg(int argc, char **argv)
 {
 	if (argc != 2)
 		throw std::runtime_error(CYAN "Usage: ./webserv [config file]" RESET);
@@ -31,8 +31,10 @@ int main(int argc, char **argv)
 {
 	try
 	{
-		check_arg(argc, argv);
-		// start();
+		(void)argc;
+		(void)argv;
+//		checkArg(argc, argv);
+		start();
 		std::cout << "start\n";
 	}
 	catch (const std::exception &e)
