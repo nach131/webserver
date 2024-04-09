@@ -1,0 +1,444 @@
+{
+    "workbench.fontAliasing": "antialiased",
+        "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false,
+    "liveServer.settings.donotShowInfoMsg": true,
+    // "editor.fontFamily": "'Fira Code', Monaco, ProggyVector, Menlo",
+    // "editor.fontFamily": "JetBrains",
+    "editor.fontFamily": "FiraCode-Retina, JetBrains",
+    // "editor.fontFamily": "FantasqueSansM Nerd Font",
+    // "editor.fontFamily": "'Monaspace Neon', monospace",
+    "editor.fontLigatures": true,
+    // "editor.fontLigatures": "'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'calt', 'dlig'",
+    "editor.fontWeight": 400,
+    "editor.fontSize": 11,
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            {
+                "scope": [
+                    "storage.modifier.c",
+                    "storage.type.built-in.primitive.c"
+                ],
+                "settings": {
+                    "foreground": "#a4fa53"
+                }
+            },
+            {
+                "scope": [
+                    "string.quoted.double.c"
+                ],
+                "settings": {
+                    "foreground": "#ff8ffd"
+                }
+            },
+            {
+                "scope": [
+                    "entity.name.function.preprocessor.c"
+                ],
+                "settings": {
+                    "foreground": "#ff8ffd"
+                }
+            },
+            {
+                "scope": [
+                    "entity.name.function.c"
+                ],
+                "settings": {
+                    "foreground": "#c7c7c7"
+                }
+            },
+            {
+                "scope": [
+                    "keyword.control.c"
+                ],
+                "settings": {
+                    "foreground": "#f7f582"
+                }
+            },
+            {
+                "scope": [
+                    "keyword.control.directive.include.c",
+                    "meta.preprocessor.include.c"
+                ],
+                "settings": {
+                    "foreground": "#a5d5fe"
+                }
+            },
+            {
+                "scope": [
+                    //    "constant.character.escape.c",
+                    "constant.other.placeholder.c"
+                ],
+                "settings": {
+                    "foreground": "#ffffff"
+                }
+            },
+            {
+                "scope": [
+                    "comment.block.c",
+                    "comment.line.double-slash.c"
+                ],
+                "settings": {
+                    "foreground": "#698aa7"
+                }
+            }
+        ]
+    },
+    "workbench.colorCustomizations": {
+    
+        "editorGroupHeader.tabsBackground":"#282a36",
+        "tab.border":"#444b70",
+        // "editor.foreground":"#b63232",
+        "editorCursor.foreground":"#2f70ac",
+        "editorLineNumber.activeForeground":"#2f70ac",
+        "activityBar.background": "#282a36",
+        "sideBar.background": "#282a36",
+        "sideBarSectionHeader.background":"#3b3e4c",
+        // "sideBarSectionHeader.background":"#474A5E",
+        "tab.inactiveForeground":"#b1b5cd",
+        "tab.inactiveBackground": "#22232e",
+        "tab.unfocusedActiveForeground":"#b7c0e7",
+        "tab.activeBackground": "#444b70",
+        "editor.background": "#282a36",
+        "panel.border":"#3b3e4c",
+        "panel.background":"#282a36",
+        "statusBar.background":"#282a36",
+        "titleBar.activeBackground":"#282a36",
+        // "titleBar.border":"#b63232",
+    },
+    "[javascriptreact]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "emmet.triggerExpansionOnTab": true,
+    "workbench.startupEditor": "none",
+    "[html]": {
+        "editor.defaultFormatter": "vscode.html-language-features"
+    },
+    "liveServer.settings.donotVerifyTags": true,
+    "[javascript]": {
+    },
+    "emmet.includeLanguages": {
+        "javascript": "javascriptreact"
+    },
+    "files.associations": {
+        "*.js": "javascriptreact",
+        "*.hbs": "handlebars",
+        "*.c": "c"
+    },
+    "[css]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "faker.locale": "es",
+    "typescript.locale": "es",
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    "git.enableSmartCommit": true,
+    // "terminal.integrated.shell.osx": "/bin/bash",
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "workbench.iconTheme": "material-icon-theme",
+    "terminal.integrated.rendererType": "dom",
+    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+    "python.jediEnabled": false,
+    "aws.profile": "profile:nacho",
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "eslint.alwaysShowStatus": true,
+    "eslint.format.enable": true,
+    "html-css-class-completion.enableEmmetSupport": true,
+    "diffEditor.maxComputationTime": 0,
+    "markdown.preview.fontSize": 13,
+    "editor.renderWhitespace": "all",
+    "debug.console.fontSize": 13,
+    "python.languageServer": "Default",
+    "github.allowUnsafeSSL": true,
+    "[graphql]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "mssql.connections": [
+        {
+            "server": "{{put-server-name-here}}",
+            "database": "{{put-database-name-here}}",
+            "user": "{{put-username-here}}",
+            "password": "{{put-password-here}}"
+        }
+    ],
+
+    "workbench.editorAssociations": {
+        // "*.ipynb": "jupyter.notebook.ipynb"
+    },
+    "security.workspace.trust.untrustedFiles": "open",
+    "tabnine.experimentalAutoImports": true,
+    "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
+    "cSpell.userWords": [
+        "abierta",
+        "acumulado",
+        "anadido",
+        "añado",
+        "bajando",
+        "barcelona",
+        "BCHUSD",
+        "beroot",
+        "bootswatch",
+        "Boton",
+        "BTCUSD",
+        "Calculamos",
+        "cambiar",
+        "cardano",
+        "centa",
+        "cinco",
+        "compara",
+        "Compruebo",
+        "conexion",
+        "connectio",
+        "consola",
+        "constchar",
+        "Convierto",
+        "cotizacion",
+        "Cotización",
+        "creando",
+        "creo",
+        "cryptofolio",
+        "cuatro",
+        "Datatable",
+        "datos",
+        "despues",
+        "DGBUSD",
+        "digitos",
+        "Disponible",
+        "DOGEUSDT",
+        "elemento",
+        "Enviar",
+        "estado",
+        "ETHUSD",
+        "excact",
+        "Exhange",
+        "existe",
+        "existente",
+        "fecha",
+        "FGREEN",
+        "gastado",
+        "Grupo",
+        "grupos",
+        "Guarda",
+        "Guardar",
+        "hexa",
+        "Historia",
+        "historial",
+        "hola",
+        "Indice",
+        "INICIO",
+        "initialprice",
+        "Insertar",
+        "iszero",
+        "libft",
+        "limite",
+        "litecoin",
+        "lnull",
+        "lstadd",
+        "lstdelone",
+        "lstlast",
+        "lstmap",
+        "lstnew",
+        "LTCUSD",
+        "método",
+        "minado",
+        "minitalk",
+        "modelo",
+        "mystruct",
+        "nach",
+        "naki",
+        "nmota",
+        "nombre",
+        "Nueva",
+        "numérico",
+        "numeros",
+        "numlen",
+        "ooid",
+        "Orge",
+        "Otra",
+        "Pasando",
+        "periodo",
+        "phpmyadmin",
+        "polcadot",
+        "porcentaje",
+        "Precio",
+        "printfhexa",
+        "printhexa",
+        "pruebas",
+        "putendl",
+        "putnbr",
+        "putstr",
+        "readed",
+        "recuperar",
+        "reemplazando",
+        "respuesta",
+        "resultante",
+        "saldo",
+        "saldoall",
+        "saldomax",
+        "saldomin",
+        "searh",
+        "segun",
+        "semana",
+        "Semanas",
+        "setnumero",
+        "srtlen",
+        "stach",
+        "striteri",
+        "strmapi",
+        "strtrim",
+        "subiendo",
+        "suma",
+        "sumar",
+        "tener",
+        "tiene",
+        "tippyjs",
+        "titulo",
+        "toma",
+        "Trtl",
+        "unsing",
+        "unsint",
+        "Utilizo",
+        "vacío",
+        "válido",
+        "widht",
+        "wordpress",
+        "XRPUSDT"
+    ],
+    "prettier.eslintIntegration": true,
+    "reactSnippets.settings.semiColons": false,
+    "reactSnippets.settings.prettierEnabled": true,
+    "bracket-pair-colorizer-2.depreciation-notice": false,
+    "githubPullRequests.createOnPublishBranch": "never",
+    "42header.username": "nmota-bu",
+    "42header.email": "nmota-bu@student.42barcel",
+    "liveSassCompile.settings.includeItems": [],
+    "settingsSync.ignoredExtensions": [
+
+
+
+
+    
+    ],
+    "cmake.configureSettings": {},
+    "cSpell.language": "es-ES,en",
+    "prettier.requireConfig": true,
+    "languageTool.language": "sp",
+    "editor.insertSpaces": false,
+    "diffEditor.ignoreTrimWhitespace": false,
+    "cSpell.languageSettings": [
+    
+
+
+    
+
+    ],
+    
+    "[c]": {
+        "editor.tabCompletion": "off",
+        "editor.wordBasedSuggestions": "off",
+        "editor.suggest.insertMode": "replace",
+        "editor.semanticHighlighting.enabled": true,
+        "editor.tabSize": 4,
+        "editor.insertSpaces": false,
+        "editor.detectIndentation": false,
+        "editor.renderWhitespace": "all",
+        "files.trimTrailingWhitespace": true,
+        "files.insertFinalNewline": true,
+        // "editor.defaultFormatter": "ms-vscode.cpptools",
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "modificationsIfAvailable",
+        "editor.defaultFormatter": "ms-vscode.cpptools"
+    },
+    "editor.guides.bracketPairs": true,
+    "editor.formatOnSaveMode": "modificationsIfAvailable",
+    "editor.formatOnSave": true,
+    "[jsonc]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "npm-intellisense.showBuildInLibs": true,
+    "editor.minimap.enabled": false,
+    "cSpell.enabled": false,
+    "npm.exclude": [
+        "**/xpacks/**"
+    ],
+    "[python]": {
+        "editor.formatOnType": true
+    },
+    "git.openRepositoryInParentFolders": "always",
+    "C_Cpp.intelliSenseEngine": "default",
+    "editor.suggest.preview": true,
+    
+    
+    "npm-intellisense.importES6": true,
+    "npm-intellisense.importQuotes": "'",
+    "npm-intellisense.importLinebreak": ";\r\n",
+    "npm-intellisense.importDeclarationType": "const",
+    "npm.keybindingsChangedWarningShown": true,
+    
+    // Customizing IntelliSense
+        // Controls if quick suggestions should show up while typing
+        "editor.quickSuggestions": {
+            "other": true,
+            "comments": false,
+            "strings": false
+        },
+    
+         // Controls whether suggestions should be accepted on commit characters. For example, in JavaScript, the semi-colon (`;`) can be a commit character that accepts a suggestion and types that character.
+        "editor.acceptSuggestionOnCommitCharacter": true,
+    
+        // Controls if suggestions should be accepted on 'Enter' - in addition to 'Tab'. Helps to avoid ambiguity between inserting new lines or accepting suggestions. The value 'smart' means only accept a suggestion with Enter when it makes a textual change
+        "editor.acceptSuggestionOnEnter": "on",
+    
+        // Controls the delay in ms after which quick suggestions will show up.
+        "editor.quickSuggestionsDelay": 10,
+    
+        // Controls if suggestions should automatically show up when typing trigger characters
+        "editor.suggestOnTriggerCharacters": true,
+    
+        // Controls if pressing tab inserts the best suggestion and if tab cycles through other suggestions
+        "editor.tabCompletion": "off",
+    
+        // Controls whether sorting favours words that appear close to the cursor
+        "editor.suggest.localityBonus": true,
+    
+        // Controls how suggestions are pre-selected when showing the suggest list
+        "editor.suggestSelection": "first",
+    
+        // Enable word based suggestions
+        "editor.wordBasedSuggestions": "matchingDocuments",
+    
+        // Enable parameter hints
+        "editor.parameterHints.enabled": true,
+        "editor.indentSize": "tabSize",
+        "editor.multiCursorModifier": "ctrlCmd",
+        "[cpp]": {
+            "editor.defaultFormatter": "ms-vscode.cpptools"
+        },
+        "hexeditor.columnWidth": 16,
+        "hexeditor.showDecodedText": true,
+        "hexeditor.defaultEndianness": "little",
+        "hexeditor.inspectorType": "aside",
+        "lldb.showDisassembly": "never",
+        "settingsSync.ignoredSettings": [],
+        "workbench.settings.applyToAllProfiles": [
+
+        
+        ],
+        "workbench.editor.empty.hint": "hidden",
+        "[typescript]": {
+            "editor.defaultFormatter":"esbenp.prettier-vscode"
+        },
+        "window.commandCenter": false,
+        "editor.accessibilitySupport": "off",
+  
+        "editor.unicodeHighlight.ambiguousCharacters": false,
+        "terminal.integrated.shellIntegration.enabled": false,
+        "editor.fontVariations": false,
+        "terminal.integrated.fontFamily": "FantasqueSansM Nerd Font"
+    
+}
