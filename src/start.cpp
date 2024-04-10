@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/09 15:48:46 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/04/10 11:07:24 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,13 @@ int start()
 
 	// Crear socket
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	// sockfd = socket(AF_MAX, SOCK_STREAM, 0); // Error socket
 	if (sockfd < 0)
 	{
-		std::cerr << "Error al crear socket: " << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
+		std::string errorMsg = RED "Error creating socket:\n";
+		errorMsg += CYAN;
+		errorMsg += strerror(errno);
+		throw std::runtime_error(errorMsg);
 	}
 
 	// Configurar la dirección del servidor
@@ -55,10 +58,13 @@ int start()
 	serverAddr.sin_addr.s_addr = htonl(INADDR_ANY); // Escuchar en todas las interfaces de red
 
 	// Enlazar el socket a la dirección del servidor
+
 	if (bind(sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0)
 	{
-		std::cerr << "Error al enlazar socket: " << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
+		std::string errorMsg = RED "Socket binding error:\n";
+		errorMsg += CYAN + std::to_string(ntohs(serverAddr.sin_port)) + " ";
+		errorMsg += strerror(errno);
+		throw std::runtime_error(errorMsg);
 	}
 
 	// Escuchar por conexiones entrantes
@@ -78,7 +84,9 @@ int start()
 			continue; // Continuar con el siguiente intento de aceptar conexiones
 		}
 
-		std::cout << "Conexión aceptada. Esperando mensaje del cliente..." << std::endl;
+		// std::cout << "Conexión aceptada. Esperando mensaje del cliente..." << std::endl;
+
+		std::cout << "Conexión aceptada. Socket del cliente: " << newsockfd << std::endl;
 
 		// Recibir datos del cliente
 		memset(buffer, 0, sizeof(buffer));
