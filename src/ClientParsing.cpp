@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/04/12 12:51:38 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/12 14:39:12 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ ClientParsing::ClientParsing(const char *buf)
 	{
 		if (line.length() == 1)
 			continue;
-		std::cout << "Line: " << line << std::endl;
+		// std::cout << "Line: " << line << std::endl;
 		std::string name, val;
 		std::stringstream ssEl(line);
 		std::getline(ssEl, name, ' ');

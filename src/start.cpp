@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/12 14:03:46 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/12 17:44:51 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ int start()
 
 		//=========================================================================
 
-		ClientSend toma(pars.getMap());
+		// ClientSend toma(pars.getMap());
 		ClientSend client(pars.getMethod(), pars.getPath(), pars.getProt());
 
 		std::string header = "HTTP/1.1 200 OK\r\n";
