@@ -6,11 +6,12 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/10 11:07:24 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/12 14:03:46 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/ClientParsing.hpp"
+#include "ClientSend.hpp"
 
 // Cabeceras específicas de sockets en sistemas tipo Unix
 // #include <sys/types.h>
@@ -78,15 +79,16 @@ int start()
 
 		// Aceptar la conexión entrante
 		newsockfd = accept(sockfd, (struct sockaddr *)&clientAddr, &clilen);
+
+		// newsockfd = -1; // error
+		// (void)clilen;	// error
 		if (newsockfd < 0)
 		{
 			std::cerr << "Error al aceptar conexión: " << strerror(errno) << std::endl;
 			continue; // Continuar con el siguiente intento de aceptar conexiones
 		}
 
-		// std::cout << "Conexión aceptada. Esperando mensaje del cliente..." << std::endl;
-
-		std::cout << "Conexión aceptada. Socket del cliente: " << newsockfd << std::endl;
+		std::cout << MAGENTA << "Conexión aceptada. Socket del cliente: " << newsockfd << RESET << std::endl;
 
 		// Recibir datos del cliente
 		memset(buffer, 0, sizeof(buffer));
@@ -98,10 +100,19 @@ int start()
 			continue; // Continuar con el siguiente intento de aceptar conexiones
 		}
 
-//		std::cout << "Mensaje del cliente: " << buffer << std::endl;
+		std::cout << CYAN "Mensaje del cliente: \n"
+				  << buffer << RESET << std::endl;
+
+		//===================PARSING==============================================
+
 		ClientParsing pars(buffer);
-		std::cout << GREEN << "Method: " << pars.getMethod() << " Path: " << pars.getPath();
-		std::cout << " Protocol: " << pars.getProt() << RESET << std::endl;
+		// std::cout << GREEN << "Method: " << pars.getMethod() << " Path: " << pars.getPath();
+		// std::cout << " Protocol: " << pars.getProt() << RESET << std::endl;
+
+		//=========================================================================
+
+		ClientSend toma(pars.getMap());
+		ClientSend client(pars.getMethod(), pars.getPath(), pars.getProt());
 
 		std::string header = "HTTP/1.1 200 OK\r\n";
 		header += "Content-Type: text/html\r\n";
@@ -123,7 +134,7 @@ int start()
 			close(newsockfd);
 			continue; // Continuar con el siguiente intento de aceptar conexiones
 		}
-
+		//=========================================================================
 		// Cerrar el socket de la conexión actual
 		close(newsockfd);
 

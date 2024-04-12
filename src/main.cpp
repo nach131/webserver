@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/04/09 15:06:01 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/04/12 10:57:31 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 	{
 		(void)argc;
 		(void)argv;
-//		checkArg(argc, argv);
+		//		checkArg(argc, argv);
 		start();
 		std::cout << "start\n";
 	}
