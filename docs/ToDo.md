@@ -1,0 +1,1 @@
+https://developer.mozilla.org/es/docs/Web/HTTP/Headers/Accept
