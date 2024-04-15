@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/12 17:44:51 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/15 11:46:21 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,12 +111,14 @@ int start()
 
 		//=========================================================================
 
-		// ClientSend toma(pars.getMap());
+		// ClientSend clientConMap(pars.getMap());
 		ClientSend client(pars.getMethod(), pars.getPath(), pars.getProt());
 
+		//=========================================================================
 		std::string header = "HTTP/1.1 200 OK\r\n";
 		header += "Content-Type: text/html\r\n";
-		header += "Content-Length: " + std::to_string(htmlContent.length()) + "\r\n\r\n";
+		// header += "Content-Length: " + std::to_string(htmlContent.length()) + "\r\n\r\n";
+		header += "Content-Length: " + std::to_string(client.content().length()) + "\r\n\r\n";
 
 		n = write(newsockfd, header.c_str(), header.length());
 		if (n < 0)
@@ -127,7 +129,7 @@ int start()
 		}
 
 		// Enviar contenido HTML
-		n = write(newsockfd, htmlContent.c_str(), htmlContent.length());
+		n = write(newsockfd, client.content().c_str(), client.content().length());
 		if (n < 0)
 		{
 			std::cerr << "Error al enviar contenido HTML: " << strerror(errno) << std::endl;
