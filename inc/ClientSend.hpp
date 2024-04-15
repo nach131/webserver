@@ -6,17 +6,18 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 12:12:11 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/15 11:44:56 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/15 20:03:11 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CLIENTSEND_HPP
-#define CLIENTSEND_HPP
+# define CLIENTSEND_HPP
 
-#include <map>
-#include <iostream>
-#include <fstream>
-#include <sstream>
+# include <map>
+# include <iostream>
+# include <fstream>
+# include <sstream>
+# include "ClientParsing.hpp"
 
 class ClientSend
 {
@@ -32,7 +33,7 @@ private:
 
 public:
 	// ClientSend(const std::map<std::string, std::string> &);
-	ClientSend(const std::string &, const std::string &, const std::string &);
+	ClientSend(const ClientParsing &);
 
 	std::string const &content() const;
 	// std::string const &content();

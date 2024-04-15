@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/04/15 12:16:11 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/15 20:00:44 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,13 @@ ClientParsing::ClientParsing(const char *buf)
 	{
 		switch (i) {
 			case 0:
-				_method = el;
+				_map["Method"] = el;
 				break;
 			case 1:
-				_path = el;
+				_map["Path"] = el;
 				break;
 			case 2:
-				_prot = el;
+				_map["Protocol"] = el;
 				break;
 		}
 		i++;
@@ -61,10 +61,10 @@ ClientParsing::ClientParsing(const char *buf)
 
 ClientParsing::~ClientParsing() {}
 
-const std::string ClientParsing::getPath() const { return _path; }
+const std::string &ClientParsing::getPath() const { return _map.find("Path")->second; }
 
-const std::string ClientParsing::getProt() const { return _prot; }
+const std::string &ClientParsing::getProt() const { return _map.find("Protocol")->second; }
 
-const std::string ClientParsing::getMethod() const { return _method; }
+const std::string &ClientParsing::getMethod() const { return _map.find("Method")->second; }
 
 const std::map<std::string, std::string> &ClientParsing::getMap() const { return _map; }

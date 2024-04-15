@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 12:28:42 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/15 12:16:11 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/15 20:04:43 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int ClientSend::methodDelete(ClientSend &client, std::string path, std::string p
 // 	}
 // }
 
-ClientSend::ClientSend(const std::string &method, const std::string &path, const std::string &prot)
+ClientSend::ClientSend(const ClientParsing & pars)
 {
 	std::map<std::string, int (*)(ClientSend &client, std::string, std::string)> map;
 
@@ -88,12 +88,12 @@ ClientSend::ClientSend(const std::string &method, const std::string &path, const
 	map["POST"] = &methodPost;
 	map["DELETE"] = &methodDelete;
 
-	std::map<std::string, int (*)(ClientSend &client, std::string, std::string)>::iterator it = map.find(method);
+	std::map<std::string, int (*)(ClientSend &client, std::string, std::string)>::iterator it = map.find(pars.getMethod());
 
 	if (it != map.end())
-		it->second(*this, path, prot);
+		it->second(*this, pars.getPath(), pars.getProt());
 	else
-		std::cout << "NotFoud: " << method << std::endl;
+		std::cout << "NotFoud: " << pars.getMethod() << std::endl;
 }
 
 ClientSend::~ClientSend() {}
