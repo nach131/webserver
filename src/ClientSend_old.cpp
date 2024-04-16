@@ -1,26 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ClientSend.cpp                                     :+:      :+:    :+:   */
+/*   ClientSend_old.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 12:28:42 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/15 20:04:43 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/04/16 17:07:42 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ClientSend.hpp"
+#include "ClientSend_old.hpp"
 #include "Colors.hpp"
 
 // GET, POST, DELETE
 
 int ClientSend::methodGet(ClientSend &client, std::string path, std::string prot)
 {
+	std::string extension;
+	size_t pos = path.find_last_of('.');
+	if (pos != std::string::npos)
+	{ // Si se encuentra el carácter '.'
+		// Extrae la subcadena que contiene la extensión
+		extension = path.substr(pos + 1);
+	}
+
 	std::cout << "==========GET===========\n";
 	// std::cout << RED << "method: " << method << RESET << std::endl;
 	std::cout << RED << "path: " << path << RESET << std::endl;
 	std::cout << RED << "prot: " << prot << RESET << std::endl;
+
+	std::cout << "La extensión del archivo es: " << extension << std::endl;
+
 	std::cout << "========================\n";
 
 	std::ifstream file;
@@ -80,7 +91,7 @@ int ClientSend::methodDelete(ClientSend &client, std::string path, std::string p
 // 	}
 // }
 
-ClientSend::ClientSend(const ClientParsing & pars)
+ClientSend::ClientSend(const ClientParsing &pars)
 {
 	std::map<std::string, int (*)(ClientSend &client, std::string, std::string)> map;
 

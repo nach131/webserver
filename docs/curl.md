@@ -67,3 +67,7 @@ curl -X DELETE \
 - `--data-urlencode "query=SELECT * FROM tabla WHERE columna='valor'"`: Codifica los datos en formato de URL. Útil para enviar datos que pueden contener caracteres especiales.
 - `"http://ejemplo.com/api/resource?parametro3=valor3&parametro4=valor4"`: La URL a la que se enviará la solicitud, con parámetros adicionales adjuntos.
 
+
+
+## Metodo no valido
+curl --location --request PATCH 'http://127.0.0.1:8080'

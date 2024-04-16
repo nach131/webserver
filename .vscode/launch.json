@@ -13,7 +13,7 @@
       "type": "lldb",
       "request": "launch",
       "name": "CPP",
-      "program": "${workspaceFolder}/pruebas/a.out",
+      "program": "${workspaceFolder}/webserv",
       "args": [],
       "stopOnEntry": false,
       "cwd": "${workspaceFolder}"

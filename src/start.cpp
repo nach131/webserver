@@ -6,12 +6,13 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/15 19:53:58 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/04/16 19:02:30 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/ClientParsing.hpp"
-#include "ClientSend.hpp"
+#include "HTTPBody.hpp"
+#include "HTTPHeader.hpp"
 
 // Cabeceras específicas de sockets en sistemas tipo Unix
 // #include <sys/types.h>
@@ -26,20 +27,6 @@ int start()
 	char buffer[1024];
 	struct sockaddr_in serverAddr, clientAddr;
 	int n;
-
-	std::string htmlContent =
-		"<!DOCTYPE html>\n"
-		"<html>\n"
-		"<head>\n"
-		"<link rel=\"stylesheet\" href=\"mystyle.css\">\n"
-		"</head>\n"
-		"<body>\n"
-		"\n"
-		"<h1>Toma mi Heading</h1>\n"
-		"<p>Toma mas tomate.</p>\n"
-		"\n"
-		"</body>\n"
-		"</html>\n";
 
 	// Crear socket
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -106,19 +93,31 @@ int start()
 		//===================PARSING==============================================
 
 		ClientParsing pars(buffer);
-		// std::cout << GREEN << "Method: " << pars.getMethod() << " Path: " << pars.getPath();
-		// std::cout << " Protocol: " << pars.getProt() << RESET << std::endl;
 
 		//=========================================================================
 
 		// ClientSend clientConMap(pars.getMap());
-		ClientSend client(pars);
+		HTTPBody body(pars);
+
+		//=========================================================================
+		HTTPHeader toma(pars.getProt(), body.code());
+		// HTTPHeader toma("HTTP/1.1", "200 OK");
+
+		// HTTPHeader toma("HTTP/1.1", "200 OK\r\n");
+
+		// Agregar otros campos al encabezado si es necesario
+		toma.addField("Content-Type", "text/css");
+		toma.addField("Content-Length", std::to_string(body.content().length()));
+
+		// Obtener el encabezado HTTP como una cadena y mostrarlo
+		std::string headerStr = toma.toString();
+		std::cout << GREEN << "Header:\n"
+				  << headerStr << RESET << std::endl;
 
 		//=========================================================================
 		std::string header = "HTTP/1.1 200 OK\r\n";
 		header += "Content-Type: text/html\r\n";
-		// header += "Content-Length: " + std::to_string(htmlContent.length()) + "\r\n\r\n";
-		header += "Content-Length: " + std::to_string(client.content().length()) + "\r\n\r\n";
+		header += "Content-Length: " + std::to_string(body.content().length()) + "\r\n\r\n";
 
 		n = write(newsockfd, header.c_str(), header.length());
 		if (n < 0)
@@ -129,7 +128,7 @@ int start()
 		}
 
 		// Enviar contenido HTML
-		n = write(newsockfd, client.content().c_str(), client.content().length());
+		n = write(newsockfd, body.content().c_str(), body.content().length());
 		if (n < 0)
 		{
 			std::cerr << "Error al enviar contenido HTML: " << strerror(errno) << std::endl;
