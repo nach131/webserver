@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/04/16 18:15:35 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/17 10:37:46 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,14 @@ ClientParsing::ClientParsing(const char *buf)
 
 	while (std::getline(ssFirst, el, ' '))
 	{
+		if (!el.empty() && el.back() == '\r')
+			el.pop_back();
 		switch (i) {
 			case 0:
 				_map["Method"] = el;
 				break;
 			case 1:
+
 				_map["Path"] = el;
 				break;
 			case 2:

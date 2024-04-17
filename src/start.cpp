@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/16 19:02:30 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/17 12:26:10 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,26 +100,35 @@ int start()
 		HTTPBody body(pars);
 
 		//=========================================================================
-		HTTPHeader toma(pars.getProt(), body.code());
-		// HTTPHeader toma("HTTP/1.1", "200 OK");
 
-		// HTTPHeader toma("HTTP/1.1", "200 OK\r\n");
+		//======================MAP============================================
+		HTTPHeader header(pars.getProt(), body.code());
 
 		// Agregar otros campos al encabezado si es necesario
-		toma.addField("Content-Type", "text/css");
-		toma.addField("Content-Length", std::to_string(body.content().length()));
+		// header.addField("Content-Type", "text/css");
+		header.addField("Content-Type", "text/hmtl");
+		header.addField("Content-Length", std::to_string(body.content().length()));
 
 		// Obtener el encabezado HTTP como una cadena y mostrarlo
-		std::string headerStr = toma.toString();
-		std::cout << GREEN << "Header:\n"
+		std::string headerStr = header.getHeader();
+		std::cout << GREEN << "header:\n"
 				  << headerStr << RESET << std::endl;
+		std::cout << "========================\n";
 
-		//=========================================================================
-		std::string header = "HTTP/1.1 200 OK\r\n";
-		header += "Content-Type: text/html\r\n";
-		header += "Content-Length: " + std::to_string(body.content().length()) + "\r\n\r\n";
+		// // //=========================================================================
+		// std::string header = "HTTP/1.1 200 OK\r\n";
+		// std::string header = pars.getProt() + " " + body.code() + "\r\n";
 
-		n = write(newsockfd, header.c_str(), header.length());
+		// header += "Content-Type: text/html\r\n";
+		// header += "Content-Length: " + std::to_string(body.content().length()) + "\r\n\r\n";
+
+		// std::cout << YELLOW << header << RESET << std::endl;
+		// std::cout << "========================\n";
+		// n = write(newsockfd, header.c_str(), header.length());
+
+		n = write(newsockfd, header.getHeader().c_str(), header.getHeader().length());
+
+		// n = write(newsockfd, header.getHeader().c_str(), header.headerLength());
 		if (n < 0)
 		{
 			std::cerr << "Error al enviar encabezado HTTP: " << strerror(errno) << std::endl;
