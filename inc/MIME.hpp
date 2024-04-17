@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 16:30:49 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/17 17:02:41 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/17 21:22:18 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ MIME::MIME()
 	_mime["mp3"] = "audio/mp3";
 	_mime["wav"] = "audio/wav";
 	_mime["mp4"] = "video/mp4";
+	_mime["avi"] = "video/avi";
 	_mime["avi"] = "video/x-msvideo";
 	_mime["doc"] = "application/msword";
 	_mime["gz"] = "application/x-gzip";

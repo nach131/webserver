@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 12:28:42 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/17 17:06:59 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/17 20:50:31 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,6 @@ int HTTPBody::methodGet(HTTPBody &client, std::string path)
 		client.setMIME(mime.getMIME(extension));
 	}
 
-	std::cout << "==========GET===========\n";
-	std::cout << RED << "path: " << path << std::endl;
-	std::cout << "La extensión del archivo es: " << extension << RESET << std::endl;
-	std::cout << "========================\n";
-
 	std::ifstream file;
 	if (path == "/")
 		file.open("./dist/index.html");
@@ -48,6 +43,12 @@ int HTTPBody::methodGet(HTTPBody &client, std::string path)
 		std::cerr << "Error al abrir el archivo " << path << std::endl;
 		client._code = "404 Not Found";
 	}
+	// // Error 400: Solicitud incorrecta (si el archivo solicitado es un directorio en lugar de un archivo)
+	// if (client._content.empty() && path.back() == '/')
+	// 	client._code = "400 Bad Request";
+	// // Error 401: No autorizado ( si el acceso al archivo está restringido)
+	// if (client._content.empty() && !file.is_open())
+	// 	client._code = "401 Unauthorized";
 	else
 	{
 		std::ostringstream oss;

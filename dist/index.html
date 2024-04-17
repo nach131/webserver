@@ -1,1 +1,120 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name="theme-color" content="#000000"><link rel="manifest" href="/manifest.json"><link rel="shortcut icon" href="/ico/favicon.ico"><script async src="https://www.googletagmanager.com/gtag/js?id=UA-8105777-9"></script><script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","UA-8105777-9")</script><title>NASA Photo</title><link href="/static/css/2.0161871a.chunk.css" rel="stylesheet"><link href="/static/css/main.6e6a3f05.chunk.css" rel="stylesheet"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"></div><script>!function(e){function r(r){for(var n,l,a=r[0],f=r[1],i=r[2],c=0,s=[];c<a.length;c++)l=a[c],Object.prototype.hasOwnProperty.call(o,l)&&o[l]&&s.push(o[l][0]),o[l]=0;for(n in f)Object.prototype.hasOwnProperty.call(f,n)&&(e[n]=f[n]);for(p&&p(r);s.length;)s.shift()();return u.push.apply(u,i||[]),t()}function t(){for(var e,r=0;r<u.length;r++){for(var t=u[r],n=!0,a=1;a<t.length;a++){var f=t[a];0!==o[f]&&(n=!1)}n&&(u.splice(r--,1),e=l(l.s=t[0]))}return e}var n={},o={1:0},u=[];function l(r){if(n[r])return n[r].exports;var t=n[r]={i:r,l:!1,exports:{}};return e[r].call(t.exports,t,t.exports,l),t.l=!0,t.exports}l.m=e,l.c=n,l.d=function(e,r,t){l.o(e,r)||Object.defineProperty(e,r,{enumerable:!0,get:t})},l.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},l.t=function(e,r){if(1&r&&(e=l(e)),8&r)return e;if(4&r&&"object"==typeof e&&e&&e.__esModule)return e;var t=Object.create(null);if(l.r(t),Object.defineProperty(t,"default",{enumerable:!0,value:e}),2&r&&"string"!=typeof e)for(var n in e)l.d(t,n,function(r){return e[r]}.bind(null,n));return t},l.n=function(e){var r=e&&e.__esModule?function(){return e.default}:function(){return e};return l.d(r,"a",r),r},l.o=function(e,r){return Object.prototype.hasOwnProperty.call(e,r)},l.p="/";var a=this["webpackJsonpNASA-Card"]=this["webpackJsonpNASA-Card"]||[],f=a.push.bind(a);a.push=r,a=a.slice();for(var i=0;i<a.length;i++)r(a[i]);var p=f;t()}([])</script><script src="/static/js/2.5477d9ce.chunk.js"></script><script src="/static/js/main.2d87c296.chunk.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tipos MIME</title>
+    <link rel="stylesheet" href="./style.css">
+
+</head>
+
+<body>
+    <h1>Tipos MIME</h1>
+
+    <!-- Texto sin formato -->
+    <h2>Texto sin formato (text/plain)</h2>
+    <pre>This is plain text.</pre>
+
+    <!-- Documento HTML -->
+    <h2>Documento HTML (text/html)</h2>
+    <p>This is <b>HTML</b> content.</p>
+
+    <!-- Hoja de estilo en cascada (CSS) -->
+    <h2>Hoja de estilo en cascada (CSS) (text/css)</h2>
+    <style>
+        p {
+            color: blue;
+        }
+    </style>
+    <p>This is styled text.</p>
+
+    <!-- Código JavaScript -->
+    <h2>Código JavaScript (text/javascript)</h2>
+    <script>
+        console.log("This is JavaScript code.");
+    </script>
+
+    <!-- Datos en formato JSON -->
+    <h2>Datos en formato JSON (application/json)</h2>
+    <pre id="json"></pre>
+    <script>
+        var jsonData = { "name": "John", "age": 30, "city": "New York" };
+        document.getElementById("json").innerText = JSON.stringify(jsonData, null, 2);
+    </script>
+
+    <!-- Documento XML -->
+    <h2>Documento XML (application/xml)</h2>
+    <pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+        &lt;note&gt;
+            &lt;to&gt;Tove&lt;/to&gt;
+            &lt;from&gt;Jani&lt;/from&gt;
+            &lt;heading&gt;Reminder&lt;/heading&gt;
+            &lt;body&gt;Don't forget me this weekend!&lt;/body&gt;
+        &lt;/note&gt;</pre>
+
+    <!-- Documento PDF -->
+    <h2>Documento PDF (application/pdf)</h2>
+    <embed src="example.pdf" width="600" height="400" type="application/pdf">
+
+    <!-- Imagen JPEG -->
+    <h2>Imagen JPEG (image/jpeg)</h2>
+    <img src="example.jpg" alt="JPEG Image">
+
+    <!-- Imagen PNG -->
+    <h2>Imagen PNG (image/png)</h2>
+    <img src="example.png" alt="PNG Image">
+
+    <!-- Imagen GIF -->
+    <h2>Imagen GIF (image/gif)</h2>
+    <img src="example.gif" alt="GIF Image">
+
+    <!-- Gráficos vectoriales escalables (SVG) -->
+    <h2>Gráficos vectoriales escalables (SVG) (image/svg+xml)</h2>
+    <svg width="100" height="100">
+        <circle cx="50" cy="50" r="40" fill="blue" />
+    </svg>
+
+    <!-- Audio MPEG -->
+    <h2>Audio MPEG (audio/mpeg)</h2>
+    <audio controls>
+        <source src="example.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Audio WAV -->
+    <h2>Audio WAV (audio/wav)</h2>
+    <audio controls>
+        <source src="example.wav" type="audio/wav">
+    </audio>
+
+    <!-- Video MP4 -->
+    <h2>Video MP4 (video/mp4)</h2>
+    <video width="320" height="240" controls>
+        <source src="example.mp4" type="video/mp4">
+    </video>
+
+    <!-- Video AVI
+    <h2>Video AVI (video/avi)</h2>
+    <video width="320" height="240" controls>
+        <source src="example.avi" type="video/avi">
+    </video> -->
+
+    <!-- Video QuickTime -->
+    <h2>Video QuickTime (video/quicktime)</h2>
+    <video width="320" height="240" controls>
+        <source src="example.mov" type="video/quicktime">
+    </video>
+
+    <!-- Datos binarios sin formato -->
+    <h2>Datos binarios sin formato (application/octet-stream)</h2>
+    <pre>This is raw binary data.</pre>
+
+    <!-- Datos de formulario con múltiples partes -->
+    <h2>Datos de formulario con múltiples partes (multipart/form-data)</h2>
+    <form action="/submit" method="post" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <input type="submit" value="Enviar">
+    </form>
+</body>
+
+</html>

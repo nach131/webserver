@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/17 17:07:20 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/17 20:32:50 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,9 +103,6 @@ int start()
 		//======================STRING=============================================
 		HTTPHeader header(pars.getProt(), body.code());
 
-		// Agregar otros campos al encabezado si es necesario
-		// header.addField("Content-Type", "text/css");
-
 		header.addField("Content-Type", body.mime());
 		header.addField("Content-Length", std::to_string(body.content().length()));
 		header.addField("Date", DateField());
@@ -118,23 +115,6 @@ int start()
 		std::cout << "========================\n";
 
 		n = write(newsockfd, header.getHeader().c_str(), header.getHeader().length());
-
-		// //======================MAP============================================
-		// HTTPHeader header(pars.getProt(), body.code());
-
-		// // Agregar otros campos al encabezado si es necesario
-		// // header.addField("Content-Type", "text/css");
-		// header.addField("Content-Type", "text/hmtl");
-		// header.addField("Content-Length", std::to_string(body.content().length()));
-		// // header.addField("Date", DateField());
-
-		// // Obtener el encabezado HTTP como una cadena y mostrarlo
-		// std::string headerStr = header.getHeader();
-		// std::cout << GREEN << "header:\n"
-		// 		  << headerStr << RESET << std::endl;
-		// std::cout << headerStr.length() << std::endl;
-		// std::cout << "========================\n";
-		// n = write(newsockfd, header.getHeader().c_str(), header.getHeader().length());
 
 		// // //=================HARDCode=================================================
 		// std::string header = "HTTP/1.1 200 OK\r\n";
