@@ -1,24 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   WebServer.hpp                                      :+:      :+:    :+:   */
+/*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/12 15:34:48 by vduchi            #+#    #+#             */
-/*   Updated: 2024/04/17 13:49:04 by nmota-bu         ###   ########.fr       */
+/*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
+/*   Updated: 2024/04/17 13:48:54 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERVER_H__
-# define WEBSERVER_H__
+#include "WebServer.hpp"
 
-# include <map>
-# include <fstream>
-# include <iostream>
-# include "Colors.hpp"
+std::string DateField()
+{
+	// Obtener la fecha y hora actual
+	time_t currentTime;
+	time(&currentTime);
+	struct tm *timeInfo = gmtime(&currentTime);
 
-int start();
-std::string DateField();
-
-#endif
+	// Formatear la fecha según el estándar RFC 1123 (ejemplo: "Tue, 15 Nov 1994 08:12:31 GMT")
+	char buffer[80];
+	strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S GMT", timeInfo);
+	return buffer;
+}

@@ -6,13 +6,14 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/17 12:26:10 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/17 14:31:57 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/ClientParsing.hpp"
 #include "HTTPBody.hpp"
 #include "HTTPHeader.hpp"
+#include "WebServer.hpp"
 
 // Cabeceras específicas de sockets en sistemas tipo Unix
 // #include <sys/types.h>
@@ -99,34 +100,53 @@ int start()
 		// ClientSend clientConMap(pars.getMap());
 		HTTPBody body(pars);
 
-		//=========================================================================
-
-		//======================MAP============================================
+		//======================STRING=============================================
 		HTTPHeader header(pars.getProt(), body.code());
 
 		// Agregar otros campos al encabezado si es necesario
 		// header.addField("Content-Type", "text/css");
-		header.addField("Content-Type", "text/hmtl");
+		header.addField("Content-Type", "text/html");
 		header.addField("Content-Length", std::to_string(body.content().length()));
+		header.addField("Date", DateField());
 
 		// Obtener el encabezado HTTP como una cadena y mostrarlo
-		std::string headerStr = header.getHeader();
+		std::string heaStr = header.getHeader();
 		std::cout << GREEN << "header:\n"
-				  << headerStr << RESET << std::endl;
+				  << heaStr << RESET << std::endl;
+		std::cout << heaStr.length() << std::endl;
 		std::cout << "========================\n";
 
-		// // //=========================================================================
+		n = write(newsockfd, header.getHeader().c_str(), header.getHeader().length());
+
+		// //======================MAP============================================
+		// HTTPHeader header(pars.getProt(), body.code());
+
+		// // Agregar otros campos al encabezado si es necesario
+		// // header.addField("Content-Type", "text/css");
+		// header.addField("Content-Type", "text/hmtl");
+		// header.addField("Content-Length", std::to_string(body.content().length()));
+		// // header.addField("Date", DateField());
+
+		// // Obtener el encabezado HTTP como una cadena y mostrarlo
+		// std::string headerStr = header.getHeader();
+		// std::cout << GREEN << "header:\n"
+		// 		  << headerStr << RESET << std::endl;
+		// std::cout << headerStr.length() << std::endl;
+		// std::cout << "========================\n";
+		// n = write(newsockfd, header.getHeader().c_str(), header.getHeader().length());
+
+		// // //=================HARDCode=================================================
 		// std::string header = "HTTP/1.1 200 OK\r\n";
+
 		// std::string header = pars.getProt() + " " + body.code() + "\r\n";
 
 		// header += "Content-Type: text/html\r\n";
 		// header += "Content-Length: " + std::to_string(body.content().length()) + "\r\n\r\n";
 
 		// std::cout << YELLOW << header << RESET << std::endl;
+		// std::cout << header.length() << std::endl;
 		// std::cout << "========================\n";
 		// n = write(newsockfd, header.c_str(), header.length());
-
-		n = write(newsockfd, header.getHeader().c_str(), header.getHeader().length());
 
 		// n = write(newsockfd, header.getHeader().c_str(), header.headerLength());
 		if (n < 0)
