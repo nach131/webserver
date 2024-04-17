@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 12:12:11 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/16 17:41:41 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/17 17:02:28 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ class HTTPBody
 private:
 	std::string _content;
 	std::string _code;
+	std::string _mime;
 	HTTPBody &operator=(const HTTPBody &);
 
 	HTTPBody(const HTTPBody &);
@@ -37,6 +38,8 @@ public:
 
 	std::string const &content() const;
 	std::string const &code() const;
+	std::string const &mime() const;
+	void setMIME(const std::string &mime);
 
 	~HTTPBody();
 };

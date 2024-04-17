@@ -6,10 +6,11 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 12:28:42 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/16 22:24:33 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/17 17:06:59 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "MIME.hpp"
 #include "HTTPBody.hpp"
 #include "Colors.hpp"
 
@@ -18,11 +19,14 @@
 int HTTPBody::methodGet(HTTPBody &client, std::string path)
 {
 	std::string extension;
+	MIME mime;
+
 	size_t pos = path.find_last_of('.');
 	if (pos != std::string::npos)
 	{
 		// Si se encuentra el carácter '.'Extrae la subcadena que contiene la extensión
 		extension = path.substr(pos + 1);
+		client.setMIME(mime.getMIME(extension));
 	}
 
 	std::cout << "==========GET===========\n";
@@ -43,7 +47,6 @@ int HTTPBody::methodGet(HTTPBody &client, std::string path)
 	{
 		std::cerr << "Error al abrir el archivo " << path << std::endl;
 		client._code = "404 Not Found";
-		// exit(EXIT_FAILURE);
 	}
 	else
 	{
@@ -97,6 +100,13 @@ HTTPBody::HTTPBody(const ClientParsing &pars)
 
 HTTPBody::~HTTPBody() {}
 
-std::string const &HTTPBody::content() const { return _content; }
+void HTTPBody::setMIME(const std::string &mime) { _mime = mime; }
+
+std::string const &HTTPBody::content() const
+{
+	return _content;
+}
 
 std::string const &HTTPBody::code() const { return _code; }
+
+std::string const &HTTPBody::mime() const { return _mime; }

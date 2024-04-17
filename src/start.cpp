@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/17 14:31:57 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/17 17:07:20 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,8 @@ int start()
 
 		// Agregar otros campos al encabezado si es necesario
 		// header.addField("Content-Type", "text/css");
-		header.addField("Content-Type", "text/html");
+
+		header.addField("Content-Type", body.mime());
 		header.addField("Content-Length", std::to_string(body.content().length()));
 		header.addField("Date", DateField());
 
