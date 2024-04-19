@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/19 11:01:10 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/19 15:19:05 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,10 @@ int start()
 
 		//======================STRING=============================================
 		HTTPHeader header(pars.getProt(), body.code());
+
+		// TODO
+		// Content-Type: text/html; charset=UTF-8
+		// falta indicar el tipo de charset
 
 		header.addField("Content-Type", body.mime());
 		header.addField("Content-Length", std::to_string(body.content().length()));

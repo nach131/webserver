@@ -1,0 +1,5 @@
+./node_modules
+.dockerignore
+./Docker
+docker-compose.yml
+rest.http

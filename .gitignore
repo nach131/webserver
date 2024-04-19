@@ -2,3 +2,5 @@
 *.o
 webserv
 .DS_Store
+BackEnd/node_modules
+BackEnd/dist

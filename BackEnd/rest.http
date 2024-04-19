@@ -1,0 +1,56 @@
+###Get a list of all products
+GET http://192.168.1.15:3000/api/users
+
+### Create a product
+POST http://192.168.1.15:3000/api/users
+Content-Type: application/json
+
+{
+  "full_name": "Bilma Picapiedra",
+  "username": "Bilma"
+}
+
+### GET a product by id
+GET http://localhost:4000/api/users/6622f56df1097d0011461513
+
+
+### Delete a product by id
+DELETE  http://192.168.1.15:3000/api/users/6622f56df1097d0011461513
+
+### 404 route Not Found
+GET http://localhost:3000/abc_xyz
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#hrXWgw4Q127uqZJ3
