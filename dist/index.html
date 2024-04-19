@@ -1,120 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tipos MIME</title>
-    <link rel="stylesheet" href="./style.css">
+    <title>Formularios</title>
+    <script>
+        function submitForm () {
+            var formData = {
+                name: document.getElementById("name").value,
+                email: document.getElementById("email").value
+            };
+            var jsonData = JSON.stringify(formData);
+    
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/submit", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(jsonData);
+        }
 
+            function submitForm2 () {
+                var formData = "<data>" +
+                    "<name>" + document.getElementById("name").value + "</name>" +
+                    "<email>" + document.getElementById("email").value + "</email>" +
+                    "</data>";
+        
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/submit", true);
+            xhr.setRequestHeader("Content-Type", "application/xml");
+            xhr.send(formData);
+        }
+</script>
 </head>
 
 <body>
-    <h1>Tipos MIME</h1>
-
-    <!-- Texto sin formato -->
-    <h2>Texto sin formato (text/plain)</h2>
-    <pre>This is plain text.</pre>
-
-    <!-- Documento HTML -->
-    <h2>Documento HTML (text/html)</h2>
-    <p>This is <b>HTML</b> content.</p>
-
-    <!-- Hoja de estilo en cascada (CSS) -->
-    <h2>Hoja de estilo en cascada (CSS) (text/css)</h2>
-    <style>
-        p {
-            color: blue;
-        }
-    </style>
-    <p>This is styled text.</p>
-
-    <!-- Código JavaScript -->
-    <h2>Código JavaScript (text/javascript)</h2>
-    <script>
-        console.log("This is JavaScript code.");
-    </script>
-
-    <!-- Datos en formato JSON -->
-    <h2>Datos en formato JSON (application/json)</h2>
-    <pre id="json"></pre>
-    <script>
-        var jsonData = { "name": "John", "age": 30, "city": "New York" };
-        document.getElementById("json").innerText = JSON.stringify(jsonData, null, 2);
-    </script>
-
-    <!-- Documento XML -->
-    <h2>Documento XML (application/xml)</h2>
-    <pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-        &lt;note&gt;
-            &lt;to&gt;Tove&lt;/to&gt;
-            &lt;from&gt;Jani&lt;/from&gt;
-            &lt;heading&gt;Reminder&lt;/heading&gt;
-            &lt;body&gt;Don't forget me this weekend!&lt;/body&gt;
-        &lt;/note&gt;</pre>
-
-    <!-- Documento PDF -->
-    <h2>Documento PDF (application/pdf)</h2>
-    <embed src="example.pdf" width="600" height="400" type="application/pdf">
-
-    <!-- Imagen JPEG -->
-    <h2>Imagen JPEG (image/jpeg)</h2>
-    <img src="example.jpg" alt="JPEG Image">
-
-    <!-- Imagen PNG -->
-    <h2>Imagen PNG (image/png)</h2>
-    <img src="example.png" alt="PNG Image">
-
-    <!-- Imagen GIF -->
-    <h2>Imagen GIF (image/gif)</h2>
-    <img src="example.gif" alt="GIF Image">
-
-    <!-- Gráficos vectoriales escalables (SVG) -->
-    <h2>Gráficos vectoriales escalables (SVG) (image/svg+xml)</h2>
-    <svg width="100" height="100">
-        <circle cx="50" cy="50" r="40" fill="blue" />
-    </svg>
-
-    <!-- Audio MPEG -->
-    <h2>Audio MPEG (audio/mpeg)</h2>
-    <audio controls>
-        <source src="example.mp3" type="audio/mpeg">
-    </audio>
-
-    <!-- Audio WAV -->
-    <h2>Audio WAV (audio/wav)</h2>
-    <audio controls>
-        <source src="example.wav" type="audio/wav">
-    </audio>
-
-    <!-- Video MP4 -->
-    <h2>Video MP4 (video/mp4)</h2>
-    <video width="320" height="240" controls>
-        <source src="example.mp4" type="video/mp4">
-    </video>
-
-    Video AVI
-    <h2>Video AVI (video/avi)</h2>
-    <video width="320" height="240" controls>
-        <source src="example.avi" type="video/avi">
-    </video>
-
-    <!-- Video QuickTime -->
-    <h2>Video QuickTime (video/quicktime)</h2>
-    <video width="320" height="240" controls>
-        <source src="example.mov" type="video/quicktime">
-    </video>
-
-    <!-- Datos binarios sin formato -->
-    <h2>Datos binarios sin formato (application/octet-stream)</h2>
-    <pre>This is raw binary data.</pre>
-
-    <!-- Datos de formulario con múltiples partes -->
-    <h2>Datos de formulario con múltiples partes (multipart/form-data)</h2>
-    <form action="/submit" method="post" enctype="multipart/form-data">
-        <input type="file" name="file">
+    <h2>Formulario para enviar datos en formato HTML</h2>
+    <form action="/submit" method="post">
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" name="name" required><br><br>
+        <label for="email">Correo electrónico:</label>
+        <input type="email" id="email" name="email" required><br><br>
         <input type="submit" value="Enviar">
     </form>
-</body>
+    <h2>Formulario para enviar datos en formato JSON</h2>
+    <label for="name">Nombre:</label>
+    <input type="text" id="name" name="name" required><br><br>
+    <label for="email">Correo electrónico:</label>
+    <input type="email" id="email" name="email" required><br><br>
+    <button type="button" onclick="submitForm()">Enviar</button>
 
+<h2>Formulario para enviar datos en formato XML</h2>
+<label for="name">Nombre:</label>
+<input type="text" id="name" name="name" required><br><br>
+    <label for="email">Correo electrónico:</label>
+    <input type="email" id="email" name="email" required><br><br>
+    <button type="button" onclick="submitForm()">Enviar</button>
+</body>
 </html>

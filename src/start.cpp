@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/17 20:32:50 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/19 11:01:10 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,27 +109,13 @@ int start()
 
 		// Obtener el encabezado HTTP como una cadena y mostrarlo
 		std::string heaStr = header.getHeader();
-		std::cout << GREEN << "header:\n"
+		std::cout << GREEN << "[ Header ]\n"
 				  << heaStr << RESET << std::endl;
 		std::cout << heaStr.length() << std::endl;
 		std::cout << "========================\n";
 
 		n = write(newsockfd, header.getHeader().c_str(), header.getHeader().length());
 
-		// // //=================HARDCode=================================================
-		// std::string header = "HTTP/1.1 200 OK\r\n";
-
-		// std::string header = pars.getProt() + " " + body.code() + "\r\n";
-
-		// header += "Content-Type: text/html\r\n";
-		// header += "Content-Length: " + std::to_string(body.content().length()) + "\r\n\r\n";
-
-		// std::cout << YELLOW << header << RESET << std::endl;
-		// std::cout << header.length() << std::endl;
-		// std::cout << "========================\n";
-		// n = write(newsockfd, header.c_str(), header.length());
-
-		// n = write(newsockfd, header.getHeader().c_str(), header.headerLength());
 		if (n < 0)
 		{
 			std::cerr << "Error al enviar encabezado HTTP: " << strerror(errno) << std::endl;

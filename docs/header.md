@@ -18,3 +18,55 @@
    - Otros campos de encabezado opcionales dependiendo de las necesidades específicas de la aplicación.
 
 3. **Línea en blanco**: Después de todos los campos de encabezado, se agrega una línea en blanco para indicar que ha terminado la sección de encabezado y que el cuerpo de la respuesta (si lo hay) sigue a continuación.
+
+# POST
+
+1. **Respuesta HTML:**
+```html
+HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 75
+Date: Sat, 17 Apr 2024 12:00:00 GMT
+Server: MiServidor/1.0
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ejemplo HTML</title>
+</head>
+<body>
+    <h1>Respuesta HTML</h1>
+    <p>Este es un ejemplo de respuesta HTML.</p>
+</body>
+</html>
+```
+
+2. **Respuesta JSON:**
+```json
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 57
+Date: Sat, 17 Apr 2024 12:00:00 GMT
+Server: MiServidor/1.0
+
+{
+    "mensaje": "Ejemplo JSON",
+    "contenido": "Esta es una respuesta JSON."
+}
+```
+
+3. **Respuesta XML:**
+```xml
+HTTP/1.1 200 OK
+Content-Type: application/xml
+Content-Length: 122
+Date: Sat, 17 Apr 2024 12:00:00 GMT
+Server: MiServidor/1.0
+
+<?xml version="1.0" encoding="UTF-8"?>
+<respuesta>
+    <mensaje>Ejemplo XML</mensaje>
+    <contenido>Esta es una respuesta XML.</contenido>
+</respuesta>
+```
+
