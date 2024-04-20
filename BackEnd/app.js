@@ -23,6 +23,14 @@ require('./initDB')();
 //   app.use('/images', express.static(pescadoPath));
 // }
 
+if (process.env.NODE_ENV === 'production') {
+  // Configuraciones específicas de producción
+  console.log('Modo de producción');
+} else {
+  // Configuraciones específicas de desarrollo
+  console.log('Modo de desarrollo');
+}
+
 // const ProductRoute = require('./Routes/Product.route');
 // app.use('/products', ProductRoute);
 

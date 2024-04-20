@@ -1,8 +1,21 @@
 const mongoose = require('mongoose');
+const dotenv = require('dotenv').config();
+
+let URL;
+
+if (process.env.NODE_ENV === 'production') {
+  // Configuraciones específicas de producción
+  URL = process.env.MONGODB_URI;
+} else {
+  // Configuraciones específicas de desarrollo
+  URL = process.env.MONGODB_DEV;
+}
+
+console.log(URL)
 
 module.exports = () => {
   mongoose
-    .connect(process.env.MONGODB_URI, {
+    .connect(URL, {
       dbName: process.env.DB_NAME,
       user: process.env.DB_USER,
       pass: process.env.DB_PASS,

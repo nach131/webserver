@@ -4,8 +4,8 @@
   "description": "Youtube Tutorial",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "nodemon app.js"
+    "start": "NODE_ENV=production node app.js",
+    "dev": "NODE_ENV=development nodemon app.js"
   },
   "author": "Me",
   "license": "ISC",
