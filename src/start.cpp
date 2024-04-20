@@ -6,12 +6,13 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/19 15:19:05 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/20 12:33:14 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/ClientParsing.hpp"
 #include "HTTPBody.hpp"
+#include "HTTPRequest.hpp"
 #include "HTTPHeader.hpp"
 #include "WebServer.hpp"
 
@@ -61,6 +62,9 @@ int start()
 
 	std::cout << "Servidor esperando conexiones..." << std::endl;
 
+	// TODO
+	// favicon.ico si no hay, enviar respuesta generica
+
 	while (42)
 	{
 		clilen = sizeof(clientAddr);
@@ -94,6 +98,15 @@ int start()
 		//===================PARSING==============================================
 
 		ClientParsing pars(buffer);
+
+		HTTPRequest httpRequest(buffer);
+
+		std::cout << "Method: " << httpRequest.getMethod() << std::endl;
+		std::cout << "Path: " << httpRequest.getPath() << std::endl;
+		std::cout << "Version: " << httpRequest.getVersion() << std::endl;
+		std::cout << "Content-Type: " << httpRequest.getHeader("Content-Type") << std::endl;
+		std::cout << "Content-Length: " << httpRequest.getHeader("Content-Length") << std::endl;
+		std::cout << "Body: " << httpRequest.getBody() << std::endl;
 
 		//=========================================================================
 

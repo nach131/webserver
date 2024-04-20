@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/04/19 11:03:40 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/20 12:34:12 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,13 +51,13 @@ ClientParsing::ClientParsing(const char *buf)
 		_map[name] = val;
 	}
 
-	std::cout << std::endl;
+	// std::cout << std::endl;
 
-	for (std::map<std::string, std::string>::iterator it = _map.begin(); it != _map.end(); it++)
-	{
-		std::cout << "Name: " << it->first << std::endl
-				  << " Value: " << it->second << std::endl;
-	}
+	// for (std::map<std::string, std::string>::iterator it = _map.begin(); it != _map.end(); it++)
+	// {
+	// 	std::cout << "Name: " << it->first << std::endl
+	// 			  << " Value: " << it->second << std::endl;
+	// }
 }
 
 ClientParsing::~ClientParsing() {}

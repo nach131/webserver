@@ -18,21 +18,19 @@ app.use(express.urlencoded({ extended: true }));
 // Initialize DB
 require('./initDB')();
 
-// if (process.env.NODE_ENV === 'production') {
-//   app.use(express.static('./dist'))
-//   app.use('/images', express.static(pescadoPath));
-// }
+if (process.env.NODE_ENV === 'production') {
+  // app.use('/images', express.static(pescadoPath));
+}
 
 if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('./dist'))
   // Configuraciones específicas de producción
   console.log('Modo de producción');
 } else {
+  app.use(express.static('./dist'))
   // Configuraciones específicas de desarrollo
   console.log('Modo de desarrollo');
 }
-
-// const ProductRoute = require('./Routes/Product.route');
-// app.use('/products', ProductRoute);
 
 const UserRoute = require('./Routes/User.route');
 app.use('/api/users', UserRoute);
