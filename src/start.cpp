@@ -6,11 +6,10 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/22 21:35:33 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/22 22:35:00 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "HTTPBody.hpp"
 #include "HTTPRes.hpp"
 #include "HTTPRequest.hpp"
 #include "HTTPHeader.hpp"
@@ -25,7 +24,7 @@
 int start()
 {
 	int sockfd, newsockfd;
-	socklen_t clilen;
+	socklen_t client;
 	char buffer[1024];
 	struct sockaddr_in serverAddr, clientAddr;
 	int n;
@@ -67,10 +66,10 @@ int start()
 
 	while (42)
 	{
-		clilen = sizeof(clientAddr);
+		client = sizeof(clientAddr);
 
 		// Aceptar la conexión entrante
-		newsockfd = accept(sockfd, (struct sockaddr *)&clientAddr, &clilen);
+		newsockfd = accept(sockfd, (struct sockaddr *)&clientAddr, &client);
 
 		// newsockfd = -1; // error
 		// (void)clilen;	// error
@@ -100,18 +99,6 @@ int start()
 
 		HTTPRequest request(buffer);
 
-		// std::cout << "=========map request===============\n";
-		// request.print();
-		// std::cout << "========================\n";
-		// std::cout << "Method: " << request.getHeader("Method") << std::endl;
-		// std::cout << "Path: " << request.getHeader("Path") << std::endl;
-		// std::cout << "Version: " << request.getHeader("Version") << std::endl;
-		// std::cout << "Content-Type: " << request.getHeader("Content-Type") << std::endl;
-		// std::cout << "Accept-Language: " << request.getHeader("Accept-Language") << std::endl;
-		// std::cout << "Content-Length: " << request.getHeader("Content-Length") << std::endl;
-		// std::cout << "Body: " << request.getHeader("Body") << std::endl;
-		// std::cout << "========================\n";
-
 		//=========================================================================
 
 		// HTTPBody body(request);
@@ -123,29 +110,8 @@ int start()
 		// std::cout << response.getContent() << std::endl;
 		std::cout << "========================" << RESET << std::endl;
 
-		//======================STRING=============================================
-		// HTTPHeader header(request.getHeader("Version"), body.code());
-
-		// // TODO
-		// // Content-Type: text/html; charset=UTF-8
-		// // falta indicar el tipo de charset
-		// header.addField("Content-Type", body.mime());
-		// header.addField("Content-Length", std::to_string(body.content().length()));
-		// header.addField("ETag", generateETag(body.content()));
-
-		// header.addField("Date", DateField());
-		// header.addField("42-Barcelona", "nmota-bu, vduchi");
-
-		// // Obtener el encabezado HTTP como una cadena y mostrarlo
-		// std::string heaStr = header.getHeader();
-		// std::cout << MAGENTA << "[ Header ]\n"
-		// 		  << heaStr << std::endl;
-		// std::cout << heaStr.length() << std::endl;
-		// std::cout << "========================" << RESET << std::endl;
-
 		//=========================================================================
 		// Enviar contenido Header
-		// n = write(newsockfd, header.getHeader().c_str(), header.getHeader().length());
 		n = write(newsockfd, response.getHeader().c_str(), response.getHeader().length());
 
 		if (n < 0)
@@ -156,7 +122,6 @@ int start()
 		}
 
 		// Enviar contenido HTML
-		// n = write(newsockfd, body.content().c_str(), body.content().length());
 		n = write(newsockfd, response.getContent().c_str(), response.getContent().length());
 		if (n < 0)
 		{
