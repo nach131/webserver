@@ -17,6 +17,15 @@
       "args": [],
       "stopOnEntry": false,
       "cwd": "${workspaceFolder}"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "a",
+      "program": "${workspaceFolder}/a.out",
+      "args": [],
+      "stopOnEntry": false,
+      "cwd": "${workspaceFolder}"
     }
   ]
 }

@@ -6,11 +6,12 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/22 00:29:55 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/22 21:35:33 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HTTPBody.hpp"
+#include "HTTPRes.hpp"
 #include "HTTPRequest.hpp"
 #include "HTTPHeader.hpp"
 #include "WebServer.hpp"
@@ -91,53 +92,61 @@ int start()
 			continue; // Continuar con el siguiente intento de aceptar conexiones
 		}
 
-		std::cout << CYAN "Mensaje del cliente: \n"
+		//===================PETICION==============================================
+		std::cout << CYAN "[ Mensaje del cliente: ]\n"
 				  << buffer << RESET << std::endl;
 
 		//===================PARSING==============================================
 
 		HTTPRequest request(buffer);
 
-		// HTTPRequest httpRequest(buffer);
-
-		std::cout << "=========map request===============\n";
-		request.print();
-		std::cout << "========================\n";
-		std::cout << "Method: " << request.getHeader("Method") << std::endl;
-		std::cout << "Path: " << request.getHeader("Path") << std::endl;
-		std::cout << "Version: " << request.getHeader("Version") << std::endl;
-		std::cout << "Content-Type: " << request.getHeader("Content-Type") << std::endl;
-		std::cout << "Accept-Language: " << request.getHeader("Accept-Language") << std::endl;
-		std::cout << "Content-Length: " << request.getHeader("Content-Length") << std::endl;
-		std::cout << "Body: " << request.getHeader("Body") << std::endl;
-		std::cout << "========================\n";
+		// std::cout << "=========map request===============\n";
+		// request.print();
+		// std::cout << "========================\n";
+		// std::cout << "Method: " << request.getHeader("Method") << std::endl;
+		// std::cout << "Path: " << request.getHeader("Path") << std::endl;
+		// std::cout << "Version: " << request.getHeader("Version") << std::endl;
+		// std::cout << "Content-Type: " << request.getHeader("Content-Type") << std::endl;
+		// std::cout << "Accept-Language: " << request.getHeader("Accept-Language") << std::endl;
+		// std::cout << "Content-Length: " << request.getHeader("Content-Length") << std::endl;
+		// std::cout << "Body: " << request.getHeader("Body") << std::endl;
+		// std::cout << "========================\n";
 
 		//=========================================================================
 
-		// ClientSend clientConMap(pars.getMap());
-		HTTPBody body(request);
+		// HTTPBody body(request);
+		HTTPRes response(request);
+
+		std::cout << YELLOW << "======[ RESPONSE ] ======" << std::endl;
+		std::cout << "[ HEADER ]" << std::endl;
+		std::cout << response.getHeader() << std::endl;
+		// std::cout << response.getContent() << std::endl;
+		std::cout << "========================" << RESET << std::endl;
 
 		//======================STRING=============================================
-		HTTPHeader header(request.getProt(), body.code());
+		// HTTPHeader header(request.getHeader("Version"), body.code());
 
-		// TODO
-		// Content-Type: text/html; charset=UTF-8
-		// falta indicar el tipo de charset
-		//
-		// header.addField("Content-Type", "text/html; charset=UTF-8");
-		header.addField("Content-Type", body.mime());
-		header.addField("Content-Length", std::to_string(body.content().length()));
-		header.addField("Date", DateField());
-		header.addField("Accept-Language", request.getHeader("Accept-Language"));
+		// // TODO
+		// // Content-Type: text/html; charset=UTF-8
+		// // falta indicar el tipo de charset
+		// header.addField("Content-Type", body.mime());
+		// header.addField("Content-Length", std::to_string(body.content().length()));
+		// header.addField("ETag", generateETag(body.content()));
 
-		// Obtener el encabezado HTTP como una cadena y mostrarlo
-		std::string heaStr = header.getHeader();
-		std::cout << GREEN << "[ Header ]\n"
-				  << heaStr << RESET << std::endl;
-		std::cout << heaStr.length() << std::endl;
-		std::cout << "========================\n";
+		// header.addField("Date", DateField());
+		// header.addField("42-Barcelona", "nmota-bu, vduchi");
 
-		n = write(newsockfd, header.getHeader().c_str(), header.getHeader().length());
+		// // Obtener el encabezado HTTP como una cadena y mostrarlo
+		// std::string heaStr = header.getHeader();
+		// std::cout << MAGENTA << "[ Header ]\n"
+		// 		  << heaStr << std::endl;
+		// std::cout << heaStr.length() << std::endl;
+		// std::cout << "========================" << RESET << std::endl;
+
+		//=========================================================================
+		// Enviar contenido Header
+		// n = write(newsockfd, header.getHeader().c_str(), header.getHeader().length());
+		n = write(newsockfd, response.getHeader().c_str(), response.getHeader().length());
 
 		if (n < 0)
 		{
@@ -147,7 +156,8 @@ int start()
 		}
 
 		// Enviar contenido HTML
-		n = write(newsockfd, body.content().c_str(), body.content().length());
+		// n = write(newsockfd, body.content().c_str(), body.content().length());
+		n = write(newsockfd, response.getContent().c_str(), response.getContent().length());
 		if (n < 0)
 		{
 			std::cerr << "Error al enviar contenido HTML: " << strerror(errno) << std::endl;

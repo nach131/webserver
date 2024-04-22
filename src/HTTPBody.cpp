@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 12:28:42 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/22 00:36:08 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/22 19:18:40 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ int HTTPBody::methodDelete(HTTPBody &client, std::string path)
 	return 0;
 }
 
-HTTPBody::HTTPBody(const HTTPRequest &pars)
+HTTPBody::HTTPBody(const HTTPRequest &request)
 {
 	std::map<std::string, int (*)(HTTPBody &client, std::string)> map;
 
@@ -92,14 +92,14 @@ HTTPBody::HTTPBody(const HTTPRequest &pars)
 	map["POST"] = &methodPost;
 	map["DELETE"] = &methodDelete;
 
-	std::map<std::string, int (*)(HTTPBody &client, std::string)>::iterator it = map.find(pars.getMethod());
+	std::map<std::string, int (*)(HTTPBody &client, std::string)>::iterator it = map.find(request.getHeader("Method"));
 
 	if (it != map.end())
-		it->second(*this, pars.getPath());
+		it->second(*this, request.getHeader("Path"));
 	else
 		// TODO
 		// hacer funcion para devolver error 405 en header
-		std::cout << "NotFoud: " << pars.getMethod() << std::endl;
+		std::cout << "NotFoud: " << request.getHeader("Method") << std::endl;
 }
 
 HTTPBody::~HTTPBody() {}

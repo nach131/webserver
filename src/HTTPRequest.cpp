@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/04/22 00:14:37 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/22 15:16:09 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,12 +65,6 @@ HTTPRequest::HTTPRequest(const char *buf)
 
 HTTPRequest::~HTTPRequest() {}
 
-const std::string &HTTPRequest::getPath() const { return _map.find("Path")->second; }
-
-const std::string &HTTPRequest::getProt() const { return _map.find("Version")->second; }
-
-const std::string &HTTPRequest::getMethod() const { return _map.find("Method")->second; }
-
 const std::map<std::string, std::string> &HTTPRequest::getMap() const { return _map; }
 
 const std::string &HTTPRequest::getHeader(const std::string name) const { return _map.find(name)->second; }
@@ -78,8 +72,6 @@ const std::string &HTTPRequest::getHeader(const std::string name) const { return
 void HTTPRequest::print()
 {
 	for (std::map<std::string, std::string>::iterator it = _map.begin(); it != _map.end(); it++)
-	{
-		std::cout << RED << it->first << " " << GREEN << it->second << std::endl;
-	}
+		std::cout << RED << it->first << ": " << GREEN << it->second << std::endl;
 	std::cout << RESET;
 }

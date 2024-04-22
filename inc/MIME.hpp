@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 16:30:49 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/22 00:31:58 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/22 19:16:56 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,15 @@ std::string MIME::getMIME(const std::string &extension) const
 {
 	MimeMap::const_iterator it = _mime.find(extension);
 	if (it != _mime.end())
-		return it->second;
+	{
+		std::string mime = it->second;
+		if (mime.substr(0, 4) == "text")
+		{
+			// Si el tipo MIME comienza con "text", añade "; charset=UTF-8"
+			mime += "; charset=UTF-8";
+		}
+		return mime;
+	}
 	else
 		return _mime.find("default")->second;
 }
