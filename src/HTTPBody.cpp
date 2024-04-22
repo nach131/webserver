@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 12:28:42 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/17 20:50:31 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/22 00:36:08 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,9 @@
 
 // GET, POST, DELETE
 
+// TODO
+// PUEDE QUE NECESITE Accept-Language, PARA INCLUIR  charset=UTF-8 EN EL Content-Type
+// SI QUE LO NECESITO
 int HTTPBody::methodGet(HTTPBody &client, std::string path)
 {
 	std::string extension;
@@ -81,7 +84,7 @@ int HTTPBody::methodDelete(HTTPBody &client, std::string path)
 	return 0;
 }
 
-HTTPBody::HTTPBody(const ClientParsing &pars)
+HTTPBody::HTTPBody(const HTTPRequest &pars)
 {
 	std::map<std::string, int (*)(HTTPBody &client, std::string)> map;
 

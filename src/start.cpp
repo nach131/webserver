@@ -6,11 +6,10 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/20 12:33:14 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/22 00:29:55 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/ClientParsing.hpp"
 #include "HTTPBody.hpp"
 #include "HTTPRequest.hpp"
 #include "HTTPHeader.hpp"
@@ -97,32 +96,39 @@ int start()
 
 		//===================PARSING==============================================
 
-		ClientParsing pars(buffer);
+		HTTPRequest request(buffer);
 
-		HTTPRequest httpRequest(buffer);
+		// HTTPRequest httpRequest(buffer);
 
-		std::cout << "Method: " << httpRequest.getMethod() << std::endl;
-		std::cout << "Path: " << httpRequest.getPath() << std::endl;
-		std::cout << "Version: " << httpRequest.getVersion() << std::endl;
-		std::cout << "Content-Type: " << httpRequest.getHeader("Content-Type") << std::endl;
-		std::cout << "Content-Length: " << httpRequest.getHeader("Content-Length") << std::endl;
-		std::cout << "Body: " << httpRequest.getBody() << std::endl;
+		std::cout << "=========map request===============\n";
+		request.print();
+		std::cout << "========================\n";
+		std::cout << "Method: " << request.getHeader("Method") << std::endl;
+		std::cout << "Path: " << request.getHeader("Path") << std::endl;
+		std::cout << "Version: " << request.getHeader("Version") << std::endl;
+		std::cout << "Content-Type: " << request.getHeader("Content-Type") << std::endl;
+		std::cout << "Accept-Language: " << request.getHeader("Accept-Language") << std::endl;
+		std::cout << "Content-Length: " << request.getHeader("Content-Length") << std::endl;
+		std::cout << "Body: " << request.getHeader("Body") << std::endl;
+		std::cout << "========================\n";
 
 		//=========================================================================
 
 		// ClientSend clientConMap(pars.getMap());
-		HTTPBody body(pars);
+		HTTPBody body(request);
 
 		//======================STRING=============================================
-		HTTPHeader header(pars.getProt(), body.code());
+		HTTPHeader header(request.getProt(), body.code());
 
 		// TODO
 		// Content-Type: text/html; charset=UTF-8
 		// falta indicar el tipo de charset
-
+		//
+		// header.addField("Content-Type", "text/html; charset=UTF-8");
 		header.addField("Content-Type", body.mime());
 		header.addField("Content-Length", std::to_string(body.content().length()));
 		header.addField("Date", DateField());
+		header.addField("Accept-Language", request.getHeader("Accept-Language"));
 
 		// Obtener el encabezado HTTP como una cadena y mostrarlo
 		std::string heaStr = header.getHeader();

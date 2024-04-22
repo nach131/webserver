@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/12 12:12:11 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/17 17:02:28 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/22 00:16:52 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include "ClientParsing.hpp"
+#include "HTTPRequest.hpp"
 
 class HTTPBody
 {
@@ -34,7 +34,7 @@ private:
 	static int methodDelete(HTTPBody &client, std::string path);
 
 public:
-	HTTPBody(const ClientParsing &);
+	HTTPBody(const HTTPRequest &);
 
 	std::string const &content() const;
 	std::string const &code() const;

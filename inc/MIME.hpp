@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 16:30:49 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/18 14:58:35 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/22 00:31:58 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,9 +83,7 @@ MIME::MIME()
 	_mime["swf"] = "application/x-shockwave-flash";
 }
 
-MIME::~MIME()
-{
-}
+MIME::~MIME() {}
 
 std::string MIME::getMIME(const std::string &extension) const
 {
