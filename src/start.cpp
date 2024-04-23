@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/23 12:48:14 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/23 13:10:30 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,32 @@
 // #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
+
+void sendResGet(int newsockfd, const std::string &header, const std::string &content)
+{
+
+	int n;
+
+	// Enviar el encabezado HTTP
+	n = write(newsockfd, header.c_str(), header.length());
+	if (n < 0)
+	{
+		std::cerr << "Error al enviar encabezado HTTP: " << strerror(errno) << std::endl;
+		close(newsockfd);
+		return; // Salir de la función si hay un error
+	}
+
+	// Enviar el contenido HTML
+	n = write(newsockfd, content.c_str(), content.length());
+	if (n < 0)
+	{
+		std::cerr << "Error al enviar contenido HTML: " << strerror(errno) << std::endl;
+		close(newsockfd);
+		return; // Salir de la función si hay un error
+	}
+
+	std::cout << "Respuesta enviada al cliente." << std::endl;
+}
 
 int start()
 {
@@ -95,6 +121,8 @@ int start()
 
 		HTTPRequest request(buffer);
 
+		request.print();
+
 		//=========================================================================
 
 		// HTTPBody body(request);
@@ -106,26 +134,35 @@ int start()
 		// std::cout << response.getContent() << std::endl;
 		std::cout << "========================" << RESET << std::endl;
 
-		//=========================================================================
-		// Enviar contenido Header
-		n = write(newsockfd, response.getHeader().c_str(), response.getHeader().length());
+		// //=========================================================================
+		// // Enviar contenido Header
+		// n = write(newsockfd, response.getHeader().c_str(), response.getHeader().length());
 
-		if (n < 0)
+		// if (n < 0)
+		// {
+		// 	std::cerr << "Error al enviar encabezado HTTP: " << strerror(errno) << std::endl;
+		// 	close(newsockfd);
+		// 	continue; // Continuar con el siguiente intento de aceptar conexiones
+		// }
+
+		// // Enviar contenido HTML
+		// n = write(newsockfd, response.getContent().c_str(), response.getContent().length());
+		// if (n < 0)
+		// {
+		// 	std::cerr << "Error al enviar contenido HTML: " << strerror(errno) << std::endl;
+		// 	close(newsockfd);
+		// 	continue; // Continuar con el siguiente intento de aceptar conexiones
+		// }
+		// //=========================================================================
+
+		// Enviar la respuesta al cliente utilizando la función creada
+		if (request.getHeader("Method") == "GET")
+			sendResGet(newsockfd, response.getHeader().c_str(), response.getContent());
+		else
 		{
-			std::cerr << "Error al enviar encabezado HTTP: " << strerror(errno) << std::endl;
-			close(newsockfd);
-			continue; // Continuar con el siguiente intento de aceptar conexiones
+			std::cout << "NO ES GET\n";
 		}
 
-		// Enviar contenido HTML
-		n = write(newsockfd, response.getContent().c_str(), response.getContent().length());
-		if (n < 0)
-		{
-			std::cerr << "Error al enviar contenido HTML: " << strerror(errno) << std::endl;
-			close(newsockfd);
-			continue; // Continuar con el siguiente intento de aceptar conexiones
-		}
-		//=========================================================================
 		// Cerrar el socket de la conexión actual
 		close(newsockfd);
 
