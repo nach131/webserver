@@ -1,0 +1,12 @@
+POST / HTTP/1.1
+user-agent: vscode-restclient
+content-type: application/json
+accept-encoding: gzip, deflate
+content-length: 60
+Host: localhost:8080
+Connection: close
+
+{
+  "full_name": "Bilma Picapiedra",
+  "username": "Bilma"
+}

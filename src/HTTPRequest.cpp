@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/04/22 15:16:09 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/23 13:20:57 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,14 +53,14 @@ HTTPRequest::HTTPRequest(const char *buf)
 		}
 	}
 
-	// Parse body
-	std::string body;
+	// Parse Content el Json enviado en el post
+	std::string Content;
 	while (std::getline(ss, line))
 	{
 		// body += line + '\n'; // Concatenate lines to form the body
-		body += line; // Concatenate lines to form the body
+		Content += line; // Concatenate lines to form the body
 	}
-	_map["Body"] = body;
+	_map["Content"] = Content;
 }
 
 HTTPRequest::~HTTPRequest() {}
