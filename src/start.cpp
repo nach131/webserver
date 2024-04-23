@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/22 22:35:00 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/23 12:48:14 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ int start()
 	serverAddr.sin_addr.s_addr = htonl(INADDR_ANY); // Escuchar en todas las interfaces de red
 
 	// Enlazar el socket a la dirección del servidor
-
 	if (bind(sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0)
 	{
 		std::string errorMsg = RED "Socket binding error:\n";
@@ -60,9 +59,6 @@ int start()
 	listen(sockfd, 5);
 
 	std::cout << "Servidor esperando conexiones..." << std::endl;
-
-	// TODO
-	// favicon.ico si no hay, enviar respuesta generica
 
 	while (42)
 	{

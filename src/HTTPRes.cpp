@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/22 21:44:35 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/23 11:13:21 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,13 @@ void HTTPRes::methodPost(HTTPRes &res)
 {
 	(void)res;
 	std::cout << "==========POST==========\n";
+	res._header.addOne(res._request.getHeader("Version"), "200 OK");
+
+	res._header.addField("Host", "localhost:3000/api/users");
+	res._header.addField("Content-Type", "application/json; charset=utf-8");
+	res._header.addField("Date", DateField());
+	res._header.addField("42-Barcelona", "nmota-bu, vduchi");
+	// res._header.addField("", "\r\n\r\n");
 }
 
 void HTTPRes::methodDelete(HTTPRes &res)
@@ -72,8 +79,10 @@ void HTTPRes::methodDelete(HTTPRes &res)
 
 void HTTPRes::methodErr(HTTPRes &res)
 {
-	res._header.addOne(res._request.getHeader("Version"), "405 Method Not Allowed");
 	std::cout << "==========ERROR==========\n";
+	res._header.addOne(res._request.getHeader("Version"), "405 Method Not Allowed");
+	res._header.addField("Date", DateField());
+	res._header.addField("42-Barcelona", "nmota-bu, vduchi");
 }
 
 std::string const HTTPRes::getHeader() const { return _header.getHeader(); }

@@ -1,8 +1,8 @@
 ###Get a list of all products
-GET http://192.168.1.15:3000/api/users
+GET http://192.168.1.46:3000/api/users
 
 ### Create a product
-POST http://192.168.1.15:3000/api/users
+POST http://localhost:3000/api/users
 Content-Type: application/json
 
 {
@@ -22,9 +22,20 @@ GET http://localhost:3000/abc_xyz
 
 
 
+### Create a user
+
+POST http://localhost:8080
+Content-Type: application/json
+
+{
+  "full_name": "Bilma Picapiedra",
+  "username": "Bilma"
+}
 
 
+### method ERROR
 
+PUT http://localhost:8080
 
 
 
