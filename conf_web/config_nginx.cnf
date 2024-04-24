@@ -20,6 +20,8 @@ http {
     # Configuración de logs
     access_log /var/log/nginx/access.log;
     sendfile on;
+    api_forward 192.168.39.140
+    api_port 3000
     keepalive_timeout 65;
     server {
         listen 80;

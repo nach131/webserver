@@ -6,8 +6,8 @@
       "type": "lldb",
       "request": "launch",
       "args": [],
-      "cwd": "/Volumes/1TB/Dropbox/00_42Barcelona/42Barcelona/C5/webserv/pruebas",
-      "program": "/Volumes/1TB/Dropbox/00_42Barcelona/42Barcelona/C5/webserv/pruebas/build/Debug/outDebug"
+      "cwd": "/Users/nmota-bu/Desktop/webserver",
+      "program": "/Users/nmota-bu/Desktop/webserver/build/Debug/outDebug"
     },
     {
       "type": "lldb",

@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/24 11:24:55 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/24 17:05:24 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,6 @@ void sendResPost(int newsockfd, const std::string &header, const std::string &co
 	if (forward_sockfd < 0)
 	{
 		std::cerr << "Error al crear socket para la conexión al otro servidor: " << strerror(errno) << std::endl;
-		close(newsockfd);
 		return;
 	}
 
@@ -70,13 +69,12 @@ void sendResPost(int newsockfd, const std::string &header, const std::string &co
 	memset(&forward_serverAddr, 0, sizeof(forward_serverAddr));
 	forward_serverAddr.sin_family = AF_INET;
 	forward_serverAddr.sin_port = htons(3000);
-	forward_serverAddr.sin_addr.s_addr = inet_addr("192.168.1.46");
+	forward_serverAddr.sin_addr.s_addr = inet_addr("192.168.39.140");
 
 	if (connect(forward_sockfd, (struct sockaddr *)&forward_serverAddr, sizeof(forward_serverAddr)) < 0)
 	{
 		std::cerr << "Error al conectar al otro servidor: " << strerror(errno) << std::endl;
 		close(forward_sockfd);
-		close(newsockfd);
 		return;
 	}
 
@@ -85,7 +83,6 @@ void sendResPost(int newsockfd, const std::string &header, const std::string &co
 	{
 		std::cerr << "Error al enviar datos al otro servidor: " << strerror(errno) << std::endl;
 		close(forward_sockfd);
-		close(newsockfd);
 		return;
 	}
 
@@ -101,7 +98,6 @@ void sendResPost(int newsockfd, const std::string &header, const std::string &co
 	{
 		std::cerr << "Error al recibir datos del otro servidor: " << strerror(errno) << std::endl;
 		close(forward_sockfd);
-		close(newsockfd);
 		return;
 	}
 
