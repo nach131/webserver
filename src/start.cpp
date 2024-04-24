@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/23 15:43:23 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/24 11:24:55 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 
 void sendResGet(int newsockfd, const std::string &header, const std::string &content)
 {
+	std::cout << "[ GET ]" << std::endl;
 
 	int n;
 
@@ -54,7 +55,7 @@ void sendResPost(int newsockfd, const std::string &header, const std::string &co
 
 	std::string request_to_forward = header + content;
 
-	std::cout << ORANGE << "======[ RESPONSE ] ======" << std::endl;
+	std::cout << ORANGE << "======[ RESPONSE POST ] ======" << std::endl;
 	std::cout << request_to_forward << RESET << std::endl;
 
 	int forward_sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -111,6 +112,32 @@ void sendResPost(int newsockfd, const std::string &header, const std::string &co
 	std::cout << "Respuesta enviada al cliente." << std::endl;
 
 	close(forward_sockfd);
+}
+
+void uploadFile(int newsockfd)
+{
+	int n;
+	std::string response = "HTTP/1.1 200 OK\r\n"
+						   "Content-Type: text/html\r\n"
+						   "\r\n"
+						   "<!DOCTYPE html>\n"
+						   "<html>\n"
+						   "<head>\n"
+						   "<title>Archivo Subido</title>\n"
+						   "</head>\n"
+						   "<body>\n"
+						   "<h1>Archivo Subido Exitosamente</h1>\n"
+						   "</body>\n"
+						   "</html>\n";
+
+	// std::string request_to_forward = header + response;
+
+	n = send(newsockfd, response.c_str(), response.size(), 0);
+	if (n < 0)
+	{
+		std::cerr << "Error al enviar datos al otro servidor: " << strerror(errno) << std::endl;
+		return;
+	}
 }
 
 int start()
@@ -206,13 +233,20 @@ int start()
 		// Enviar la respuesta al cliente utilizando la función creada
 		if (request.getHeader("Method") == "GET")
 		{
-			std::cout << "[ GET ]" << std::endl;
 			sendResGet(newsockfd, response.getHeader().c_str(), response.getContent());
 		}
 		else if (request.getHeader("Method") == "POST")
 		{
 			std::cout << "[ POST ]" << std::endl;
-			sendResPost(newsockfd, response.getHeader().c_str(), response.getContent(), buffer);
+			if (request.getHeader("Path") == "/submit")
+			// TODO
+			// DESPUES HACER REDIRECCCIONAMIENRTO A LA URL DE DONDE VENIA
+			{
+				std::cout << "FILE" << std::endl;
+				uploadFile(newsockfd);
+			}
+			else
+				sendResPost(newsockfd, response.getHeader().c_str(), response.getContent(), buffer);
 		}
 
 		else if (request.getHeader("Method") == "DELETE")

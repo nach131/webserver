@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/23 15:50:19 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/24 11:46:32 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ void HTTPRes::methodGet(HTTPRes &res)
 	res._header.addField("Content-Length", std::to_string(res._content.length()));
 	res._header.addField("Date", DateField());
 	res._header.addField("ETag", generateETag(res._content));
+	res._header.addField("Server", "ACME co.");
 	res._header.addField("42-Barcelona", "nmota-bu, vduchi");
 }
 

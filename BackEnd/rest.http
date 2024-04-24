@@ -32,6 +32,9 @@ Content-Type: application/json
   "username": "Bilma"
 }
 
+### DELETE a product by id
+DELETE http://localhost:8080/6622f56df1097d0011461513
+
 
 ### method ERROR
 
