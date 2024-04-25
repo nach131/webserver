@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/24 17:05:24 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/25 10:18:02 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,3 +259,6 @@ int start()
 	close(sockfd);
 	return 0;
 }
+
+// TODO
+// ~/Documents/GitHub_ejemplos/mern-crud-auth
