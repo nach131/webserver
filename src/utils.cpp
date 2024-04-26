@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/22 19:25:43 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/25 22:02:31 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,4 +57,25 @@ std::string getExtension(const std::string &path)
 	size_t pos = path.find_last_of('.');
 
 	return path.substr(pos + 1);
+}
+
+std::string extractEndpoint(const std::string &url)
+{
+	// Encuentra la última ocurrencia de "/"
+	size_t lastSlashPos = url.find_last_of("/");
+
+	std::string endpoint;
+	if (lastSlashPos != std::string::npos)
+		// Usa substr para obtener la subcadena que sigue después de la última "/"
+		endpoint = url.substr(lastSlashPos + 1);
+	else
+		// Si no se encuentra "/", devuelve la URL completa
+		endpoint = url;
+
+	// Elimina los caracteres de retorno de carro ("\r") del final de la cadena
+	size_t pos = endpoint.find_last_not_of("\r");
+	if (pos != std::string::npos)
+		endpoint.erase(pos + 1);
+
+	return endpoint;
 }

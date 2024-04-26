@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/24 11:46:32 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/25 22:08:06 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@ void HTTPRes::methodGet(HTTPRes &res)
 		res._header.addField("Content-Type", mime.getContentType(extension));
 
 	res._header.addField("Content-Length", std::to_string(res._content.length()));
+	res._header.addField("Cookie", res._request.getHeader("Cookie"));
+
 	res._header.addField("Date", DateField());
 	res._header.addField("ETag", generateETag(res._content));
 	res._header.addField("Server", "ACME co.");
@@ -62,16 +64,25 @@ void HTTPRes::methodGet(HTTPRes &res)
 void HTTPRes::methodPost(HTTPRes &res)
 {
 	std::cout << "==========POST==========\n";
-
+	std::string header;
 	res._content = res._request.getHeader("Content");
 
-	std::string header = res._request.getHeader("Method") + " /api/users";
+	// std::string header = res._request.getHeader("Method") + " /api/users";
+	// std::string header = res._request.getHeader("Method") + " /api/auth/register";
+	// if (res._request.getHeader("Referer") != "")
+	// {
+	// 	std::string newPath = +" /api/" + extractEndpoint(res._request.getHeader("Referer"));
+	// 	header = res._request.getHeader("Method") + newPath;
+	// }
+	// else
+	header = res._request.getHeader("Method") + " " + res._request.getHeader("Path");
 
 	res._header.addOne(header, res._request.getHeader("Version"));
 
-	res._header.addField("Host", "localhost:3000");
+	res._header.addField("Host", "localhost:8080");
 	res._header.addField("Content-Type", "application/json; charset=utf-8");
 	res._header.addField("Content-Length", std::to_string(res._content.length()));
+	res._header.addField("Cookie", res._request.getHeader("Cookie"));
 	res._header.addField("Date", DateField());
 	res._header.addField("42-Barcelona", "nmota-bu, vduchi");
 }
