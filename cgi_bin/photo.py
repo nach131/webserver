@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-import os
-
 # Imprime las cabeceras HTTP requeridas
 print("Content-Type: text/html")  # Indica que se va a enviar HTML
 print()  # Imprime una línea en blanco para indicar el final de las cabeceras
