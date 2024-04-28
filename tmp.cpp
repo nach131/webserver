@@ -1,25 +1,143 @@
-#include <iostream>
-#include <cstdlib>
-#include <cstring>
-#include <cstdio>
-#include <cerrno>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tmp.cpp                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
+/*   Updated: 2024/04/27 21:17:47 by nmota-bu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#include <sys/types.h>
-#include <sys/socket.h>
+#include "HTTPRes.hpp"
+#include "HTTPRequest.hpp"
+#include "HTTPHeader.hpp"
+#include "WebServer.hpp"
+
+// Cabeceras específicas de sockets en sistemas tipo Unix
+// #include <sys/types.h>
+// #include <sys/socket.h>
 #include <netinet/in.h>
-#include <arpa/inet.h>
 #include <unistd.h>
+#include <arpa/inet.h>
 
-#define RED "\033[0;31m"
-#define GREEN "\033[0;32m"
-#define YELLOW "\033[0;33m"
-#define BLUE "\x1B[38;2;47;82;191m"
-#define MAGENTA "\033[0;35m"
-#define CYAN "\033[0;36m"
-#define ORANGE "\033[1;31m"
-#define WHITE "\033[0;37m"
-#define BLACK "\x1B[30m"
-#define RESET "\x1B[0m"
+void sendResGet(int newsockfd, const std::string &header, const std::string &content)
+{
+	std::cout << "[ GET ]" << std::endl;
+
+	int n;
+
+	// Enviar el encabezado HTTP
+	n = write(newsockfd, header.c_str(), header.length());
+	if (n < 0)
+	{
+		std::cerr << "Error al enviar encabezado HTTP: " << strerror(errno) << std::endl;
+		close(newsockfd);
+		return; // Salir de la función si hay un error
+	}
+
+	// Enviar el contenido HTML
+	n = write(newsockfd, content.c_str(), content.length());
+	if (n < 0)
+	{
+		std::cerr << "Error al enviar contenido HTML: " << strerror(errno) << std::endl;
+		close(newsockfd);
+		return; // Salir de la función si hay un error
+	}
+
+	std::cout << "Respuesta enviada al cliente." << std::endl;
+}
+
+void sendResPost(int newsockfd, const std::string &header, const std::string &content, char *buffer)
+{
+	int n;
+
+	std::string request_to_forward = header + content;
+
+	std::cout << ORANGE << "======[ RESPONSE POST ] ======" << std::endl;
+	std::cout << request_to_forward << RESET << std::endl;
+
+	int forward_sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	if (forward_sockfd < 0)
+	{
+		std::cerr << "Error al crear socket para la conexión al otro servidor: " << strerror(errno) << std::endl;
+		return;
+	}
+
+	struct sockaddr_in forward_serverAddr;
+	memset(&forward_serverAddr, 0, sizeof(forward_serverAddr));
+	forward_serverAddr.sin_family = AF_INET;
+	forward_serverAddr.sin_port = htons(3000);
+	// forward_serverAddr.sin_addr.s_addr = inet_addr("192.168.39.140");
+	forward_serverAddr.sin_addr.s_addr = inet_addr("192.168.1.20");
+
+	if (connect(forward_sockfd, (struct sockaddr *)&forward_serverAddr, sizeof(forward_serverAddr)) < 0)
+	{
+		std::cerr << "Error al conectar al otro servidor: " << strerror(errno) << std::endl;
+		close(forward_sockfd);
+		return;
+	}
+
+	n = send(forward_sockfd, request_to_forward.c_str(), request_to_forward.size(), 0);
+	if (n < 0)
+	{
+		std::cerr << "Error al enviar datos al otro servidor: " << strerror(errno) << std::endl;
+		close(forward_sockfd);
+		return;
+	}
+
+	std::cout << "Solicitud enviada al otro servidor." << std::endl;
+
+	std::string response_from_server;
+	while ((n = recv(forward_sockfd, buffer, sizeof(buffer), 0)) > 0)
+	{
+		response_from_server.append(buffer, n);
+	}
+
+	if (n < 0)
+	{
+		std::cerr << "Error al recibir datos del otro servidor: " << strerror(errno) << std::endl;
+		close(forward_sockfd);
+		return;
+	}
+
+	std::cout << "Respuesta del otro servidor recibida." << std::endl;
+
+	send(newsockfd, response_from_server.c_str(), response_from_server.size(), 0);
+
+	std::cout << "Respuesta enviada al cliente." << std::endl;
+
+	close(forward_sockfd);
+}
+
+void uploadFile(int newsockfd)
+{
+	int n;
+	std::string response = "HTTP/1.1 200 OK\r\n"
+						   "Content-Type: text/html\r\n"
+						   "\r\n"
+						   "<!DOCTYPE html>\n"
+						   "<html>\n"
+						   "<head>\n"
+						   "<title>Archivo Subido</title>\n"
+						   "</head>\n"
+						   "<body>\n"
+						   "<h1>Archivo Subido Exitosamente</h1>\n"
+						   "</body>\n"
+						   "</html>\n";
+
+	// std::string request_to_forward = header + response;
+
+	n = send(newsockfd, response.c_str(), response.size(), 0);
+	if (n < 0)
+	{
+		std::cerr << "Error al enviar datos al otro servidor: " << strerror(errno) << std::endl;
+		return;
+	}
+}
+
+#include <poll.h>
 
 int start()
 {
@@ -59,128 +177,56 @@ int start()
 
 	std::cout << "Servidor esperando conexiones..." << std::endl;
 
+	// Configurar pollfd para el socket de escucha
+	struct pollfd fds[1];
+	fds[0].fd = sockfd;
+	fds[0].events = POLLIN;
+
 	while (42)
 	{
-		client = sizeof(clientAddr);
-
-		// Aceptar la conexión entrante
-		newsockfd = accept(sockfd, (struct sockaddr *)&clientAddr, &client);
-
-		if (newsockfd < 0)
+		// Esperar eventos en el socket de escucha
+		if (poll(fds, 1, -1) < 0)
 		{
-			std::cerr << "Error al aceptar conexión: " << strerror(errno) << std::endl;
-			continue; // Continuar con el siguiente intento de aceptar conexiones
+			std::cerr << "Error en poll(): " << strerror(errno) << std::endl;
+			continue;
 		}
 
-		std::cout << MAGENTA << "Conexión aceptada. Socket del cliente: " << newsockfd << RESET << std::endl;
-
-		// Recibir datos del cliente
-		memset(buffer, 0, sizeof(buffer));
-		n = recv(newsockfd, buffer, sizeof(buffer), 0);
-		if (n < 0)
+		// Verificar si hay un evento en el socket de escucha
+		if (fds[0].revents & POLLIN)
 		{
-			std::cerr << "Error al recibir datos: " << strerror(errno) << std::endl;
-			close(newsockfd);
-			continue; // Continuar con el siguiente intento de aceptar conexiones
+			client = sizeof(clientAddr);
+
+			// Aceptar la conexión entrante
+			newsockfd = accept(sockfd, (struct sockaddr *)&clientAddr, &client);
+			if (newsockfd < 0)
+			{
+				std::cerr << "Error al aceptar conexión: " << strerror(errno) << std::endl;
+				continue; // Continuar con el siguiente intento de aceptar conexiones
+			}
+
+			std::cout << MAGENTA << "Conexión aceptada. Socket del cliente: " << newsockfd << RESET << std::endl;
+
+			// Recibir datos del cliente
+			memset(buffer, 0, sizeof(buffer));
+			n = recv(newsockfd, buffer, sizeof(buffer), 0);
+			if (n < 0)
+			{
+				std::cerr << "Error al recibir datos: " << strerror(errno) << std::endl;
+				close(newsockfd);
+				continue; // Continuar con el siguiente intento de aceptar conexiones
+			}
+
+			// Resto del código para manejar la solicitud HTTP, procesarla y enviar una respuesta al cliente
+			// ...
+
+			close(newsockfd); // Cerrar el socket de la conexión actual
 		}
-
-		//===================PETICION==============================================
-		std::cout << CYAN "[ Mensaje del cliente: ]\n"
-				  << buffer << RESET << std::endl;
-
-		//===================PARSING==============================================
-
-		// HTTPRequest request(buffer);
-		// HTTPBody body(request);
-		// HTTPRes response(request);
-
-		//=========================================================================
-
-		// Construir la solicitud para enviar al otro servidor
-		std::string request_to_forward = "POST /api/users HTTP/1.1\r\n";
-		request_to_forward += "Host: 192.168.1.46:3000\r\n";
-		request_to_forward += "Content-Type: application/json\r\n";
-
-		std::string content = "{\"full_name\": \"Bilma Picapiedra\", \"username\": \"Bilma\"}";
-
-		request_to_forward += "Content-Length: " + std::to_string(content.length()) + "\r\n\r\n";
-		request_to_forward += content;
-
-		// Crear un socket para la conexión al otro servidor
-		int forward_sockfd = socket(AF_INET, SOCK_STREAM, 0);
-		if (forward_sockfd < 0)
-		{
-			std::cerr << "Error al crear socket para la conexión al otro servidor: " << strerror(errno) << std::endl;
-			close(newsockfd);
-			continue; // Continuar con el siguiente intento de aceptar conexiones
-		}
-
-		// Establecer la dirección del servidor remoto
-		struct sockaddr_in forward_serverAddr;
-		memset(&forward_serverAddr, 0, sizeof(forward_serverAddr));
-		forward_serverAddr.sin_family = AF_INET;
-		forward_serverAddr.sin_port = htons(3000);
-		forward_serverAddr.sin_addr.s_addr = inet_addr("192.168.1.46");
-
-		// Conectar al servidor remoto
-		if (connect(forward_sockfd, (struct sockaddr *)&forward_serverAddr, sizeof(forward_serverAddr)) < 0)
-		{
-			std::cerr << "Error al conectar al otro servidor: " << strerror(errno) << std::endl;
-			close(forward_sockfd);
-			close(newsockfd);
-			continue; // Continuar con el siguiente intento de aceptar conexiones
-		}
-
-		// Enviar la solicitud al servidor remoto
-		n = send(forward_sockfd, request_to_forward.c_str(), request_to_forward.size(), 0);
-		if (n < 0)
-		{
-			std::cerr << "Error al enviar datos al otro servidor: " << strerror(errno) << std::endl;
-			close(forward_sockfd);
-			close(newsockfd);
-			continue; // Continuar con el siguiente intento de aceptar conexiones
-		}
-
-		std::cout << "Solicitud enviada al otro servidor." << std::endl;
-		//=========================================================================
-
-		// Recibir la respuesta del servidor remoto
-		std::string response_from_server;
-		while ((n = recv(forward_sockfd, buffer, sizeof(buffer), 0)) > 0)
-		{
-			response_from_server.append(buffer, n);
-		}
-
-		if (n < 0)
-		{
-			std::cerr << "Error al recibir datos del otro servidor: " << strerror(errno) << std::endl;
-			close(forward_sockfd);
-			close(newsockfd);
-			continue; // Continuar con el siguiente intento de aceptar conexiones
-		}
-
-		std::cout << "Respuesta del otro servidor recibida." << std::endl;
-		//=========================================================================
-
-		// Enviar la respuesta al cliente
-		n = send(newsockfd, response_from_server.c_str(), response_from_server.size(), 0);
-		if (n < 0)
-		{
-			std::cerr << "Error al enviar la respuesta al cliente: " << strerror(errno) << std::endl;
-			close(forward_sockfd);
-			close(newsockfd);
-			continue; // Continuar con el siguiente intento de aceptar conexiones
-		}
-
-		std::cout << "Respuesta enviada al cliente." << std::endl;
-
-		// Cerrar los sockets
-		close(forward_sockfd);
-		close(newsockfd);
 	}
 
-	// Cerrar el socket del servidor
+	// Cerrar el socket del servidor (esto no se alcanzará)
 	close(sockfd);
-
 	return 0;
 }
+
+// TODO
+// ~/Documents/GitHub_ejemplos/mern-crud-auth

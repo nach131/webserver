@@ -10,13 +10,21 @@ Conocer sus entresijos será útil, incluso si no vas a trabajar en un sitio web
 Versión: 21.2  
 
 Contenidos
+
 I Introducción 2
+
 II Reglas generales 3  
+
 III Parte obligatoria 4
+
 III.1 Requisitos . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+
 III.2 Solo para MacOS . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+
 III.3 Archivo de configuración . . . . . . . . . . . . . . . . . . . . . . 7
+
 IV Parte bonus 9
+
 V Entrega y evaluación por pares 10
 
 Capítulo I  

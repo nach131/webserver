@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   start.cpp                                          :+:      :+:    :+:   */
+/*   start_con_poll.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/27 21:20:37 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/27 21:21:00 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <arpa/inet.h>
-#include <poll.h>
 
 void sendResGet(int newsockfd, const std::string &header, const std::string &content)
 {
@@ -138,6 +137,8 @@ void uploadFile(int newsockfd)
 	}
 }
 
+#include <poll.h>
+
 int start()
 {
 	int sockfd, newsockfd;
@@ -148,7 +149,6 @@ int start()
 
 	// Crear socket
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	// sockfd = socket(AF_MAX, SOCK_STREAM, 0); // Error socket
 	if (sockfd < 0)
 	{
 		std::string errorMsg = RED "Error creating socket:\n";
@@ -184,82 +184,43 @@ int start()
 
 	while (42)
 	{
-		client = sizeof(clientAddr);
-
-		// Aceptar la conexión entrante
-		newsockfd = accept(sockfd, (struct sockaddr *)&clientAddr, &client);
-
-		// newsockfd = -1; // error
-		// (void)clilen;	// error
-		if (newsockfd < 0)
+		// Esperar eventos en el socket de escucha
+		if (poll(fds, 1, -1) < 0)
 		{
-			std::cerr << "Error al aceptar conexión: " << strerror(errno) << std::endl;
-			continue; // Continuar con el siguiente intento de aceptar conexiones
+			std::cerr << "Error en poll(): " << strerror(errno) << std::endl;
+			continue;
 		}
 
-		std::cout << MAGENTA << "Conexión aceptada. Socket del cliente: " << newsockfd << RESET << std::endl;
-
-		// Recibir datos del cliente
-		memset(buffer, 0, sizeof(buffer));
-		n = recv(newsockfd, buffer, sizeof(buffer), 0);
-		if (n < 0)
+		// Verificar si hay un evento en el socket de escucha
+		if (fds[0].revents & POLLIN)
 		{
-			std::cerr << "Error al recibir datos: " << strerror(errno) << std::endl;
-			close(newsockfd);
-			continue; // Continuar con el siguiente intento de aceptar conexiones
-		}
+			client = sizeof(clientAddr);
 
-		//===================PETICION==============================================
-		std::cout << CYAN "[ Mensaje del cliente: ]\n"
-				  << buffer << RESET << std::endl;
-
-		//===================PARSING==============================================
-
-		HTTPRequest request(buffer);
-
-		request.print();
-
-		//=========================================================================
-
-		// HTTPBody body(request);
-		HTTPRes response(request);
-
-		std::cout << YELLOW << "======[ RESPONSE ] ======" << std::endl;
-		std::cout << "[ HEADER ]" << std::endl;
-		std::cout << response.getHeader() << std::endl;
-		// std::cout << "[ CONTENT ]" << std::endl;
-		// std::cout << response.getContent() << std::endl;
-		std::cout << "========================" << RESET << std::endl;
-
-		//=========================================================================
-
-		// Enviar la respuesta al cliente utilizando la función creada
-		if (request.getHeader("Method") == "GET")
-		{
-			sendResGet(newsockfd, response.getHeader().c_str(), response.getContent());
-		}
-		else if (request.getHeader("Method") == "POST")
-		{
-			std::cout << "[ POST ]" << std::endl;
-			if (request.getHeader("Path") == "/submit")
-			// TODO
-			// DESPUES HACER REDIRECCCIONAMIENRTO A LA URL DE DONDE VENIA
+			// Aceptar la conexión entrante
+			newsockfd = accept(sockfd, (struct sockaddr *)&clientAddr, &client);
+			if (newsockfd < 0)
 			{
-				std::cout << "FILE" << std::endl;
-				uploadFile(newsockfd);
+				std::cerr << "Error al aceptar conexión: " << strerror(errno) << std::endl;
+				continue; // Continuar con el siguiente intento de aceptar conexiones
 			}
-			else
-				sendResPost(newsockfd, response.getHeader().c_str(), response.getContent(), buffer);
-		}
 
-		else if (request.getHeader("Method") == "DELETE")
-		{
-			std::cout << "ES DELETE\n";
-		}
+			std::cout << MAGENTA << "Conexión aceptada. Socket del cliente: " << newsockfd << RESET << std::endl;
 
-		//=========================================================================
-		// Cerrar el socket de la conexión actual
-		close(newsockfd);
+			// Recibir datos del cliente
+			memset(buffer, 0, sizeof(buffer));
+			n = recv(newsockfd, buffer, sizeof(buffer), 0);
+			if (n < 0)
+			{
+				std::cerr << "Error al recibir datos: " << strerror(errno) << std::endl;
+				close(newsockfd);
+				continue; // Continuar con el siguiente intento de aceptar conexiones
+			}
+
+			// Resto del código para manejar la solicitud HTTP, procesarla y enviar una respuesta al cliente
+			// ...
+
+			close(newsockfd); // Cerrar el socket de la conexión actual
+		}
 	}
 
 	// Cerrar el socket del servidor (esto no se alcanzará)
