@@ -21,11 +21,11 @@
     {
       "type": "lldb",
       "request": "launch",
-      "name": "a",
-      "program": "${workspaceFolder}/a.out",
-      "args": [],
+      "name": "File a",
+      "program": "${fileDirname}/a.out",
+      "args": ["default.conf"],
       "stopOnEntry": false,
-      "cwd": "${workspaceFolder}"
+      // "cwd": "${workspaceFolder}"
     }
   ]
 }

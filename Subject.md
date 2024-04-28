@@ -68,16 +68,25 @@ Capítulo III
 Parte obligatoria  
 
 Nombre del programa webserv
+
 Archivos a entregar  Makefile, *.{h, hpp}, *.cpp, *.tpp, *.ipp, archivos de configuración
+
 Makefile NAME, all, clean, fclean, re
+
 Argumentos [Un archivo de configuración]
+
 Funciones externas Todo en C++ 98.
-execve, dup, dup2, pipe, strerror, gai_strerror, errno, dup, dup2, fork, socketpair, htons, htonl, ntohs, ntohl, select, poll, epoll (epoll_create, epoll_ctl, epoll_wait), kqueue (kqueue, kevent), socket, accept, listen, send, recv, chdir bind, connect, getaddrinfo, freeaddrinfo, setsockopt, getsockname, getprotobyname, fcntl, close, read, write, waitpid, kill, signal, access, stat, open, opendir, readdir y closedir.
+
+    execve, dup, dup2, pipe, strerror, gai_strerror, errno, dup, dup2, fork, socketpair, htons, htonl, ntohs, ntohl, select, poll, epoll (epoll_create, epoll_ctl, epoll_wait), kqueue (kqueue, kevent), socket, accept, listen, send, recv, chdir bind, connect, getaddrinfo, freeaddrinfo, setsockopt, getsockname, getprotobyname, fcntl, close, read, write, waitpid, kill, signal, access, stat, open, opendir, readdir y closedir.
+
 Libft autorizada n/a
+
 Descripción Un servidor HTTP en C++ 98
 
 Debes escribir un servidor HTTP en C++ 98.
+
 Tu ejecutable se ejecutará de la siguiente manera:
+
 ./webserv [archivo de configuración]
 
 Incluso si se menciona poll() en el enunciado y la escala de evaluación, puedes utilizar cualquier equivalente como select(), kqueue() o epoll().
@@ -136,7 +145,7 @@ III.1 Requisitos
 
 • Tu servidor debe poder escuchar en varios puertos (ver Archivo de configuración).
 
-Webserv Esto es cuando finalmente entiendes por qué una URL comienza con HTTP  
+
 III.2 Solo para MacOS
 
 Dado que MacOS no implementa write() de la misma manera que otros sistemas operativos Unix, se te permite usar fcntl().
