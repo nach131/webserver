@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/04/29 15:28:44 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/29 17:00:16 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 // #include "Colors.hpp"
 # include "WebServer.hpp"
 # include "ServerConfig.hpp"
-
+#include "AdminServer.hpp"
 
 void checkArg(int argc, char **argv)
 {
@@ -41,10 +41,10 @@ int main(int argc, char **argv)
 
 		ServerConfig config;
 		config.loadConf("argv[1]");
-		config.print();	
+		AdminServer server(config);
+		server.run();
+		// config.print();
 
-
-		start();
 		std::cout << "start\n";
 	}
 	catch (const std::exception &e)
