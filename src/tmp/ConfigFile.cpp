@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ConfigFile.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelona.com>    +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/28 13:36:30 by vduchi            #+#    #+#             */
-/*   Updated: 2024/04/28 16:04:09 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/04/29 15:10:32 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,12 @@ ConfigFile::ConfigFile(const std::string & filename)
 	std::vector<std::string> arr;
 	while (getline(in, line))
 		arr.push_back(line);
-	for (std::string s : arr)
-	{
-		if (s.find("server") == std::string::npos)
-			throw e_cee("Error at line " + std::to_string(lineNum) + " -> no semicolumn");
-	}
+		(void)lineNum;
+	// for (std::string s: arr)
+	// {
+	// 	if (s.find("server") == std::string::npos)
+	// 		throw e_cee("Error at line " + std::to_string(lineNum) + " -> no semicolumn");
+	// }
 }
 
 ConfigFile::~ConfigFile()

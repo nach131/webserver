@@ -6,11 +6,15 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/04/12 10:57:31 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/29 15:28:44 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/ClientParsing.hpp"
+// #include "../inc/ClientParsing.hpp"
+// #include "Colors.hpp"
+# include "WebServer.hpp"
+# include "ServerConfig.hpp"
+
 
 void checkArg(int argc, char **argv)
 {
@@ -34,6 +38,12 @@ int main(int argc, char **argv)
 		(void)argc;
 		(void)argv;
 		//		checkArg(argc, argv);
+
+		ServerConfig config;
+		config.loadConf("argv[1]");
+		config.print();	
+
+
 		start();
 		std::cout << "start\n";
 	}
