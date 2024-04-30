@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/29 15:15:26 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/30 13:34:12 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,10 @@
 
 #include <iostream>
 #include <map>
+
+#include "MIMETypeReader.hpp"
+
+class MIMETypeReader;
 
 class ServerConfig{
 
@@ -26,9 +30,10 @@ private:
     int _apiPort;
     std::string _apiForward;
     std::map<std::string, std::map<std::string, std::string> >  _locations; 
+    MIMETypeReader _mime;
 
 public:
-    ServerConfig();
+    ServerConfig(const std::string &mimeFilePath);
     ~ServerConfig();
 
     void loadConf(const std::string &filename);
@@ -40,7 +45,9 @@ public:
     std::string getErrorPage(int errorCode) const;
     std::string getApiForward() const;
     int getApiPort() const;
-    std::map<std::string, std::map<std::string, std::string> > getLocation();
+    std::map<std::string, std::map<std::string, std::string> > getLocation() const;
+    std::string getContentType(const std::string &extension) const ;
+
 };
 
 

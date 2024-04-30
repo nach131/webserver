@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/04/23 13:20:57 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/30 10:23:09 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ const std::string &HTTPRequest::getHeader(const std::string name) const { return
 
 void HTTPRequest::print()
 {
+	std::cout << RED << "[ Request client ]" << std::endl;
 	for (std::map<std::string, std::string>::iterator it = _map.begin(); it != _map.end(); it++)
 		std::cout << RED << it->first << ": " << GREEN << it->second << std::endl;
 	std::cout << RESET;

@@ -6,13 +6,13 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/29 15:13:46 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/30 16:15:11 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ServerConfig.hpp"
 
-ServerConfig::ServerConfig() : _port(8080), _apiPort(3000), _apiForward("192.168.1.20") {} // Valores por defecto
+ServerConfig::ServerConfig(const std::string &mimeFilePath) : _port(8080), _apiPort(3000), _apiForward("192.168.1.20"), _mime(mimeFilePath) {} // Valores por defecto
 
 ServerConfig::~ServerConfig() {}
 
@@ -26,23 +26,23 @@ void ServerConfig::loadConf(const std::string &filename)
 	_errorPages[405] = "config_web/error/405.html";
 
 	_locations["/"] = std::map<std::string, std::string>();
-		_locations["/"]["autoindex"] = "off";
-		_locations["/"]["allow_methods"] = "DELETE POST GET";
+	_locations["/"]["autoindex"] = "off";
+	_locations["/"]["allow_methods"] = "DELETE POST GET";
 	_locations["/files"] = std::map<std::string, std::string>();
-		_locations["/files"]["autoindex"] = "on";
-		_locations["/files"]["allow_methods"] = "GET";
+	_locations["/files"]["autoindex"] = "on";
+	_locations["/files"]["allow_methods"] = "GET";
 	_locations["/cgi_bin"] = std::map<std::string, std::string>();
-		_locations["/cgi_bin"]["autoindex"] = "on";
-		_locations["/cgi_bin"]["allow_methods"] = "GET";
-		_locations["/cgi_bin"]["root"] = "./";
-		_locations["/cgi_bin"]["index"] = "calc.py";
-		_locations["/cgi_bin"]["cgi_path"] = "/usr/bin/python3 /bin/bash";
-		_locations["/cgi_bin"]["cgi_ext"] = "cgi_ext .py .sh";
+	_locations["/cgi_bin"]["autoindex"] = "off";
+	_locations["/cgi_bin"]["allow_methods"] = "GET";
+	_locations["/cgi_bin"]["root"] = "./";
+	_locations["/cgi_bin"]["index"] = "calc.py";
+	_locations["/cgi_bin"]["cgi_path"] = "/usr/bin/python3 /bin/bash";
+	_locations["/cgi_bin"]["cgi_ext"] = "cgi_ext .py .sh";
 }
 
 void ServerConfig::print() const
 {
-	std::cout << "Server Configuration:" << std::endl;
+	std::cout << "[ Server Configuration ]" << std::endl;
 	std::cout << "Port: " << _port << std::endl;
 	std::cout << "Server Name: " << _serverName << std::endl;
 	std::cout << "Root Directory: " << _rootDirectory << std::endl;
@@ -80,4 +80,13 @@ std::string ServerConfig::getApiForward() const { return _apiForward; }
 
 int ServerConfig::getApiPort() const { return _apiPort; }
 
-std::map<std::string, std::map<std::string, std::string> > ServerConfig::getLocation() { return _locations;}
+std::map<std::string, std::map<std::string, std::string> > ServerConfig::getLocation() const
+{
+	return _locations;
+}
+
+// Método para obtener el tipo MIME de una extensión de archivo
+std::string ServerConfig::getContentType(const std::string &extension) const
+{
+	return _mime.getContentType(extension);
+}

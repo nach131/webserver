@@ -6,15 +6,82 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/25 22:08:06 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/30 16:22:15 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HTTPRes.hpp"
 
-HTTPRes::HTTPRes(const HTTPRequest &request) : _request(request)
+// bool HTTPRes::YesLocation()
+// {
+
+// for (std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.begin(); it != _locations.end(); ++it)
+// 	{
+// 		std::cout << GREEN;
+// 			std::cout << it->first << std::endl;
+// 			if(it->first == _request.getHeader("Path"))
+// 				{
+// 					std::cout<< ORANGE << "TOMA\n";
+				
+// 					return true;
+// 				}
+// 				else
+// 				{
+// 				_header.addOne(_request.getHeader("Version"), "404 Not Found");
+// 					// TODO
+// 					// enviar 404.html
+// 					// poner los errores en map string dentro clase HTTPError
+// 					return false;
+// 				}
+
+// 		std::cout << RESET;
+		
+// 	}
+// 	return true;
+
+// }
+
+bool HTTPRes::isUrlAllowed(const std::string& url, const std::string& method) const {
+    // Verificar si la URL coincide exactamente con el location "/"
+    if (url == "/") {
+        return true; // Permitir acceso a todos los archivos bajo el location "/"
+    }
+
+    // Obtener la configuración del location correspondiente a la URL
+    std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.find(url);
+    if (it != _locations.end()) {
+        // Verificar si el método está permitido para este location
+        std::map<std::string, std::string> locationConfig = it->second;
+        std::string allowedMethods = locationConfig["allow_methods"];
+
+        // Comprobar si el método de la solicitud está en la lista de métodos permitidos
+        if (allowedMethods.find(method) != std::string::npos) {
+            return true; // El método está permitido para esta URL
+        }
+    }
+    return false; // La URL no está configurada o el método no está permitido
+}
+
+
+
+HTTPRes::HTTPRes(const HTTPRequest &request, const ServerConfig &config) : _request(request), _config(config)
 {
 
+	// config.print();
+	_config.print();
+	_locations = config.getLocation();
+	
+	// if(!isUrlAllowed(request.getHeader("Path"), request.getHeader("Method")))
+	// {
+	// 	// return;
+	// 	std::cout << ORANGE << "NO PERMITIDA\n";
+	// }
+	// else
+	// {
+	// 	std::cout << ORANGE << "PERMITIDA\n";
+	// }
+	
+		
 	std::map<std::string, void (*)(HTTPRes &res)> function;
 
 	function["GET"] = &methodGet;
@@ -32,11 +99,15 @@ HTTPRes::~HTTPRes() {}
 
 void HTTPRes::methodGet(HTTPRes &res)
 {
-	MIMETypeReader mime("./conf_web/mime.type");
-
+	// MIMETypeReader mime("./conf_web/mime.type");
+	
 	std::string path = res._request.getHeader("Path");
 	std::string extension = getExtension(path);
 
+
+	std::string contentType = res._config.getContentType(extension) ;
+    std::cout <<ORANGE << "Content type for "<< extension<<" files: " << contentType << RESET<<std::endl;
+	
 	if (path == "/")
 		res._content = readFile("./dist/index.html");
 	else
@@ -50,7 +121,8 @@ void HTTPRes::methodGet(HTTPRes &res)
 	if (path == "/")
 		res._header.addField("Content-Type", "text/html; charset=UTF-8");
 	else
-		res._header.addField("Content-Type", mime.getContentType(extension));
+		// res._header.addField("Content-Type", mime.getContentType(extension));
+		res._header.addField("Content-Type", res._config.getContentType(extension));
 
 	res._header.addField("Content-Length", std::to_string(res._content.length()));
 	res._header.addField("Cookie", res._request.getHeader("Cookie"));

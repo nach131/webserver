@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:26:56 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/29 16:59:37 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/30 10:01:14 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ class ServerConfig;
 class AdminServer
 {
 private:
+	ServerConfig _config;
+
 public:
 	AdminServer(const ServerConfig &config);
 	~AdminServer();

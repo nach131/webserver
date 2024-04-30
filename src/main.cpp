@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/04/29 17:00:16 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/30 13:52:33 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,13 @@ int main(int argc, char **argv)
 		(void)argv;
 		//		checkArg(argc, argv);
 
-		ServerConfig config;
+// TODO
+		ServerConfig config("./conf_web/mime.type");	// comprobar que exita el fichero mime.type
 		config.loadConf("argv[1]");
+		
 		AdminServer server(config);
 		server.run();
 		// config.print();
-
-		std::cout << "start\n";
 	}
 	catch (const std::exception &e)
 	{

@@ -6,13 +6,13 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/29 16:59:47 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/30 10:27:07 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "AdminServer.hpp"
 
-AdminServer::AdminServer(const ServerConfig &config) { config.print(); }
+AdminServer::AdminServer(const ServerConfig &config) : _config(config) {}
 
 AdminServer::~AdminServer() {}
 
@@ -135,9 +135,10 @@ void AdminServer::run()
 {
 	int sockfd, newsockfd;
 	socklen_t client;
-	char buffer[1024];
 	struct sockaddr_in serverAddr, clientAddr;
 	int n;
+
+	char buffer[1024];
 
 	// Crear socket
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -215,7 +216,7 @@ void AdminServer::run()
 		//=========================================================================
 
 		// HTTPBody body(request);
-		HTTPRes response(request);
+		HTTPRes response(request, _config);
 
 		std::cout << YELLOW << "======[ RESPONSE ] ======" << std::endl;
 		std::cout << "[ HEADER ]" << std::endl;
