@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:32 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/30 16:22:34 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/30 23:41:34 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,11 @@
 #include "Colors.hpp"
 #include "HTTPRequest.hpp"
 #include "HTTPHeader.hpp"
-// #include "MIMETypeReader.hpp"
 #include "WebServer.hpp"
 #include "ServerConfig.hpp"
 
 class HTTPHeader;
 class HTTPRequest;
-// class MIMETypeReader;
 class ServerConfig;
 
 class HTTPRes
@@ -35,7 +33,6 @@ private:
 	ServerConfig _config;
 	std::string _content;
     std::map<std::string, std::map<std::string, std::string> >  _locations; 
-
 
 public:
 	HTTPRes(const HTTPRequest &request, const ServerConfig &config);
@@ -49,7 +46,10 @@ public:
 	static void methodDelete(HTTPRes &res);
 	static void methodErr(HTTPRes &res);
 
-bool isUrlAllowed(const std::string& url, const std::string& method) const ;
+// bool isUrlAllowed(const std::string& url, const std::string& method) const ;
+
+bool isUrlAllowed(const std::string& url) const ;
+void rootPath();
 
 };
 

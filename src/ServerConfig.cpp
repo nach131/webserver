@@ -6,13 +6,13 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/30 16:15:11 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/30 23:54:09 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ServerConfig.hpp"
 
-ServerConfig::ServerConfig(const std::string &mimeFilePath) : _port(8080), _apiPort(3000), _apiForward("192.168.1.20"), _mime(mimeFilePath) {} // Valores por defecto
+ServerConfig::ServerConfig(const std::string &mimeFilePath) : _port(8080), _apiPort(3000), _apiForward("192.168.1.20"), _mime(mimeFilePath), _first(true) {} // Valores por defecto
 
 ServerConfig::~ServerConfig() {}
 
@@ -42,6 +42,7 @@ void ServerConfig::loadConf(const std::string &filename)
 
 void ServerConfig::print() const
 {
+	std::cout << BLUE;
 	std::cout << "[ Server Configuration ]" << std::endl;
 	std::cout << "Port: " << _port << std::endl;
 	std::cout << "Server Name: " << _serverName << std::endl;
@@ -51,6 +52,7 @@ void ServerConfig::print() const
 		std::cout << "  " << it->first << ": " << it->second << std::endl;
 	std::cout << "API Forward: " << _apiForward << std::endl;
 	std::cout << "API Port: " << _apiPort << std::endl;
+	std::cout << "first : " << _first << std::endl;
 
 	std::cout << "Locations:" << std::endl;
 	for (std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.begin(); it != _locations.end(); ++it)
@@ -59,6 +61,7 @@ void ServerConfig::print() const
 		for (std::map<std::string, std::string>::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
 			std::cout << "    " << it2->first << ": " << it2->second << std::endl;
 	}
+	std::cout << RESET;
 }
 
 int ServerConfig::getPort() const { return _port; }

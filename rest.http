@@ -1,0 +1,7 @@
+### method ERROR
+
+PUT http://localhost:8080
+
+### get
+
+GET http://localhost:8080/files`

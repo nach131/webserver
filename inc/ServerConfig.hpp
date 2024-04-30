@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/30 13:34:12 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/30 23:53:06 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <map>
 
 #include "MIMETypeReader.hpp"
+#include "Colors.hpp"
 
 class MIMETypeReader;
 
@@ -31,6 +32,7 @@ private:
     std::string _apiForward;
     std::map<std::string, std::map<std::string, std::string> >  _locations; 
     MIMETypeReader _mime;
+    bool _first;
 
 public:
     ServerConfig(const std::string &mimeFilePath);

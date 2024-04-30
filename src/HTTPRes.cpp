@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/30 16:22:15 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/04/30 23:39:09 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 // 			if(it->first == _request.getHeader("Path"))
 // 				{
 // 					std::cout<< ORANGE << "TOMA\n";
-				
+
 // 					return true;
 // 				}
 // 				else
@@ -35,53 +35,50 @@
 // 				}
 
 // 		std::cout << RESET;
-		
+
 // 	}
 // 	return true;
 
 // }
 
-bool HTTPRes::isUrlAllowed(const std::string& url, const std::string& method) const {
-    // Verificar si la URL coincide exactamente con el location "/"
-    if (url == "/") {
-        return true; // Permitir acceso a todos los archivos bajo el location "/"
-    }
+// bool HTTPRes::isUrlAllowed(const std::string& url, const std::string& method) const {
+//     // Verificar si la URL coincide exactamente con el location "/"
+//     if (url == "/") {
+//         return true; // Permitir acceso a todos los archivos bajo el location "/"
+//     }
 
-    // Obtener la configuración del location correspondiente a la URL
-    std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.find(url);
-    if (it != _locations.end()) {
-        // Verificar si el método está permitido para este location
-        std::map<std::string, std::string> locationConfig = it->second;
-        std::string allowedMethods = locationConfig["allow_methods"];
+//     // Obtener la configuración del location correspondiente a la URL
+//     std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.find(url);
+//     if (it != _locations.end()) {
+//         // Verificar si el método está permitido para este location
+//         std::map<std::string, std::string> locationConfig = it->second;
+//         std::string allowedMethods = locationConfig["allow_methods"];
 
-        // Comprobar si el método de la solicitud está en la lista de métodos permitidos
-        if (allowedMethods.find(method) != std::string::npos) {
-            return true; // El método está permitido para esta URL
-        }
-    }
-    return false; // La URL no está configurada o el método no está permitido
+//         // Comprobar si el método de la solicitud está en la lista de métodos permitidos
+//         if (allowedMethods.find(method) != std::string::npos) {
+//             return true; // El método está permitido para esta URL
+//         }
+//     }
+//     return false; // La URL no está configurada o el método no está permitido
+// }
+
+bool HTTPRes::isUrlAllowed(const std::string &url) const
+{
+	std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.find(url);
+	if (it != _locations.end())
+		return true;
+
+	return false;
 }
-
-
 
 HTTPRes::HTTPRes(const HTTPRequest &request, const ServerConfig &config) : _request(request), _config(config)
 {
-
-	// config.print();
+	// TODO
+	// [ Server Configuration ]
 	_config.print();
-	_locations = config.getLocation();
-	
-	// if(!isUrlAllowed(request.getHeader("Path"), request.getHeader("Method")))
-	// {
-	// 	// return;
-	// 	std::cout << ORANGE << "NO PERMITIDA\n";
-	// }
-	// else
-	// {
-	// 	std::cout << ORANGE << "PERMITIDA\n";
-	// }
-	
-		
+
+
+
 	std::map<std::string, void (*)(HTTPRes &res)> function;
 
 	function["GET"] = &methodGet;
@@ -97,41 +94,96 @@ HTTPRes::HTTPRes(const HTTPRequest &request, const ServerConfig &config) : _requ
 
 HTTPRes::~HTTPRes() {}
 
+void HTTPRes::rootPath()
+{
+
+	
+}
+
 void HTTPRes::methodGet(HTTPRes &res)
 {
-	// MIMETypeReader mime("./conf_web/mime.type");
-	
+
 	std::string path = res._request.getHeader("Path");
 	std::string extension = getExtension(path);
 
 
-	std::string contentType = res._config.getContentType(extension) ;
-    std::cout <<ORANGE << "Content type for "<< extension<<" files: " << contentType << RESET<<std::endl;
-	
-	if (path == "/")
-		res._content = readFile("./dist/index.html");
-	else
-		res._content = readFile("./dist" + path);
 
+	std::cout << RED << res.isUrlAllowed(path) << std::endl;
+
+	// if (res.isUrlAllowed(path) && res._init == false)
+	// {
+	// 	// res._init = true;
+	// }
+		if (path == "/")
+			res._content = readFile("./dist/index.html");
+		else
+			// res._content = readFile("./dist" + path);
+			res._content = readFile(res._config.getRootDirectory() + path);
+	// }
+	// else
+	// {
+	// 	res._header.addField("Content-Type", "text/html; charset=UTF-8");		
+	// 	res._content = readFile("./conf_web/error/404/404.html");
+	// }
+
+	// comprueba si el fichero a pasar tiene datos	
 	if (!res._content.empty())
 		res._header.addOne(res._request.getHeader("Version"), "200 OK");
 	else
 		res._header.addOne(res._request.getHeader("Version"), "404 Not Found");
 
+	// esto es solo para la raiz
 	if (path == "/")
 		res._header.addField("Content-Type", "text/html; charset=UTF-8");
 	else
 		// res._header.addField("Content-Type", mime.getContentType(extension));
 		res._header.addField("Content-Type", res._config.getContentType(extension));
+		
 
 	res._header.addField("Content-Length", std::to_string(res._content.length()));
 	res._header.addField("Cookie", res._request.getHeader("Cookie"));
-
 	res._header.addField("Date", DateField());
 	res._header.addField("ETag", generateETag(res._content));
 	res._header.addField("Server", "ACME co.");
 	res._header.addField("42-Barcelona", "nmota-bu, vduchi");
 }
+
+// void HTTPRes::methodGet(HTTPRes &res)
+// {
+
+// 	std::string path = res._request.getHeader("Path");
+// 	std::string extension = getExtension(path);
+
+// 	std::cout << RED << res.isUrlAllowed(path) << std::endl;
+
+// 		if (path == "/")
+// 			res._content = readFile("./dist/index.html");
+// 		else
+// 			// res._content = readFile("./dist" + path);
+// 			res._content = readFile(res._config.getRootDirectory() + path);
+
+// 	// comprueba si el fichero a pasar tiene datos	
+// 	if (!res._content.empty())
+// 		res._header.addOne(res._request.getHeader("Version"), "200 OK");
+// 	else
+// 		res._header.addOne(res._request.getHeader("Version"), "404 Not Found");
+
+// 	// esto es solo para la raiz
+// 	if (path == "/")
+// 		res._header.addField("Content-Type", "text/html; charset=UTF-8");
+// 	else
+// 		// res._header.addField("Content-Type", mime.getContentType(extension));
+// 		res._header.addField("Content-Type", res._config.getContentType(extension));
+		
+
+// 	res._header.addField("Content-Length", std::to_string(res._content.length()));
+// 	res._header.addField("Cookie", res._request.getHeader("Cookie"));
+// 	res._header.addField("Date", DateField());
+// 	res._header.addField("ETag", generateETag(res._content));
+// 	res._header.addField("Server", "ACME co.");
+// 	res._header.addField("42-Barcelona", "nmota-bu, vduchi");
+// }
+
 
 void HTTPRes::methodPost(HTTPRes &res)
 {
