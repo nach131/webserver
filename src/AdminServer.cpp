@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/30 10:27:07 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/01 18:33:31 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,82 +178,98 @@ void AdminServer::run()
 
 	while (42)
 	{
-		client = sizeof(clientAddr);
-
-		// Aceptar la conexión entrante
-		newsockfd = accept(sockfd, (struct sockaddr *)&clientAddr, &client);
-
-		// newsockfd = -1; // error
-		// (void)clilen;	// error
-		if (newsockfd < 0)
+		// Esperar eventos en el socket de escucha
+		if (poll(fds, 1, -1) < 0)
 		{
-			std::cerr << "Error al aceptar conexión: " << strerror(errno) << std::endl;
-			continue; // Continuar con el siguiente intento de aceptar conexiones
+			std::cerr << "Error en poll(): " << strerror(errno) << std::endl;
+			continue;
 		}
 
-		std::cout << MAGENTA << "Conexión aceptada. Socket del cliente: " << newsockfd << RESET << std::endl;
 
-		// Recibir datos del cliente
-		memset(buffer, 0, sizeof(buffer));
-		n = recv(newsockfd, buffer, sizeof(buffer), 0);
-		if (n < 0)
+
+		if (fds[0].revents & POLLIN)
 		{
-			std::cerr << "Error al recibir datos: " << strerror(errno) << std::endl;
-			close(newsockfd);
-			continue; // Continuar con el siguiente intento de aceptar conexiones
-		}
+			client = sizeof(clientAddr);
 
-		//===================PETICION==============================================
-		std::cout << CYAN "[ Mensaje del cliente: ]\n"
-				  << buffer << RESET << std::endl;
+			// Aceptar la conexión entrante
+			newsockfd = accept(sockfd, (struct sockaddr *)&clientAddr, &client);
 
-		//===================PARSING==============================================
-
-		HTTPRequest request(buffer);
-
-		request.print();
-
-		//=========================================================================
-
-		// HTTPBody body(request);
-		HTTPRes response(request, _config);
-
-		std::cout << YELLOW << "======[ RESPONSE ] ======" << std::endl;
-		std::cout << "[ HEADER ]" << std::endl;
-		std::cout << response.getHeader() << std::endl;
-		// std::cout << "[ CONTENT ]" << std::endl;
-		// std::cout << response.getContent() << std::endl;
-		std::cout << "========================" << RESET << std::endl;
-
-		//=========================================================================
-
-		// Enviar la respuesta al cliente utilizando la función creada
-		if (request.getHeader("Method") == "GET")
-		{
-			sendResGet(newsockfd, response.getHeader().c_str(), response.getContent());
-		}
-		else if (request.getHeader("Method") == "POST")
-		{
-			std::cout << "[ POST ]" << std::endl;
-			if (request.getHeader("Path") == "/submit")
-			// TODO
-			// DESPUES HACER REDIRECCCIONAMIENRTO A LA URL DE DONDE VENIA
+			// newsockfd = -1; // error
+			// (void)clilen;	// error
+			if (newsockfd < 0)
 			{
-				std::cout << "FILE" << std::endl;
-				uploadFile(newsockfd);
+				std::cerr << "Error al aceptar conexión: " << strerror(errno) << std::endl;
+				continue; // Continuar con el siguiente intento de aceptar conexiones
 			}
-			else
-				sendResPost(newsockfd, response.getHeader().c_str(), response.getContent(), buffer);
-		}
 
-		else if (request.getHeader("Method") == "DELETE")
-		{
-			std::cout << "ES DELETE\n";
-		}
+			std::cout << MAGENTA << "Conexión aceptada. Socket del cliente: " << newsockfd << RESET << std::endl;
 
-		//=========================================================================
-		// Cerrar el socket de la conexión actual
-		close(newsockfd);
+			// Recibir datos del cliente
+			memset(buffer, 0, sizeof(buffer));
+			n = recv(newsockfd, buffer, sizeof(buffer), 0);
+			if (n < 0)
+			{
+				std::cerr << "Error al recibir datos: " << strerror(errno) << std::endl;
+				close(newsockfd);
+				continue; // Continuar con el siguiente intento de aceptar conexiones
+			}
+
+			//===================PETICION==============================================
+			std::cout << CYAN "[ Mensaje del cliente: ]\n"
+					  << buffer << RESET << std::endl;
+
+			//===================PARSING==============================================
+
+			HTTPRequest request(buffer);
+
+			request.print();
+
+			//=========================================================================
+
+			// HTTPBody body(request);
+			HTTPRes response(request, _config);
+
+
+			std::cout << YELLOW << "======[ RESPONSE ] ======" << std::endl;
+			std::cout << "[ HEADER ]" << std::endl;
+			std::cout << response.getHeader() << std::endl;
+			// std::cout << "[ CONTENT ]" << std::endl;
+			// std::cout << response.getContent() << std::endl;
+			std::cout << "========================" << RESET << std::endl;
+
+			//=========================================================================
+
+			// Enviar la respuesta al cliente utilizando la función creada
+			if (request.getHeader("Method") == "GET")
+			{
+				// AQUI PARA LOCATIONS ?
+
+
+				sendResGet(newsockfd, response.getHeader().c_str(), response.getContent());
+			}
+			else if (request.getHeader("Method") == "POST")
+			{
+				std::cout << "[ POST ]" << std::endl;
+				if (request.getHeader("Path") == "/submit")
+				// TODO
+				// DESPUES HACER REDIRECCCIONAMIENRTO A LA URL DE DONDE VENIA
+				{
+					std::cout << "FILE" << std::endl;
+					uploadFile(newsockfd);
+				}
+				else
+					sendResPost(newsockfd, response.getHeader().c_str(), response.getContent(), buffer);
+			}
+
+			else if (request.getHeader("Method") == "DELETE")
+			{
+				std::cout << "ES DELETE\n";
+			}
+
+			//=========================================================================
+			// Cerrar el socket de la conexión actual
+			close(newsockfd);
+		}
 	}
 
 	// Cerrar el socket del servidor (esto no se alcanzará)

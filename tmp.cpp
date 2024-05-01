@@ -5,22 +5,16 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/03 11:58:24 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/27 21:17:47 by nmota-bu         ###   ########.fr       */
+/*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
+/*   Updated: 2024/05/01 16:25:54 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "HTTPRes.hpp"
-#include "HTTPRequest.hpp"
-#include "HTTPHeader.hpp"
-#include "WebServer.hpp"
+#include "AdminServer.hpp"
 
-// Cabeceras específicas de sockets en sistemas tipo Unix
-// #include <sys/types.h>
-// #include <sys/socket.h>
-#include <netinet/in.h>
-#include <unistd.h>
-#include <arpa/inet.h>
+AdminServer::AdminServer(const ServerConfig &config) : _config(config) {}
+
+AdminServer::~AdminServer() {}
 
 void sendResGet(int newsockfd, const std::string &header, const std::string &content)
 {
@@ -137,96 +131,141 @@ void uploadFile(int newsockfd)
 	}
 }
 
-#include <poll.h>
-
-int start()
+void AdminServer::run()
 {
-	int sockfd, newsockfd;
-	socklen_t client;
-	char buffer[1024];
-	struct sockaddr_in serverAddr, clientAddr;
-	int n;
+    int sockfd, newsockfd;
+    socklen_t client;
+    struct sockaddr_in serverAddr, clientAddr;
+    int n;
 
-	// Crear socket
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (sockfd < 0)
-	{
-		std::string errorMsg = RED "Error creating socket:\n";
-		errorMsg += CYAN;
-		errorMsg += strerror(errno);
-		throw std::runtime_error(errorMsg);
-	}
+    char buffer[1024];
 
-	// Configurar la dirección del servidor
-	memset(&serverAddr, 0, sizeof(serverAddr));
-	serverAddr.sin_family = AF_INET;
-	serverAddr.sin_port = htons(8080);				// Puerto del servidor
-	serverAddr.sin_addr.s_addr = htonl(INADDR_ANY); // Escuchar en todas las interfaces de red
+    // Crear socket
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0)
+    {
+        std::string errorMsg = RED "Error creating socket:\n";
+        errorMsg += CYAN;
+        errorMsg += strerror(errno);
+        throw std::runtime_error(errorMsg);
+    }
 
-	// Enlazar el socket a la dirección del servidor
-	if (bind(sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0)
-	{
-		std::string errorMsg = RED "Socket binding error:\n";
-		errorMsg += CYAN + std::to_string(ntohs(serverAddr.sin_port)) + " ";
-		errorMsg += strerror(errno);
-		throw std::runtime_error(errorMsg);
-	}
+    // Configurar la dirección del servidor
+    memset(&serverAddr, 0, sizeof(serverAddr));
+    serverAddr.sin_family = AF_INET;
+    serverAddr.sin_port = htons(8080);              // Puerto del servidor
+    serverAddr.sin_addr.s_addr = htonl(INADDR_ANY); // Escuchar en todas las interfaces de red
 
-	// Escuchar por conexiones entrantes
-	listen(sockfd, 5);
+    // Enlazar el socket a la dirección del servidor
+    if (bind(sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0)
+    {
+        std::string errorMsg = RED "Socket binding error:\n";
+        errorMsg += CYAN + std::to_string(ntohs(serverAddr.sin_port)) + " ";
+        errorMsg += strerror(errno);
+        throw std::runtime_error(errorMsg);
+    }
 
-	std::cout << "Servidor esperando conexiones..." << std::endl;
+    // Escuchar por conexiones entrantes
+    listen(sockfd, 5);
 
-	// Configurar pollfd para el socket de escucha
-	struct pollfd fds[1];
-	fds[0].fd = sockfd;
-	fds[0].events = POLLIN;
+    std::cout << "Servidor esperando conexiones..." << std::endl;
 
-	while (42)
-	{
-		// Esperar eventos en el socket de escucha
-		if (poll(fds, 1, -1) < 0)
-		{
-			std::cerr << "Error en poll(): " << strerror(errno) << std::endl;
-			continue;
-		}
+    // Configurar pollfd para el socket de escucha
+    struct pollfd fds[1];
+    fds[0].fd = sockfd;
+    fds[0].events = POLLIN;
 
-		// Verificar si hay un evento en el socket de escucha
-		if (fds[0].revents & POLLIN)
-		{
-			client = sizeof(clientAddr);
+    while (42)
+    {
+        // Esperar eventos en el socket de escucha
+        if (poll(fds, 1, -1) < 0)
+        {
+            std::cerr << "Error en poll(): " << strerror(errno) << std::endl;
+            continue;
+        }
 
-			// Aceptar la conexión entrante
-			newsockfd = accept(sockfd, (struct sockaddr *)&clientAddr, &client);
-			if (newsockfd < 0)
-			{
-				std::cerr << "Error al aceptar conexión: " << strerror(errno) << std::endl;
-				continue; // Continuar con el siguiente intento de aceptar conexiones
-			}
+        bool toma = false;
+        if (fds[0].revents & POLLIN)
+        {
+            client = sizeof(clientAddr);
 
-			std::cout << MAGENTA << "Conexión aceptada. Socket del cliente: " << newsockfd << RESET << std::endl;
+            // Aceptar la conexión entrante
+            newsockfd = accept(sockfd, (struct sockaddr *)&clientAddr, &client);
+            if (newsockfd < 0)
+            {
+                std::cerr << "Error al aceptar conexión: " << strerror(errno) << std::endl;
+                continue; // Continuar con el siguiente intento de aceptar conexiones
+            }
 
-			// Recibir datos del cliente
-			memset(buffer, 0, sizeof(buffer));
-			n = recv(newsockfd, buffer, sizeof(buffer), 0);
-			if (n < 0)
-			{
-				std::cerr << "Error al recibir datos: " << strerror(errno) << std::endl;
-				close(newsockfd);
-				continue; // Continuar con el siguiente intento de aceptar conexiones
-			}
+            std::cout << MAGENTA << "Conexión aceptada. Socket del cliente: " << newsockfd << RESET << std::endl;
 
-			// Resto del código para manejar la solicitud HTTP, procesarla y enviar una respuesta al cliente
-			// ...
+            // Recibir datos del cliente
+            memset(buffer, 0, sizeof(buffer));
+            n = recv(newsockfd, buffer, sizeof(buffer), 0);
+            if (n < 0)
+            {
+                std::cerr << "Error al recibir datos: " << strerror(errno) << std::endl;
+                close(newsockfd);
+                continue; // Continuar con el siguiente intento de aceptar conexiones
+            }
 
-			close(newsockfd); // Cerrar el socket de la conexión actual
-		}
-	}
+            //===================PETICION==============================================
+            std::cout << CYAN "[ Mensaje del cliente: ]\n"
+                      << buffer << RESET << std::endl;
 
-	// Cerrar el socket del servidor (esto no se alcanzará)
-	close(sockfd);
-	return 0;
+            //===================PARSING==============================================
+
+            HTTPRequest request(buffer);
+
+            request.print();
+
+            //=========================================================================
+
+            HTTPRes response(request, _config, &toma);
+
+            std::cout << "toma en AsminServer dentro if bol: " << toma << std::endl;
+
+            std::cout << YELLOW << "======[ RESPONSE ] ======" << std::endl;
+            std::cout << "[ HEADER ]" << std::endl;
+            std::cout << response.getHeader() << std::endl;
+            std::cout << "========================" << RESET << std::endl;
+
+            //=========================================================================
+
+            // Enviar la respuesta al cliente utilizando la función creada
+            if (request.getHeader("Method") == "GET")
+            {
+                if (request.getPath() == "/")
+                {
+                    sendResGet(newsockfd, response.getHeader().c_str(), response.getContent());
+                }
+                else if (request.getPath() == "/files")
+                {
+                    sendResFiles(newsockfd, response.getHeader().c_str(), response.getContent());
+                }
+            }
+            else if (request.getHeader("Method") == "POST")
+            {
+                std::cout << "[ POST ]" << std::endl;
+                if (request.getHeader("Path") == "/submit")
+                {
+                    std::cout << "FILE" << std::endl;
+                    uploadFile(newsockfd);
+                }
+                else
+                    sendResPost(newsockfd, response.getHeader().c_str(), response.getContent(), buffer);
+            }
+            else if (request.getHeader("Method") == "DELETE")
+            {
+                std::cout << "ES DELETE\n";
+            }
+
+            //=========================================================================
+            // Cerrar el socket de la conexión actual
+            close(newsockfd);
+        }
+    }
+
+    // Cerrar el socket del servidor (esto no se alcanzará)
+    close(sockfd);
 }
-
-// TODO
-// ~/Documents/GitHub_ejemplos/mern-crud-auth

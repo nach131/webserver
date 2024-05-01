@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/30 23:39:09 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/01 18:39:14 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,6 @@ HTTPRes::HTTPRes(const HTTPRequest &request, const ServerConfig &config) : _requ
 	_config.print();
 
 
-
 	std::map<std::string, void (*)(HTTPRes &res)> function;
 
 	function["GET"] = &methodGet;
@@ -94,23 +93,36 @@ HTTPRes::HTTPRes(const HTTPRequest &request, const ServerConfig &config) : _requ
 
 HTTPRes::~HTTPRes() {}
 
-void HTTPRes::rootPath()
-{
+// void HTTPRes::rootPath(HTTPRes &res)
+// {
+// 	res._content = readFile("./dist/index.html");
 
 	
-}
+// }
+
+// void HTTPRes::rootOtherFiles()
+// {
+
+// }
+
 
 void HTTPRes::methodGet(HTTPRes &res)
 {
+
+
 
 	std::string path = res._request.getHeader("Path");
 	std::string extension = getExtension(path);
 
 
 
-	std::cout << RED << res.isUrlAllowed(path) << std::endl;
+	std::cout << MAGENTA << " [HTTPRes::methodGet ]";
+	std::cout << "Path: " << path << " extension: " << extension << std::endl;
+	std::cout  << res.isUrlAllowed(path) << std::endl;
 
-	// if (res.isUrlAllowed(path) && res._init == false)
+	std::cout << RESET;
+
+		// if (res.isUrlAllowed(path) && res._init == false)
 	// {
 	// 	// res._init = true;
 	// }

@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:32 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/30 23:41:34 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/01 18:37:21 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,8 @@ public:
 // bool isUrlAllowed(const std::string& url, const std::string& method) const ;
 
 bool isUrlAllowed(const std::string& url) const ;
-void rootPath();
+void rootPath(HTTPRes &res);
+void rootOtherFiles();
 
 };
 
