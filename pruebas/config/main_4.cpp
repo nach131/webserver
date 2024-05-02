@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <stdlib.h>
 
 class ServerConfiguration
 {
@@ -36,6 +37,7 @@ public:
                     std::istringstream iss(line);
                     std::string key, value;
                     iss >> key >> value;
+					std::cout << "Key: -" << key << "- Value: -" << value << "-" << std::endl;
                     if (key == "listen")
                         _port = std::stoi(value);
                     else if (key == "server_name")
@@ -46,7 +48,9 @@ public:
                     {
                         int errorCode;
                         std::string errorFile;
-                        iss >> errorCode >> errorFile;
+                        iss >> errorFile;
+						errorCode = atoi(value.c_str());
+						std::cout << "Code: " << errorCode << " and File:" << errorFile << std::endl;
                         _errorPages[errorCode] = errorFile;
                     }
                     else if (key == "api_forward")
@@ -73,6 +77,7 @@ public:
                 }
             }
         }
+		std::cout << std::endl;
     }
 
     void printConfiguration() const

@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 16:10:22 by vduchi            #+#    #+#             */
-/*   Updated: 2024/04/29 15:16:46 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/02 21:47:11 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <fstream>
 # include <sstream>
 # include <iostream>
-# include "Colors.hpp"
+# include "../Colors.hpp"
 
 class Location
 {
@@ -27,7 +27,7 @@ class Location
 		std::map<std::string, std::string> _val;
 
 	public:
-		Location(const std::string &);
+		Location(const std::vector<std::string> &, size_t &);
 		~Location();
 };
 
@@ -39,7 +39,7 @@ class ConfigServer
 		std::multimap<std::string, Location *> _loc;
 
 	public:
-		ConfigServer(const std::string &);
+		ConfigServer(const std::vector<std::string> &, size_t &);
 		~ConfigServer();
 };
 
