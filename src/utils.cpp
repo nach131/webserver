@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/25 22:02:31 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/01 19:57:20 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,4 +78,9 @@ std::string extractEndpoint(const std::string &url)
 		endpoint.erase(pos + 1);
 
 	return endpoint;
+}
+
+bool isFile(const std::string& path) {
+    std::size_t found = path.find_last_of(".");
+    return (found != std::string::npos && found != path.size() - 1);
 }

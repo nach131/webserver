@@ -6,235 +6,191 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/01 18:39:14 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/02 17:39:47 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HTTPRes.hpp"
 
-// bool HTTPRes::YesLocation()
-// {
-
-// for (std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.begin(); it != _locations.end(); ++it)
-// 	{
-// 		std::cout << GREEN;
-// 			std::cout << it->first << std::endl;
-// 			if(it->first == _request.getHeader("Path"))
-// 				{
-// 					std::cout<< ORANGE << "TOMA\n";
-
-// 					return true;
-// 				}
-// 				else
-// 				{
-// 				_header.addOne(_request.getHeader("Version"), "404 Not Found");
-// 					// TODO
-// 					// enviar 404.html
-// 					// poner los errores en map string dentro clase HTTPError
-// 					return false;
-// 				}
-
-// 		std::cout << RESET;
-
-// 	}
-// 	return true;
-
-// }
-
-// bool HTTPRes::isUrlAllowed(const std::string& url, const std::string& method) const {
-//     // Verificar si la URL coincide exactamente con el location "/"
-//     if (url == "/") {
-//         return true; // Permitir acceso a todos los archivos bajo el location "/"
-//     }
-
-//     // Obtener la configuración del location correspondiente a la URL
-//     std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.find(url);
-//     if (it != _locations.end()) {
-//         // Verificar si el método está permitido para este location
-//         std::map<std::string, std::string> locationConfig = it->second;
-//         std::string allowedMethods = locationConfig["allow_methods"];
-
-//         // Comprobar si el método de la solicitud está en la lista de métodos permitidos
-//         if (allowedMethods.find(method) != std::string::npos) {
-//             return true; // El método está permitido para esta URL
-//         }
-//     }
-//     return false; // La URL no está configurada o el método no está permitido
-// }
-
 bool HTTPRes::isUrlAllowed(const std::string &url) const
 {
-	std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.find(url);
-	if (it != _locations.end())
-		return true;
+	std::map<std::string, std::map<std::string, std::string> > location = _config.getLocation();
 
+	std::map<std::string, std::map<std::string, std::string> >::const_iterator it = location.find(url);
+	if (it != location.end())
+		return true;
 	return false;
 }
+
+void HTTPRes::last()
+{
+	_header.addField("Cookie", _request.getHeader("Cookie"));
+
+	_header.addField("Content-Length", std::to_string(_content.length()));
+	_header.addField("ETag", generateETag(_content));
+
+	_header.addField("Date", DateField());
+	_header.addField("Server", "ACME co.");
+	_header.addField("42-Barcelona", "nmota-bu, vduchi");
+}
+
 
 HTTPRes::HTTPRes(const HTTPRequest &request, const ServerConfig &config) : _request(request), _config(config)
 {
 	// TODO
 	// [ Server Configuration ]
-	_config.print();
+	// _config.print();
+
+	std::string path = request.getHeader("Path");
+
+	std::string method = request.getHeader("Method");
+	if (method == "GET")
+	{
+		if (path == "/")
+		{
+			// TODO
+			// si no hay index.html, enviar 403 Forbidden
+			std::cout << ORANGE << "RAIZ\n";
+			rootPath();
+		}
+		// si tiene extension.
+		else if (isFile(path))
+		{
+			std::cout << ORANGE << "Si tiene extension\n" << RESET;
+			rootOtherFiles(); // comprobar que es true el bool -> dentro de la funcion poner el path de la variable antesde lapath config
+		}
+		// es una carpeta
+		else if (!isFile(path))
+		{
+			std::cout << ORANGE << "Es una carpeta\n" << RESET;
+
+			_header.addField("Extenxion", "No tiene");
+			
+			if (isUrlAllowed(path))
+			{
+				// AQUI LOS LOCATION PERMITIDOS
+				std::cout << ORANGE << "PERMITIDO\n" << RESET;
+			}
+			else
+			{	
+				// AQUI error 404
+			std::cout << RED << "NO PERMITIDO\n" << RESET;
+			_header.addOne(_request.getHeader("Version"), "404 Not Found");
+			_content = readFile("./conf_web/error/404/404.html");
+			// poner el path en variable
 
 
-	std::map<std::string, void (*)(HTTPRes &res)> function;
 
-	function["GET"] = &methodGet;
-	function["POST"] = &methodPost;
-	function["DELETE"] = &methodDelete;
-
-	std::map<std::string, void (*)(HTTPRes &res)>::iterator it = function.find(request.getHeader("Method"));
-	if (it != function.end())
-		it->second(*this);
+			}
+			
+		}		
+		else
+		{
+			std::cout << ORANGE << "otros dentro de raiz\n" << RESET;
+			_header.addField("Extenxion", "Otros");
+		}
+	}
+	else if (method == "POST")
+	{
+		methodPost();
+	}
+	else if (method == "DELETE")
+	{
+		void methodDelete();
+	}
 	else
-		methodErr(*this);
+	{
+		void methodErr();
+	}
+
+	last();
 }
 
 HTTPRes::~HTTPRes() {}
 
-// void HTTPRes::rootPath(HTTPRes &res)
-// {
-// 	res._content = readFile("./dist/index.html");
-
-	
-// }
-
-// void HTTPRes::rootOtherFiles()
-// {
-
-// }
-
-
-void HTTPRes::methodGet(HTTPRes &res)
+void HTTPRes::rootPath()
 {
 
-
-
-	std::string path = res._request.getHeader("Path");
+	std::string path = _request.getHeader("Path");
 	std::string extension = getExtension(path);
 
+	_content = readFile("./dist/index.html");
 
-
-	std::cout << MAGENTA << " [HTTPRes::methodGet ]";
-	std::cout << "Path: " << path << " extension: " << extension << std::endl;
-	std::cout  << res.isUrlAllowed(path) << std::endl;
-
-	std::cout << RESET;
-
-		// if (res.isUrlAllowed(path) && res._init == false)
-	// {
-	// 	// res._init = true;
-	// }
-		if (path == "/")
-			res._content = readFile("./dist/index.html");
-		else
-			// res._content = readFile("./dist" + path);
-			res._content = readFile(res._config.getRootDirectory() + path);
-	// }
-	// else
-	// {
-	// 	res._header.addField("Content-Type", "text/html; charset=UTF-8");		
-	// 	res._content = readFile("./conf_web/error/404/404.html");
-	// }
-
-	// comprueba si el fichero a pasar tiene datos	
-	if (!res._content.empty())
-		res._header.addOne(res._request.getHeader("Version"), "200 OK");
+	if (!_content.empty())
+		_header.addOne(_request.getHeader("Version"), "200 OK");
 	else
-		res._header.addOne(res._request.getHeader("Version"), "404 Not Found");
+		_header.addOne(_request.getHeader("Version"), "404 Not Found");
 
 	// esto es solo para la raiz
-	if (path == "/")
-		res._header.addField("Content-Type", "text/html; charset=UTF-8");
-	else
-		// res._header.addField("Content-Type", mime.getContentType(extension));
-		res._header.addField("Content-Type", res._config.getContentType(extension));
-		
+	_header.addField("Content-Type", "text/html; charset=UTF-8");
 
-	res._header.addField("Content-Length", std::to_string(res._content.length()));
-	res._header.addField("Cookie", res._request.getHeader("Cookie"));
-	res._header.addField("Date", DateField());
-	res._header.addField("ETag", generateETag(res._content));
-	res._header.addField("Server", "ACME co.");
-	res._header.addField("42-Barcelona", "nmota-bu, vduchi");
+	// _header.addField("Content-Length", std::to_string(_content.length()));
+	// _header.addField("Cookie", _request.getHeader("Cookie"));
+	// _header.addField("Date", DateField());
+	// _header.addField("ETag", generateETag(_content));
+	// _header.addField("Server", "ACME co.");
+	// _header.addField("42-Barcelona", "nmota-bu, vduchi");
 }
 
-// void HTTPRes::methodGet(HTTPRes &res)
-// {
+void HTTPRes::rootOtherFiles()
+{
+	std::string path = _request.getHeader("Path");
+	std::string extension = getExtension(path);
 
-// 	std::string path = res._request.getHeader("Path");
-// 	std::string extension = getExtension(path);
+	_content = readFile(_config.getRootDirectory() + path);
 
-// 	std::cout << RED << res.isUrlAllowed(path) << std::endl;
+	// comprueba si el fichero a pasar tiene datos
+	if (!_content.empty())
+		_header.addOne(_request.getHeader("Version"), "200 OK");
+	else
+		_header.addOne(_request.getHeader("Version"), "404 Not Found");
 
-// 		if (path == "/")
-// 			res._content = readFile("./dist/index.html");
-// 		else
-// 			// res._content = readFile("./dist" + path);
-// 			res._content = readFile(res._config.getRootDirectory() + path);
+	_header.addField("Content-Type", _config.getContentType(extension));
 
-// 	// comprueba si el fichero a pasar tiene datos	
-// 	if (!res._content.empty())
-// 		res._header.addOne(res._request.getHeader("Version"), "200 OK");
-// 	else
-// 		res._header.addOne(res._request.getHeader("Version"), "404 Not Found");
-
-// 	// esto es solo para la raiz
-// 	if (path == "/")
-// 		res._header.addField("Content-Type", "text/html; charset=UTF-8");
-// 	else
-// 		// res._header.addField("Content-Type", mime.getContentType(extension));
-// 		res._header.addField("Content-Type", res._config.getContentType(extension));
-		
-
-// 	res._header.addField("Content-Length", std::to_string(res._content.length()));
-// 	res._header.addField("Cookie", res._request.getHeader("Cookie"));
-// 	res._header.addField("Date", DateField());
-// 	res._header.addField("ETag", generateETag(res._content));
-// 	res._header.addField("Server", "ACME co.");
-// 	res._header.addField("42-Barcelona", "nmota-bu, vduchi");
-// }
+	// _header.addField("Content-Length", std::to_string(_content.length()));
+	// _header.addField("Cookie", _request.getHeader("Cookie"));
+	// _header.addField("ETag", generateETag(_content));
+}
 
 
-void HTTPRes::methodPost(HTTPRes &res)
+
+void HTTPRes::methodPost()
 {
 	std::cout << "==========POST==========\n";
 	std::string header;
-	res._content = res._request.getHeader("Content");
+	_content = _request.getHeader("Content");
 
-	// std::string header = res._request.getHeader("Method") + " /api/users";
-	// std::string header = res._request.getHeader("Method") + " /api/auth/register";
-	// if (res._request.getHeader("Referer") != "")
+	// std::string header = _request.getHeader("Method") + " /api/users";
+	// std::string header = _request.getHeader("Method") + " /api/auth/register";
+	// if (_request.getHeader("Referer") != "")
 	// {
-	// 	std::string newPath = +" /api/" + extractEndpoint(res._request.getHeader("Referer"));
-	// 	header = res._request.getHeader("Method") + newPath;
+	// 	std::string newPath = +" /api/" + extractEndpoint(_request.getHeader("Referer"));
+	// 	header = _request.getHeader("Method") + newPath;
 	// }
 	// else
-	header = res._request.getHeader("Method") + " " + res._request.getHeader("Path");
+	header = _request.getHeader("Method") + " " + _request.getHeader("Path");
 
-	res._header.addOne(header, res._request.getHeader("Version"));
+	_header.addOne(header, _request.getHeader("Version"));
 
-	res._header.addField("Host", "localhost:8080");
-	res._header.addField("Content-Type", "application/json; charset=utf-8");
-	res._header.addField("Content-Length", std::to_string(res._content.length()));
-	res._header.addField("Cookie", res._request.getHeader("Cookie"));
-	res._header.addField("Date", DateField());
-	res._header.addField("42-Barcelona", "nmota-bu, vduchi");
+	_header.addField("Host", "localhost:8080");
+	_header.addField("Content-Type", "application/json; charset=utf-8");
+	_header.addField("Content-Length", std::to_string(_content.length()));
+	_header.addField("Cookie", _request.getHeader("Cookie"));
+	_header.addField("Date", DateField());
+	_header.addField("42-Barcelona", "nmota-bu, vduchi");
 }
 
-void HTTPRes::methodDelete(HTTPRes &res)
+void HTTPRes::methodDelete()
 {
-	(void)res;
 	std::cout << "==========DELTE==========\n";
 }
 
-void HTTPRes::methodErr(HTTPRes &res)
+void HTTPRes::methodErr()
 {
 	std::cout << "==========ERROR==========\n";
-	res._header.addOne(res._request.getHeader("Version"), "405 Method Not Allowed");
-	res._header.addField("Date", DateField());
-	res._header.addField("42-Barcelona", "nmota-bu, vduchi");
+	_header.addOne(_request.getHeader("Version"), "405 Method Not Allowed");
+	_header.addField("Date", DateField());
+	_header.addField("42-Barcelona", "nmota-bu, vduchi");
 }
 
 std::string const HTTPRes::getHeader() const { return _header.getHeader(); }

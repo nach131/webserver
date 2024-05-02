@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/01 18:33:31 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/02 17:42:45 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,8 +176,36 @@ void AdminServer::run()
 	fds[0].fd = sockfd;
 	fds[0].events = POLLIN;
 
+	int timeout = 1; // milisegundos (1 segundos)
+	time_t last_activity = time(NULL); // Guardar el tiempo de la última actividad
+
+	int cuenta = 0;
+	bool toma = false;
+
 	while (42)
 	{
+
+		 // Calcular el tiempo de inactividad
+        time_t current_time = time(NULL); // tiempo actual en segundos
+        time_t inactive_time = current_time - last_activity;
+
+
+		// Si no hay actividad durante el tiempo de espera, cerrar la conexión
+        if (inactive_time >= timeout)
+        {
+            std::cout << "Tiempo de inactividad 2 segundos" << std::endl;
+			cuenta = 0;
+			toma = false;
+			last_activity = time(NULL);
+        }
+
+std::cout << "1 valor toma: " << toma<<std::endl;
+		std::cout << "last_activity: " << last_activity << std::endl;
+		std::cout << "current_time: " << current_time << std::endl;
+		std::cout << "inactive_time: " << inactive_time << std::endl;
+
+//=========================================================================
+		
 		// Esperar eventos en el socket de escucha
 		if (poll(fds, 1, -1) < 0)
 		{
@@ -185,10 +213,9 @@ void AdminServer::run()
 			continue;
 		}
 
-
-
 		if (fds[0].revents & POLLIN)
 		{
+			cuenta++;
 			client = sizeof(clientAddr);
 
 			// Aceptar la conexión entrante
@@ -270,6 +297,11 @@ void AdminServer::run()
 			// Cerrar el socket de la conexión actual
 			close(newsockfd);
 		}
+
+std::cout << "cuenta: " << cuenta << std::endl;
+std::cout << "2 valor toma: " << toma<<std::endl;
+
+	
 	}
 
 	// Cerrar el socket del servidor (esto no se alcanzará)

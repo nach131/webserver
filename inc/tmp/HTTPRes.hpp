@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:32 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/01 19:50:46 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/01 18:37:21 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,19 +41,16 @@ public:
 	std::string const getHeader() const;
 	std::string const getContent() const;
 
-
-void methodGet();
-void methodPost();
-void methodDelete();
-void methodErr();
+	static void methodGet(HTTPRes &res);
+	static void methodPost(HTTPRes &res);
+	static void methodDelete(HTTPRes &res);
+	static void methodErr(HTTPRes &res);
 
 // bool isUrlAllowed(const std::string& url, const std::string& method) const ;
 
 bool isUrlAllowed(const std::string& url) const ;
-void rootPath();
+void rootPath(HTTPRes &res);
 void rootOtherFiles();
-void last();
-
 
 };
 
