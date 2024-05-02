@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:32 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/01 19:50:46 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/02 19:40:05 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,20 @@ class HTTPRes
 private:
 	HTTPHeader _header;
 	HTTPRequest _request;
-	ServerConfig _config;
+	ServerConfig *_config;
 	std::string _content;
     std::map<std::string, std::map<std::string, std::string> >  _locations; 
 
+	bool isUrlAllowed(const std::string& url) const ;
+	void rootPath();
+	void rootOtherFiles();
+	void last();
+void error404();
+
+	std::string const OtherPath() const;
+
 public:
-	HTTPRes(const HTTPRequest &request, const ServerConfig &config);
+	HTTPRes(const HTTPRequest &request, ServerConfig *config);
 	~HTTPRes();
 
 	std::string const getHeader() const;
@@ -49,10 +57,8 @@ void methodErr();
 
 // bool isUrlAllowed(const std::string& url, const std::string& method) const ;
 
-bool isUrlAllowed(const std::string& url) const ;
-void rootPath();
-void rootOtherFiles();
-void last();
+
+
 
 
 };

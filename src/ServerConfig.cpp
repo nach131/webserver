@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/01 00:30:39 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/02 20:12:59 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ void ServerConfig::loadConf(const std::string &filename)
 	_serverName = "locahost";
 	_rootDirectory = "dist/";
 
-	_errorPages[404] = "config_web/error/404.html";
-	_errorPages[405] = "config_web/error/405.html";
+	_errorPages[404] = "config_web/error/404/index.html";
+	_errorPages[405] = "config_web/error/405/index.html";
 
 	_locations["/"] = std::map<std::string, std::string>();
 	_locations["/"]["autoindex"] = "off";
@@ -53,6 +53,7 @@ void ServerConfig::print() const
 	std::cout << "API Forward: " << _apiForward << std::endl;
 	std::cout << "API Port: " << _apiPort << std::endl;
 	std::cout << "first GET: " << _first << std::endl;
+	std::cout << "pre Path: " << _prePath << std::endl;
 
 	std::cout << "Locations:" << std::endl;
 	for (std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.begin(); it != _locations.end(); ++it)
@@ -93,3 +94,11 @@ std::string ServerConfig::getContentType(const std::string &extension) const
 {
 	return _mime.getContentType(extension);
 }
+
+bool ServerConfig::getFirst() const { return _first;}
+
+std::string ServerConfig::getPrePath() const {return _prePath;}
+
+void ServerConfig::setFirst(bool action){	_first = action;}
+
+void ServerConfig::setPrePath(const std::string &path) { _prePath = path; }

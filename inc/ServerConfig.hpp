@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/02 17:44:47 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/02 18:22:09 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,16 +21,17 @@
 
 class MIMETypeReader;
 
-class ServerConfig{
+class ServerConfig
+{
 
 private:
     int _port;
     std::string _serverName;
     std::string _rootDirectory;
-    std::map<int, std::string> _errorPages; 
+    std::map<int, std::string> _errorPages;
     int _apiPort;
     std::string _apiForward;
-    std::map<std::string, std::map<std::string, std::string> >  _locations; 
+    std::map<std::string, std::map<std::string, std::string> > _locations;
     MIMETypeReader _mime;
     bool _first;
     std::string _prePath;
@@ -49,9 +50,13 @@ public:
     std::string getApiForward() const;
     int getApiPort() const;
     std::map<std::string, std::map<std::string, std::string> > getLocation() const;
-    std::string getContentType(const std::string &extension) const ;
+    std::string getContentType(const std::string &extension) const;
+    
+    bool getFirst() const;
+    std::string getPrePath() const;
 
+    void setFirst(bool action);
+    void setPrePath(const std::string &path);
 };
-
 
 #endif
