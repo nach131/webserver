@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/02 17:44:47 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/02 20:24:21 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,5 @@ public:
     std::string getContentType(const std::string &extension) const ;
 
 };
-
 
 #endif

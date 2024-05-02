@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 16:04:28 by vduchi            #+#    #+#             */
-/*   Updated: 2024/04/29 15:18:10 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/02 21:41:49 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ class ConfigFile
 	public:
 		ConfigFile(const std::string &);
 		~ConfigFile();
+
+		void checkSyntax(std::vector<std::string> &, int &, size_t &);
 	
 		class ConfErrorException : std::runtime_error
 		{
