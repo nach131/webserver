@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/02 20:14:12 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/03 13:10:43 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,6 +123,8 @@ std::string const HTTPRes::OtherPath() const
 	{
 		std::string post = _request.getHeader("Path");
 		path = _config->getPrePath() + post;
+		// TODO hay que quitar los locates del pricipo de los errores
+		// Error al abrir el archivo ./conf_web/error/404/files/script.js
 	}
 	std::cout << MAGENTA << path << RESET << std::endl;
 	return path;
@@ -197,6 +199,6 @@ void HTTPRes::error404()
 	_header.addOne(_request.getHeader("Version"), "404 Not Found");
 	_content = readFile("./conf_web/error/404/index.html");
 	// poner el path en variable
-	_config->setFirst(true);
+	_config->setFirst(false);
 	_config->setPrePath("./conf_web/error/404");
 }

@@ -23,9 +23,10 @@
       "request": "launch",
       "name": "File a",
       "program": "${fileDirname}/a.out",
-      "args": ["default.conf"],
-      "stopOnEntry": false,
-      // "cwd": "${workspaceFolder}"
+      "args": [
+        "default.conf"
+      ],
+      "stopOnEntry": false
     }
   ]
 }
