@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/06 16:55:25 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/06 21:12:25 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,18 +132,37 @@ void uploadFile(int newsockfd)
 	}
 }
 
-void printEvent(const struct kevent& event) {
+//===============PRINT====================================================
+void printEvent(const struct kevent &event)
+{
 	std::cout << GREEN;
-    std::cout << "Identificador: " << event.ident << std::endl;
-    std::cout << "Filtro: " << event.filter << std::endl;
-    std::cout << "Flags: " << event.flags << std::endl;
-    std::cout << "Filtros específicos: " << event.fflags << std::endl;
-    std::cout << "Datos: " << event.data << std::endl;
-    std::cout << "Datos de usuario: " << event.udata << std::endl;
+	std::cout << "Identificador: " << event.ident << std::endl;
+	std::cout << "Filtro: " << event.filter << std::endl;
+	std::cout << "Flags: " << event.flags << std::endl;
+	std::cout << "Filtros específicos: " << event.fflags << std::endl;
+	std::cout << "Datos: " << event.data << std::endl;
+	std::cout << "Datos de usuario: " << event.udata << std::endl;
 	std::cout << RESET;
-
 }
 
+void printPeticion(const std::string buffer)
+{
+	std::cout << CYAN "[ Mensaje del cliente: ]\n"
+			  << buffer << RESET << std::endl;
+}
+
+void printResponse(std::string header, std::string content)
+{
+	(void)content;
+	std::cout << YELLOW << "======[ RESPONSE ] ======" << std::endl;
+	std::cout << "[ HEADER ]" << std::endl;
+	std::cout << header << std::endl;
+	// std::cout << "[ CONTENT ]" << std::endl;
+	// std::cout << content << std::endl;
+	std::cout << "========================" << RESET << std::endl;
+}
+
+//=========================================================================
 
 void AdminServer::run()
 {
@@ -211,6 +230,12 @@ void AdminServer::run()
 
 	//=========================================================================
 
+	// Inicializar el conjunto de descriptores de archivo, para CGI
+	// fd_set fdSet;
+	// FD_ZERO(&fdSet);
+
+	//=========================================================================
+
 	while (42)
 	{
 
@@ -240,8 +265,9 @@ void AdminServer::run()
 				// Registro de newsockfd para eventos de lectura
 				EV_SET(&change, newsockfd, EVFILT_READ, EV_ADD, 0, 0, NULL);
 
+				// TODO
 				std::cout << "[ conexion entrante ]" << std::endl;
-				std::cout << "events: " << i  << std::endl;
+				std::cout << "events: " << i << std::endl;
 				printEvent(change);
 
 				if (kevent(kq, &change, 1, NULL, 0, NULL) == -1)
@@ -262,26 +288,20 @@ void AdminServer::run()
 					}
 
 					//===================PETICION==============================================
-					std::cout << CYAN "[ Mensaje del cliente: ]\n"
-							  << buffer << RESET << std::endl;
-
+					// TODO
+					printPeticion(buffer);
 					//===================PARSING==============================================
 
 					HTTPRequest request(buffer);
-
+					// TODO
 					request.print();
 
 					//=========================================================================
 
 					// HTTPBody body(request);
 					HTTPRes response(request, &_config);
-
-					std::cout << YELLOW << "======[ RESPONSE ] ======" << std::endl;
-					std::cout << "[ HEADER ]" << std::endl;
-					std::cout << response.getHeader() << std::endl;
-					// std::cout << "[ CONTENT ]" << std::endl;
-					// std::cout << response.getContent() << std::endl;
-					std::cout << "========================" << RESET << std::endl;
+					// TODO
+					printResponse(response.getHeader(), response.getContent());
 
 					//=========================================================================
 
@@ -289,7 +309,6 @@ void AdminServer::run()
 					if (request.getHeader("Method") == "GET")
 					{
 						sendResGet(newsockfd, response.getHeader(), response.getContent());
-					
 					}
 					else if (request.getHeader("Method") == "POST")
 					{
@@ -313,6 +332,7 @@ void AdminServer::run()
 					// close(events[i].ident);
 					close(newsockfd);
 
+					// TODO
 					// [ Server Configuration ]
 					_config.print();
 				}
