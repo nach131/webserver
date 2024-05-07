@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/06 21:12:25 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/07 14:01:21 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -263,14 +263,14 @@ void AdminServer::run()
 				std::cout << MAGENTA << "Conexión aceptada. Socket del cliente: " << newsockfd << RESET << std::endl;
 
 				// Registro de newsockfd para eventos de lectura
-				EV_SET(&change, newsockfd, EVFILT_READ, EV_ADD, 0, 0, NULL);
+				EV_SET(&events[i], newsockfd, EVFILT_READ, EV_ADD, 0, 0, NULL);
 
 				// TODO
 				std::cout << "[ conexion entrante ]" << std::endl;
 				std::cout << "events: " << i << std::endl;
-				printEvent(change);
+				printEvent(events[i]);
 
-				if (kevent(kq, &change, 1, NULL, 0, NULL) == -1)
+				if (kevent(kq, &events[i], 1, NULL, 0, NULL) == -1)
 				{
 					std::cerr << "Error en kevent: " << strerror(errno) << std::endl;
 					exit(EXIT_FAILURE);

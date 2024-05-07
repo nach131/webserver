@@ -1,6 +1,9 @@
 #include <iostream>
-#include <sys/types.h>
+// #include <types.h>
 #include <sys/event.h>
+// #include <arpa/inet.h>
+// #include <sys/types.h>
+// #include <sys/event.h>
 
 // Estructura para almacenar información del cliente
 struct ClientInfo {

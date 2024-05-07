@@ -79,7 +79,7 @@ int main() {
 En este ejemplo, `select()` espera hasta que haya actividad en el descriptor de archivo del socket (`sockfd`) o hasta que se alcance el tiempo de espera especificado. Después de `select()` retorna, el programa puede verificar si el socket está listo para lectura utilizando `FD_ISSET()`.
 
 
-## FD_CKR
+## FD_CLR
 
 `FD_CLR` es una macro en C que se utiliza para borrar un descriptor de archivo específico de un conjunto de descriptores de archivo (`fd_set`). Esta macro se utiliza junto con `FD_ZERO`, `FD_SET` y `FD_ISSET` para manipular conjuntos de descriptores de archivo en el contexto de la función `select()`.
 
