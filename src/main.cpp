@@ -41,11 +41,16 @@ int main(int argc, char **argv)
 
 // TODO
 		ServerConfig config("./conf_web/mime.type");	// comprobar que exita el fichero mime.type
-		config.loadConf("argv[1]");
-		
+		config.loadConf(argv[1]);
+
 		AdminServer server(config);
 		server.run();
 		// config.print();
+	}
+	catch (const ServerConfig::ConfErrorException &e)
+	{
+		std::cerr << e.what() << std::endl;
+		return EXIT_FAILURE;
 	}
 	catch (const std::exception &e)
 	{
