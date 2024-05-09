@@ -6,11 +6,13 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/03 13:08:08 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/07 14:01:21 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "AdminServer.hpp"
+
+#define MAX_EVENTS 10
 
 AdminServer::AdminServer(const ServerConfig &config) : _config(config) {}
 
@@ -21,23 +23,22 @@ void sendResGet(int newsockfd, const std::string &header, const std::string &con
 	std::cout << "[ GET ]" << std::endl;
 
 	int n;
-
-	// Enviar el encabezado HTTP
-	n = write(newsockfd, header.c_str(), header.length());
+	// Enviar la respuesta al cliente utilizando el descriptor de archivo correcto (newsockfd)
+	n = send(newsockfd, header.c_str(), header.length(), 0);
 	if (n < 0)
 	{
 		std::cerr << "Error al enviar encabezado HTTP: " << strerror(errno) << std::endl;
 		close(newsockfd);
-		return; // Salir de la función si hay un error
+		return; // Continuar con el siguiente intento de aceptar conexiones
 	}
 
-	// Enviar el contenido HTML
-	n = write(newsockfd, content.c_str(), content.length());
+	// Enviar el contenido HTML utilizando el descriptor de archivo correcto (newsockfd)
+	n = send(newsockfd, content.c_str(), content.length(), 0);
 	if (n < 0)
 	{
 		std::cerr << "Error al enviar contenido HTML: " << strerror(errno) << std::endl;
 		close(newsockfd);
-		return; // Salir de la función si hay un error
+		return; // Continuar con el siguiente intento de aceptar conexiones
 	}
 
 	std::cout << "Respuesta enviada al cliente." << std::endl;
@@ -131,14 +132,51 @@ void uploadFile(int newsockfd)
 	}
 }
 
+//===============PRINT====================================================
+void printEvent(const struct kevent &event)
+{
+	std::cout << GREEN;
+	std::cout << "Identificador: " << event.ident << std::endl;
+	std::cout << "Filtro: " << event.filter << std::endl;
+	std::cout << "Flags: " << event.flags << std::endl;
+	std::cout << "Filtros específicos: " << event.fflags << std::endl;
+	std::cout << "Datos: " << event.data << std::endl;
+	std::cout << "Datos de usuario: " << event.udata << std::endl;
+	std::cout << RESET;
+}
+
+void printPeticion(const std::string buffer)
+{
+	std::cout << CYAN "[ Mensaje del cliente: ]\n"
+			  << buffer << RESET << std::endl;
+}
+
+void printResponse(std::string header, std::string content)
+{
+	(void)content;
+	std::cout << YELLOW << "======[ RESPONSE ] ======" << std::endl;
+	std::cout << "[ HEADER ]" << std::endl;
+	std::cout << header << std::endl;
+	// std::cout << "[ CONTENT ]" << std::endl;
+	// std::cout << content << std::endl;
+	std::cout << "========================" << RESET << std::endl;
+}
+
+//=========================================================================
+
 void AdminServer::run()
 {
 	int sockfd, newsockfd;
 	socklen_t client;
+	char buffer[1024];
 	struct sockaddr_in serverAddr, clientAddr;
 	int n;
 
-	char buffer[1024];
+	// Configurar la dirección del servidor
+	memset(&serverAddr, 0, sizeof(serverAddr));
+	serverAddr.sin_family = AF_INET;
+	serverAddr.sin_port = htons(8080);				// Puerto del servidor
+	serverAddr.sin_addr.s_addr = htonl(INADDR_ANY); // Escuchar en todas las interfaces de red
 
 	// Crear socket
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -150,12 +188,6 @@ void AdminServer::run()
 		errorMsg += strerror(errno);
 		throw std::runtime_error(errorMsg);
 	}
-
-	// Configurar la dirección del servidor
-	memset(&serverAddr, 0, sizeof(serverAddr));
-	serverAddr.sin_family = AF_INET;
-	serverAddr.sin_port = htons(8080);				// Puerto del servidor
-	serverAddr.sin_addr.s_addr = htonl(INADDR_ANY); // Escuchar en todas las interfaces de red
 
 	// Enlazar el socket a la dirección del servidor
 	if (bind(sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0)
@@ -171,125 +203,141 @@ void AdminServer::run()
 
 	std::cout << "Servidor esperando conexiones..." << std::endl;
 
-	// Configurar pollfd para el socket de escucha
-	struct pollfd fds[1];
-	fds[0].fd = sockfd;
-	fds[0].events = POLLIN;
+	//=========================================================================
 
-	// int timeout = 2; // milisegundos (1 segundos)
-	// time_t last_activity = time(NULL); // Guardar el tiempo de la última actividad
+	// Crear kqueue
+	int kq = kqueue();
+	if (kq == 0)
+	{
+		std::cerr << "Error creating kqueue: " << strerror(errno) << std::endl;
+		close(sockfd);
+		return;
+	}
+
+	// Configurar evento para el socket de escucha
+	struct kevent change;
+	EV_SET(&change, sockfd, EVFILT_READ, EV_ADD, 0, 0, NULL);
+
+	// Registro de sockfd para eventos de lectura
+	if (kevent(kq, &change, 1, NULL, 0, NULL) == -1)
+	{
+		std::cerr << "Error en kevent: " << strerror(errno) << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	// Array para eventos
+	struct kevent events[MAX_EVENTS];
+
+	//=========================================================================
+
+	// Inicializar el conjunto de descriptores de archivo, para CGI
+	// fd_set fdSet;
+	// FD_ZERO(&fdSet);
+
+	//=========================================================================
 
 	while (42)
 	{
 
-		//  // Calcular el tiempo de inactividad
-		//     time_t current_time = time(NULL); // tiempo actual en segundos
-		//     time_t inactive_time = current_time - last_activity;
-
-		// // Si no hay actividad durante el tiempo de espera, cerrar la conexión
-		//     if (inactive_time >= timeout)
-		//     // if (inactive_time <= timeout)
-		//     {
-		//         std::cout<< RED << "Tiempo de inactividad 2 segundos" << std::endl;
-		// 	_config.setFirst(false);
-		// 	_config.setPrePath("");
-		// 	last_activity = time(NULL);
-		//     }
-		//=========================================================================
-		// Esperar eventos en el socket de escucha
-		if (poll(fds, 1, -1) < 0)
+		// Esperar eventos en kqueue
+		int nev = kevent(kq, NULL, 0, events, MAX_EVENTS, NULL);
+		if (nev < 0)
 		{
-			std::cerr << "Error en poll(): " << strerror(errno) << std::endl;
-			continue;
+			std::cerr << "Error en kevent: " << strerror(errno) << std::endl;
+			exit(EXIT_FAILURE);
 		}
 
-		if (fds[0].revents & POLLIN)
+		for (int i = 0; i < nev; ++i)
 		{
-			client = sizeof(clientAddr);
-
-			// Aceptar la conexión entrante
-			newsockfd = accept(sockfd, (struct sockaddr *)&clientAddr, &client);
-
-			// newsockfd = -1; // error
-			// (void)clilen;	// error
-			if (newsockfd < 0)
+			if (events[i].ident == (unsigned long)sockfd)
 			{
-				std::cerr << "Error al aceptar conexión: " << strerror(errno) << std::endl;
-				continue; // Continuar con el siguiente intento de aceptar conexiones
-			}
-
-			std::cout << MAGENTA << "Conexión aceptada. Socket del cliente: " << newsockfd << RESET << std::endl;
-
-			// Recibir datos del cliente
-			memset(buffer, 0, sizeof(buffer));
-			n = recv(newsockfd, buffer, sizeof(buffer), 0);
-			if (n < 0)
-			{
-				std::cerr << "Error al recibir datos: " << strerror(errno) << std::endl;
-				close(newsockfd);
-				continue; // Continuar con el siguiente intento de aceptar conexiones
-			}
-
-			//===================PETICION==============================================
-			std::cout << CYAN "[ Mensaje del cliente: ]\n"
-								<< buffer << RESET << std::endl;
-
-			//===================PARSING==============================================
-
-			HTTPRequest request(buffer);
-
-			request.print();
-
-			//=========================================================================
-
-			// HTTPBody body(request);
-			HTTPRes response(request, &_config);
-
-			std::cout << YELLOW << "======[ RESPONSE ] ======" << std::endl;
-			std::cout << "[ HEADER ]" << std::endl;
-			std::cout << response.getHeader() << std::endl;
-			// std::cout << "[ CONTENT ]" << std::endl;
-			// std::cout << response.getContent() << std::endl;
-			std::cout << "========================" << RESET << std::endl;
-
-			//=========================================================================
-
-			// Enviar la respuesta al cliente utilizando la función creada
-			if (request.getHeader("Method") == "GET")
-			{
-				// AQUI PARA LOCATIONS ?
-				sendResGet(newsockfd, response.getHeader().c_str(), response.getContent());
-			}
-			else if (request.getHeader("Method") == "POST")
-			{
-				std::cout << "[ POST ]" << std::endl;
-				if (request.getHeader("Path") == "/submit")
-				// TODO
-				// DESPUES HACER REDIRECCCIONAMIENRTO A LA URL DE DONDE VENIA
+				// Aceptar la conexión entrante
+				newsockfd = accept(sockfd, (struct sockaddr *)&clientAddr, &client);
+				// newsockfd = -1; // error
+				if (newsockfd < 0)
 				{
-					std::cout << "FILE" << std::endl;
-					uploadFile(newsockfd);
+					std::cerr << "Error al aceptar conexión: " << strerror(errno) << std::endl;
+					continue; // Continuar con el siguiente intento de aceptar conexiones
+				}
+
+				std::cout << MAGENTA << "Conexión aceptada. Socket del cliente: " << newsockfd << RESET << std::endl;
+
+				// Registro de newsockfd para eventos de lectura
+				EV_SET(&events[i], newsockfd, EVFILT_READ, EV_ADD, 0, 0, NULL);
+
+				// TODO
+				std::cout << "[ conexion entrante ]" << std::endl;
+				std::cout << "events: " << i << std::endl;
+				printEvent(events[i]);
+
+				if (kevent(kq, &events[i], 1, NULL, 0, NULL) == -1)
+				{
+					std::cerr << "Error en kevent: " << strerror(errno) << std::endl;
+					exit(EXIT_FAILURE);
 				}
 				else
-					sendResPost(newsockfd, response.getHeader().c_str(), response.getContent(), buffer);
-			}
+				{
+					// Recibir datos del cliente
+					memset(buffer, 0, sizeof(buffer));
+					n = recv(newsockfd, buffer, sizeof(buffer), 0);
+					if (n < 0)
+					{
+						std::cerr << "Error al recibir datos: " << strerror(errno) << std::endl;
+						close(newsockfd);
+						continue; // Continuar con el siguiente intento de aceptar conexiones
+					}
 
-			else if (request.getHeader("Method") == "DELETE")
-			{
-				std::cout << "ES DELETE\n";
-			}
+					//===================PETICION==============================================
+					// TODO
+					printPeticion(buffer);
+					//===================PARSING==============================================
 
-			//=========================================================================
-			// Cerrar el socket de la conexión actual
-			close(newsockfd);
+					HTTPRequest request(buffer);
+					// TODO
+					request.print();
+
+					//=========================================================================
+
+					// HTTPBody body(request);
+					HTTPRes response(request, &_config);
+					// TODO
+					printResponse(response.getHeader(), response.getContent());
+
+					//=========================================================================
+
+					// Enviar la respuesta al cliente utilizando la función creada
+					if (request.getHeader("Method") == "GET")
+					{
+						sendResGet(newsockfd, response.getHeader(), response.getContent());
+					}
+					else if (request.getHeader("Method") == "POST")
+					{
+						std::cout << "[ POST ]" << std::endl;
+						if (request.getHeader("Path") == "/submit")
+						{
+							std::cout << "FILE" << std::endl;
+							uploadFile(newsockfd);
+						}
+						else
+							sendResPost(newsockfd, response.getHeader().c_str(), response.getContent(), buffer);
+					}
+
+					else if (request.getHeader("Method") == "DELETE")
+					{
+						std::cout << "ES DELETE\n";
+					}
+
+					//=========================================================================
+					// Cerrar el socket de la conexión actual
+					// close(events[i].ident);
+					close(newsockfd);
+
+					// TODO
+					// [ Server Configuration ]
+					_config.print();
+				}
+			}
 		}
-
-		// std::cout << "last_activity: " << last_activity << std::endl;
-		// std::cout << "current_time: " << current_time << std::endl;
-		// std::cout << "inactive_time: " << inactive_time << std::endl;
-
-		// [ Server Configuration ]
-		_config.print();
 	}
 
 	// Cerrar el socket del servidor (esto no se alcanzará)

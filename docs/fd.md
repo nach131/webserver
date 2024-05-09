@@ -1,4 +1,7 @@
-# FD_SET
+# FD_SET FD_CLR FD_ISSET FD_ZERO
+Los que se pueden usar
+
+## FD_SET
 
 `FD_SET` es una macro utilizada en programación de sockets en sistemas basados en Unix para agregar un descriptor de archivo a un conjunto de descriptores de archivo (`fd_set`). Este conjunto se utiliza comúnmente con funciones como `select()`, `pselect()`, `FD_ISSET()`, entre otras, para verificar la disponibilidad de operaciones de lectura, escritura o excepcionales en múltiples descriptores de archivo de manera eficiente.
 
