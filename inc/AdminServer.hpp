@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:26:56 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/04 13:22:59 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/09 19:39:04 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ public:
 	AdminServer(const ServerConfig &config);
 	~AdminServer();
 
-	void run();
+	void run(int sockfd, int kq);
 };
 
 #endif

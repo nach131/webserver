@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/08 17:54:29 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/09 19:39:20 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,78 +164,46 @@ void printResponse(std::string header, std::string content)
 
 //=========================================================================
 
-void AdminServer::run()
+void AdminServer::run(int sockfd, int kq)
 {
-	int sockfd, newsockfd;
+	int newsockfd;
 	socklen_t client;
 	char buffer[1024];
-	struct sockaddr_in serverAddr, clientAddr;
+	struct sockaddr_in clientAddr;
 	int n;
-
-	// Configurar la dirección del servidor
-	memset(&serverAddr, 0, sizeof(serverAddr));
-	serverAddr.sin_family = AF_INET;
-	serverAddr.sin_port = htons(8080);				// Puerto del servidor
-	serverAddr.sin_addr.s_addr = htonl(INADDR_ANY); // Escuchar en todas las interfaces de red
-
-	// Crear socket
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	// sockfd = socket(AF_MAX, SOCK_STREAM, 0); // Error socket
-	if (sockfd < 0)
-	{
-		std::string errorMsg = RED "Error creating socket:\n";
-		errorMsg += CYAN;
-		errorMsg += strerror(errno);
-		throw std::runtime_error(errorMsg);
-	}
-
-	// Enlazar el socket a la dirección del servidor
-	if (bind(sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0)
-	{
-		std::string errorMsg = RED "Socket binding error:\n";
-		errorMsg += CYAN + std::to_string(ntohs(serverAddr.sin_port)) + " ";
-		errorMsg += strerror(errno);
-		throw std::runtime_error(errorMsg);
-	}
-
-	// Escuchar por conexiones entrantes
-	listen(sockfd, 5);
-
-	std::cout << "sockfd: " << sockfd << std::endl;
-	std::cout << "Servidor esperando conexiones..." << std::endl;	
 
 	//=========================================================================
 
 	// Crear kqueue
-	int kq = kqueue();
-	if (kq == 0)
-	{
-		std::cerr << "Error creating kqueue: " << strerror(errno) << std::endl;
-		close(sockfd);
-		return;
-	}
+	// int kq = kqueue();
+	// if (kq == 0)
+	// {
+	// 	std::cerr << "Error creating kqueue: " << strerror(errno) << std::endl;
+	// 	close(sockfd);
+	// 	return;
+	// }
 
-	// Configurar evento para el socket de escucha
-	struct kevent eventRead;
-	EV_SET(&eventRead, sockfd, EVFILT_READ, EV_ADD, 0, 0, NULL);
+	// // Configurar evento para el socket de escucha
+	// struct kevent eventRead;
+	// EV_SET(&eventRead, sockfd, EVFILT_READ, EV_ADD, 0, 0, NULL);
 
-	// Registro de sockfd para eventos de lectura
-	if (kevent(kq, &eventRead, 1, NULL, 0, NULL) == -1)
-	{
-		std::cerr << "Error en kevent: " << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	// // Registro de sockfd para eventos de lectura
+	// if (kevent(kq, &eventRead, 1, NULL, 0, NULL) == -1)
+	// {
+	// 	std::cerr << "Error en kevent: " << strerror(errno) << std::endl;
+	// 	exit(EXIT_FAILURE);
+	// }
 
-	// Configurar evento para el socket de escucha para escritura
-	struct kevent eventWrite;
-	EV_SET(&eventWrite, sockfd, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
+	// // Configurar evento para el socket de escucha para escritura
+	// struct kevent eventWrite;
+	// EV_SET(&eventWrite, sockfd, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
 
-	// Registro de sockfd para eventos de escritura
-	if (kevent(kq, &eventWrite, 1, NULL, 0, NULL) == -1)
-	{
-		std::cerr << "Error en kevent para escritura: " << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	// // Registro de sockfd para eventos de escritura
+	// if (kevent(kq, &eventWrite, 1, NULL, 0, NULL) == -1)
+	// {
+	// 	std::cerr << "Error en kevent para escritura: " << strerror(errno) << std::endl;
+	// 	exit(EXIT_FAILURE);
+	// }
 
 	// Array para eventos
 	struct kevent events[MAX_EVENTS];
@@ -253,7 +221,7 @@ void AdminServer::run()
 
 		// Esperar eventos en kqueue
 		int nev = kevent(kq, NULL, 0, events, MAX_EVENTS, NULL); // miarar kqueue.cpp para timeout
- 		if (nev < 0)
+		if (nev < 0)
 		{
 			std::cerr << "Error en kevent: " << strerror(errno) << std::endl;
 			exit(EXIT_FAILURE);
@@ -261,26 +229,6 @@ void AdminServer::run()
 
 		for (int i = 0; i < nev; ++i)
 		{
-			std::cout << "i: "<< i << ", nev: " << nev << std::endl;
-			
-
-if (events[i].ident == (unsigned long)sockfd)
-{
-    // Verifica si el evento es para lectura o escritura
-
-		std::cout << CYAN << "toma: " << events[i].filter << std::endl;
-
-    if (events[i].filter == EVFILT_READ)
-    {
-        std::cout << CYAN << "EVENTO lectura" << RESET << std::endl;
-    }
-    else if (events[i].filter == EVFILT_WRITE)
-    {
-        std::cout << CYAN << "EVENTO escritura" << RESET << std::endl;
-    }
-}
-
-
 
 			if (events[i].ident == (unsigned long)sockfd)
 			{
