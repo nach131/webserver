@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/10 12:50:26 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/10 19:55:27 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,26 +201,10 @@ int delConnect(int fd)
 	return close(fd);
 }
 
-void recv_msg(int s)
-{
-	char buf[MAX_MSG_SIZE];
-	int bytes_read = recv(s, buf, sizeof(buf) - 1, 0);
-	buf[bytes_read] = 0;
-	std::cout << "client #" << getConnect(s) << ": " << buf;
-	std::cout.flush();
-
-	// Construimos el mensaje de confirmación
-	char confirm_msg[MAX_MSG_SIZE];
-	snprintf(confirm_msg, sizeof(confirm_msg), "Hemos recibido su mensaje: %s\n", buf);
-
-	// Enviamos el mensaje de confirmación al cliente
-	send(s, confirm_msg, strlen(confirm_msg), 0);
-}
-
 void AdminServer::run(int sockfd, int kq)
 {
 
-	char buffer[1024];
+	char buffer[MAX_MSG_SIZE];
 	struct kevent evSet;
 	struct kevent evList[MAX_EVENTS];
 	struct sockaddr_storage addr;
@@ -237,7 +221,9 @@ void AdminServer::run(int sockfd, int kq)
 				int fd = accept(evList[i].ident, (struct sockaddr *)&addr, &socklen);
 				if (addConnet(fd) == 0)
 				{
-					EV_SET(&evSet, fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
+					// EV_SET(&evSet, fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
+					// EV_FLAG1 PAR LA PRIMERA PETICION
+					EV_SET(&evSet, fd, EVFILT_READ, EV_ADD | EV_FLAG1, 0, 0, NULL);
 					kevent(kq, &evSet, 1, NULL, 0, NULL);
 					// send_welcome_msg(fd);
 				}
@@ -284,7 +270,20 @@ void AdminServer::run(int sockfd, int kq)
 				printResponse(response.getHeader(), response.getContent());
 
 				//=========================================================================
+				// Manejo de flags para la primera lectura
+				if (evSet.flags & EV_FLAG1)
+				{
+					std::cout << "CON EV_FLAG1" << std::endl;
+					EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & ~EV_FLAG1, 0, 0, NULL);
+				}
+				else if (evSet.flags | EV_FLAG1)
+				{
+					std::cout << "SIN EV_FLAG1" << std::endl;
+				}
+
+				//=========================================================================
 				sendResGet(evList[i].ident, response.getHeader(), response.getContent());
+				//=========================================================================
 			}
 		}
 	}

@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/10 12:23:56 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/10 19:31:02 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ int createSocket()
 	hints.ai_flags = AI_PASSIVE;	 // se especifica que debe devolver direcciones par vincular al socket de escucha
 	hints.ai_family = PF_UNSPEC;	 // IPv4 o IPv6
 	hints.ai_socktype = SOCK_STREAM; // tipo del socket
-	getaddrinfo("127.0.0.1", "8082", &hints, &addr);
+	getaddrinfo("127.0.0.1", "8080", &hints, &addr);
 	int sockfd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
 
 	if (bind(sockfd, addr->ai_addr, addr->ai_addrlen) < 0)

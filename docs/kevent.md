@@ -16,9 +16,7 @@ int kevent(int kq, const struct kevent *changelist, int nchanges,
 
 5. `nevents`: Este es el tamaño del arreglo `eventlist`. Indica cuántos eventos pueden ser almacenados en `eventlist`.
 
-6. `timeout`: Este parámetro es opcional. Es un puntero a una estructura `timespec` que especifica un intervalo de tiempo durante el cual `kevent` esperará eventos. Si `timeout` es `NULL`, `kevent` no esperará eventos y regresará inmediatamente. Si `timeout` apunta a una estructura `timespec` que tiene el campo `tv_sec` y `tv_nsec` establecido en 0, `kevent` tampoco esperará y regresará inmediatamente.
-
-En resumen, `kevent` se utiliza para realizar operaciones como agregar, modificar o eliminar eventos en el conjunto de descriptores de archivo que están siendo monitoreados por `kqueue`, así como para esperar eventos y recibirlos.
+6. `timeout`: Este parámetro es opcional. Es un puntero a una estructura `timespec` que especifica un intervalo de tiempo durante el cual `kevent` esperará eventos. Si `timeout` es `NULL`, `kevent` no esperará eventos y regresará inmediatamente. Si `timeout` apunta a una estructura `timespec` que tiene el campo `tv_sec` y `tv_nsec` establecido en 0, `kevent` tampoco esperará y regresará inmediatamente. Si es NULL, se espera indefinidamente.
 
 
 # `struct kevent`
@@ -48,3 +46,26 @@ struct kevent {
 - `udata`: Es un puntero de usuario opcional que se puede utilizar para asociar datos adicionales definidos por el usuario con el evento. Este campo puede ser útil para mantener información adicional relacionada con el evento.
 
 Estos son los elementos principales de la estructura `kevent` que se utilizan para representar eventos en `kqueue`.
+
+## flags
+
+Los flags de kevent se utilizan para controlar el comportamiento de la llamada al sistema kevent
+
+Los flags de kevent se pueden combinar usando operaciones OR a nivel de bits.
+
+- `EV_ADD`	Agrega un evento a la cola de eventos del kernel.
+- `EV_DELETE`	Elimina un evento de la cola de eventos del kernel.
+- `EV_ENABLE`	Habilita un evento para monitoreo.
+- `EV_DISABLE`	Deshabilita un evento para monitoreo.
+- `EV_CLEAR`	Limpia cualquier evento pendiente para el descriptor de archivo o identificador - especificado.
+- `EV_RECEIPT`	Indica que el kernel ha procesado un evento.
+- `EV_ERROR`	Indica que ocurrió un error al procesar un evento.
+- `EV_EOF`	Indica que se ha alcanzado el final del archivo para un socket.
+- `EV_TIMEOUT`	Indica que ha ocurrido un timeout para un evento.
+- `EV_SIGNAL`	Indica que se ha recibido una señal.
+- `EV_USER`	Indica un evento definido por el usuario.
+- `EV_SYSFLAGS`	Indica que los flags son específicos del sistema operativo.
+- `EV_FLAG1`	Indica el primer flag definido por el usuario.
+- `EV_FLAG2`	Indica el segundo flag definido por el usuario.
+- `EV_FLAG3`	Indica el tercer flag definido por el usuario.
+- `EV_FLAG4`	Indica el cuarto flag definido por el usuario
