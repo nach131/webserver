@@ -6,13 +6,15 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/09 19:51:49 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/10 12:50:26 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "AdminServer.hpp"
 
-#define MAX_EVENTS 10
+#define NUM_CLIENTS 10
+#define MAX_EVENTS 32
+#define MAX_MSG_SIZE 8192
 
 AdminServer::AdminServer(const ServerConfig &config) : _config(config) {}
 
@@ -164,132 +166,152 @@ void printResponse(std::string header, std::string content)
 
 //=========================================================================
 
+struct client_data
+{
+	int fd;
+} clients[NUM_CLIENTS];
+
+int getConnect(int fd)
+{
+	for (int i = 0; i < NUM_CLIENTS; i++)
+		if (clients[i].fd == fd)
+			return i;
+	return -1;
+}
+
+int addConnet(int fd)
+{
+	if (fd < 1)
+		return -1;
+	int i = getConnect(0);
+	if (i == -1)
+		return -1;
+	clients[i].fd = fd;
+	return 0;
+}
+
+int delConnect(int fd)
+{
+	if (fd < 1)
+		return -1;
+	int i = getConnect(fd);
+	if (i == -1)
+		return -1;
+	clients[i].fd = 0;
+	return close(fd);
+}
+
+void recv_msg(int s)
+{
+	char buf[MAX_MSG_SIZE];
+	int bytes_read = recv(s, buf, sizeof(buf) - 1, 0);
+	buf[bytes_read] = 0;
+	std::cout << "client #" << getConnect(s) << ": " << buf;
+	std::cout.flush();
+
+	// Construimos el mensaje de confirmación
+	char confirm_msg[MAX_MSG_SIZE];
+	snprintf(confirm_msg, sizeof(confirm_msg), "Hemos recibido su mensaje: %s\n", buf);
+
+	// Enviamos el mensaje de confirmación al cliente
+	send(s, confirm_msg, strlen(confirm_msg), 0);
+}
+
 void AdminServer::run(int sockfd, int kq)
 {
-	int newsockfd;
-	socklen_t client;
+
 	char buffer[1024];
-	struct sockaddr_in clientAddr;
-	int n;
-
-	//=========================================================================
-
-	// Array para eventos
-	struct kevent events[MAX_EVENTS];
-
-	//=========================================================================
-
-	// Inicializar el conjunto de descriptores de archivo, para CGI
-	// fd_set fdSet;
-	// FD_ZERO(&fdSet);
-
-	//=========================================================================
+	struct kevent evSet;
+	struct kevent evList[MAX_EVENTS];
+	struct sockaddr_storage addr;
+	socklen_t socklen = sizeof(addr);
 
 	while (42)
 	{
-
-		// Esperar eventos en kqueue
-		int nev = kevent(kq, NULL, 0, events, MAX_EVENTS, NULL); // miarar kqueue.cpp para timeout
-		if (nev < 0)
+		int num_events = kevent(kq, NULL, 0, evList, MAX_EVENTS, NULL);
+		for (int i = 0; i < num_events; i++)
 		{
-			std::cerr << "Error en kevent: " << strerror(errno) << std::endl;
-			exit(EXIT_FAILURE);
-		}
-
-		for (int i = 0; i < nev; ++i)
-		{
-
-			if (events[i].ident == (unsigned long)sockfd)
+			// receive new connection
+			if (evList[i].ident == (unsigned long)sockfd)
 			{
-				// Aceptar la conexión entrante
-				newsockfd = accept(sockfd, (struct sockaddr *)&clientAddr, &client);
-				// newsockfd = -1; // error
-				if (newsockfd < 0)
+				int fd = accept(evList[i].ident, (struct sockaddr *)&addr, &socklen);
+				if (addConnet(fd) == 0)
 				{
-					std::cerr << "Error al aceptar conexión: " << strerror(errno) << std::endl;
-					continue; // Continuar con el siguiente intento de aceptar conexiones
-				}
-
-				std::cout << MAGENTA << "Conexión aceptada. Socket del cliente: " << newsockfd << RESET << std::endl;
-
-				// Registro de newsockfd para eventos de lectura
-				EV_SET(&events[i], newsockfd, EVFILT_READ, EV_ADD, 0, 0, NULL);
-
-				// TODO
-				std::cout << "[ conexion entrante ]" << std::endl;
-				std::cout << "events: " << i << std::endl;
-				printEvent(events[i]);
-
-				if (kevent(kq, &events[i], 1, NULL, 0, NULL) == -1)
-				{
-					std::cerr << "Error en kevent: " << strerror(errno) << std::endl;
-					exit(EXIT_FAILURE);
+					EV_SET(&evSet, fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
+					kevent(kq, &evSet, 1, NULL, 0, NULL);
+					// send_welcome_msg(fd);
 				}
 				else
 				{
-					// Recibir datos del cliente
-					memset(buffer, 0, sizeof(buffer));
-					n = recv(newsockfd, buffer, sizeof(buffer), 0);
-					if (n < 0)
-					{
-						std::cerr << "Error al recibir datos: " << strerror(errno) << std::endl;
-						close(newsockfd);
-						continue; // Continuar con el siguiente intento de aceptar conexiones
-					}
-
-					//===================PETICION==============================================
-					// TODO
-					printPeticion(buffer);
-					//===================PARSING==============================================
-
-					HTTPRequest request(buffer);
-					// TODO
-					request.print();
-
-					//=========================================================================
-
-					// HTTPBody body(request);
-					HTTPRes response(request, &_config);
-					// TODO
-					printResponse(response.getHeader(), response.getContent());
-
-					//=========================================================================
-
-					// Enviar la respuesta al cliente utilizando la función creada
-					if (request.getHeader("Method") == "GET")
-					{
-						sendResGet(newsockfd, response.getHeader(), response.getContent());
-					}
-					else if (request.getHeader("Method") == "POST")
-					{
-						std::cout << "[ POST ]" << std::endl;
-						if (request.getHeader("Path") == "/submit")
-						{
-							std::cout << "FILE" << std::endl;
-							uploadFile(newsockfd);
-						}
-						else
-							sendResPost(newsockfd, response.getHeader().c_str(), response.getContent(), buffer);
-					}
-
-					else if (request.getHeader("Method") == "DELETE")
-					{
-						std::cout << "ES DELETE\n";
-					}
-
-					//=========================================================================
-					// Cerrar el socket de la conexión actual
-					// close(events[i].ident);
-					close(newsockfd);
-
-					// TODO
-					// [ Server Configuration ]
-					_config.print();
+					std::cout << "connection refused." << std::endl;
+					close(fd);
 				}
+			} // client disconnected
+			else if (evList[i].flags & EV_EOF)
+			{
+				int fd = evList[i].ident;
+				std::cout << "client #" << getConnect(fd) << " disconnected." << std::endl;
+				EV_SET(&evSet, fd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
+				kevent(kq, &evSet, 1, NULL, 0, NULL);
+				delConnect(fd);
+			} // read message from client
+			else if (evList[i].filter == EVFILT_READ)
+			{
+				std::cout << RED << "ESTO ES AKI\n";
+
+				//=================DESDE AQUI==============================================
+				// Recibir datos del cliente
+				memset(buffer, 0, sizeof(buffer));
+				int n = recv(evList[i].ident, buffer, sizeof(buffer), 0);
+				if (n < 0)
+				{
+					std::cerr << "Error al recibir datos: " << strerror(errno) << std::endl;
+					close(evList[i].ident);
+					continue; // Continuar con el siguiente intento de aceptar conexiones
+				}
+				//===================PETICION==============================================
+				// TODO
+				printPeticion(buffer);
+				//===================PARSING==============================================
+				HTTPRequest request(buffer);
+				// TODO
+				request.print();
+				//=========================================================================
+
+				// HTTPBody body(request);
+				HTTPRes response(request, &_config);
+				// TODO
+				printResponse(response.getHeader(), response.getContent());
+
+				//=========================================================================
+				sendResGet(evList[i].ident, response.getHeader(), response.getContent());
 			}
 		}
 	}
-
-	// Cerrar el socket del servidor (esto no se alcanzará)
-	close(sockfd);
 }
+
+// 1. **Receive New Connection**:
+//    - Este caso se maneja cuando se recibe una nueva conexión en el socket principal (`sockfd`).
+//    - Se comprueba si la identificación (`ident`) del evento en `evList` es igual al identificador del socket principal (`sockfd`).
+//    - Si es así, significa que hay una nueva conexión entrante.
+//    - Se acepta la conexión utilizando la función `accept` y se asigna un nuevo descriptor de archivo (`fd`) para esta conexión.
+//    - Se llama a `addConnet(fd)` para agregar esta conexión a la lista de clientes.
+//    - Si la conexión se agregó correctamente, se registra el descriptor de archivo (`fd`) para eventos de lectura (`EVFILT_READ`) utilizando `kevent`.
+//    - Si la conexión no se puede agregar, se imprime un mensaje de "connection refused" y se cierra el descriptor de archivo (`fd`).
+
+// 2. **Client Disconnected**:
+//    - Este caso se maneja cuando se detecta que un cliente se ha desconectado.
+//    - Se comprueba si la bandera `EV_EOF` está activada en el evento en `evList`.
+//    - Si la bandera `EV_EOF` está activada, significa que se ha detectado el fin de la conexión desde el lado del cliente.
+//    - Se obtiene el descriptor de archivo (`fd`) correspondiente al cliente que se desconectó.
+//    - Se elimina este descriptor de archivo de la lista de clientes utilizando `delConnect(fd)`.
+//    - Se elimina el evento asociado a este descriptor de archivo de la lista de eventos utilizando `EV_DELETE`.
+//    - Se imprime un mensaje indicando que el cliente se ha desconectado.
+
+// 3. **Read Message from Client**:
+//    - Este caso se maneja cuando se detecta que hay datos para leer desde un cliente.
+//    - Se comprueba si el filtro del evento es `EVFILT_READ`.
+//    - Si es así, significa que hay datos disponibles para leer en el descriptor de archivo (`fd`).
+//    - Se lee el mensaje del cliente utilizando la función `recv` y se almacena en el búfer `buffer`.
+//    - Se realiza cualquier procesamiento adicional necesario, como imprimir la petición recibida (`printPeticion`), analizar la solicitud HTTP (`HTTPRequest`), generar una respuesta HTTP (`HTTPRes`), y así sucesivamente.
+//    - Finalmente, se envía la respuesta al cliente utilizando la función `sendResGet` con los encabezados y contenido generados.
