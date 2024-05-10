@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/09 19:39:20 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/09 19:51:49 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,37 +173,6 @@ void AdminServer::run(int sockfd, int kq)
 	int n;
 
 	//=========================================================================
-
-	// Crear kqueue
-	// int kq = kqueue();
-	// if (kq == 0)
-	// {
-	// 	std::cerr << "Error creating kqueue: " << strerror(errno) << std::endl;
-	// 	close(sockfd);
-	// 	return;
-	// }
-
-	// // Configurar evento para el socket de escucha
-	// struct kevent eventRead;
-	// EV_SET(&eventRead, sockfd, EVFILT_READ, EV_ADD, 0, 0, NULL);
-
-	// // Registro de sockfd para eventos de lectura
-	// if (kevent(kq, &eventRead, 1, NULL, 0, NULL) == -1)
-	// {
-	// 	std::cerr << "Error en kevent: " << strerror(errno) << std::endl;
-	// 	exit(EXIT_FAILURE);
-	// }
-
-	// // Configurar evento para el socket de escucha para escritura
-	// struct kevent eventWrite;
-	// EV_SET(&eventWrite, sockfd, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
-
-	// // Registro de sockfd para eventos de escritura
-	// if (kevent(kq, &eventWrite, 1, NULL, 0, NULL) == -1)
-	// {
-	// 	std::cerr << "Error en kevent para escritura: " << strerror(errno) << std::endl;
-	// 	exit(EXIT_FAILURE);
-	// }
 
 	// Array para eventos
 	struct kevent events[MAX_EVENTS];

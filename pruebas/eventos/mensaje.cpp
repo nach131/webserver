@@ -121,27 +121,29 @@ void run_event_loop(int kq, int local_s)
 
 int create_socket_and_listen()
 {
-	struct addrinfo *addr;
+	struct addrinfo *addr; // informacion sobre direcciones
 	struct addrinfo hints;
-	memset(&hints, 0, sizeof hints);
-	hints.ai_flags = AI_PASSIVE;
-	hints.ai_family = PF_UNSPEC;
-	hints.ai_socktype = SOCK_STREAM;
+	memset(&hints, 0, sizeof hints); // bzero to hints
+	hints.ai_flags = AI_PASSIVE;	 // se especifica que debe devolver direcciones par vincular al socket de escucha
+	hints.ai_family = PF_UNSPEC;	 // IPv4 o IPv6
+	hints.ai_socktype = SOCK_STREAM; // tipo del socket
 	getaddrinfo("127.0.0.1", "8082", &hints, &addr);
-	int local_s = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
-	bind(local_s, addr->ai_addr, addr->ai_addrlen);
-	listen(local_s, 5);
-	return local_s;
+	int sockfd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+	bind(sockfd, addr->ai_addr, addr->ai_addrlen);
+	listen(sockfd, 5);
+	return sockfd;
 }
 
 int main(int argc, char *argv[])
 {
-	int local_s = create_socket_and_listen();
+	int sockfd = create_socket_and_listen();
+
 	int kq = kqueue();
 	struct kevent evSet;
-	EV_SET(&evSet, local_s, EVFILT_READ, EV_ADD, 0, 0, NULL);
+	EV_SET(&evSet, sockfd, EVFILT_READ, EV_ADD, 0, 0, NULL);
 	kevent(kq, &evSet, 1, NULL, 0, NULL);
-	run_event_loop(kq, local_s);
+
+	run_event_loop(kq, sockfd);
 	return EXIT_SUCCESS;
 }
 
