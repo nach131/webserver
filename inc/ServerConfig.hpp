@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/08 19:36:41 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/11 13:26:20 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <string.h>
 #include <netinet/in.h>
 #include "Colors.hpp"
 #include "MIMETypeReader.hpp"

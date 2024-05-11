@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/08 19:40:48 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/11 14:34:23 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ ServerConfig::ServerConfig(const std::string &mimeFilePath) : _first(true), _por
 	listen(_serverSocketFd, 5);
 
 	_buffer = new char[1024];
-	std::memset(_buffer, 0, 1024);
+	memset(_buffer, 0, 1024);
 }
 
 ServerConfig::~ServerConfig() { delete _buffer; }
@@ -70,22 +70,23 @@ void ServerConfig::loadConf(const std::string &filename)
 	_locations["/cgi_bin"]["cgi_path"] = "/usr/bin/python3 /bin/bash";
 	_locations["/cgi_bin"]["cgi_ext"] = "cgi_ext .py .sh";
 
-	// std::string line;
-	// std::ifstream in(filename);
-	// std::vector<std::string> arr;
-
-	// while (getline(in, line))
-	// {
-	// 	std::cout << "Line: -" << (int)(line[0] - 48) << "-" << std::endl;
-	// 	if (line[0] == '\0' || checkLine(line))
-	// 		continue;
-	// 	arr.push_back(line);
-	// }
-	// in.close();
-	// try { checkSyntax(arr); }
-	// catch (std::runtime_error & ex) { throw e_cee(ex.what()); }
-	// std::cout << "Syntax correct!" << std::endl;
-	// exit(0);
+//	std::string line;
+//	std::ifstream in(filename);
+//	std::vector<std::string> arr;
+//	
+//	if (!in.good())
+//		throw e_cee("File doesn't exist");
+//	
+//	while (getline(in, line))
+//	{
+//		std::cout << "Line: -" << (int)(line[0] - 48) << "- -" << line[0] << "- -" << line[1] << "-" << std::endl;
+//		arr.push_back(line);
+//	}
+//	in.close();
+//	try { checkSyntax(arr); }
+//	catch (std::runtime_error & ex) { throw e_cee(ex.what()); }
+//	std::cout << "Syntax correct!" << std::endl;
+//	exit(0);
 }
 
 void ServerConfig::print() const
@@ -161,36 +162,57 @@ void ServerConfig::setPrePath(const std::string &path) { _prePath = path; }
 
 int ServerConfig::checkLine(std::string & line)
 {
-	for (std::string::iterator it = line.begin(); it != line.end(); it++)
-	{
-		if (*it != 9 && *it != 0)
-			return 0;
-		// TODO check comentarios
-	}
-	return 1;
+	if (line[0] != 9 && line[0] != 0)
+		return 0;
+	for (size_t i = 1; line[i] != 9 && line[i] != 0; i++)
+		if (line[i] == '#')
+			return 1;
+	return 0;
 }
 
 void ServerConfig::checkSyntax(std::vector<std::string> & arr)
 {
-	int brack = 0, lineNum = 0;
+	bool check = true;
+	int brack = 1, lineNum = 1;
 	std::stringstream ss;
-	lineNum++;
 
-	// for (std::vector<std::string>::iterator it = arr.begin(); it != arr.end(); it++)
-	// {
-	// 	std::cout << "Array line: " << *it << std::endl;
-	// }
-	std::cout << "Here" << std::endl;
+	for (std::vector<std::string>::iterator it = arr.begin(); it != arr.end(); it++)
+	{
+		std::cout << "Array line: " << *it << std::endl;
+	}
 	if (arr[0].find("server {") == std::string::npos)
 		parseError("server declaration incorrect at line ", lineNum);
 	for (size_t i = 1; i < arr.size(); i++)
 	{
-		std::cout << "Line ->" << arr[i] << std::endl;
-		brack++;
 		lineNum++;
+		check = true;
+//		std::cout << "Num: " << lineNum << " Line ->" << arr[i] << std::endl;
+		size_t j = 0;
+		for ( ; arr[i][j] != 0; j++)
+		{
+//			std::cout << "Char: -" << arr[i][j] << "- Val:" << (int)arr[i][j] << std::endl;
+			if (arr[i][j] == '#')
+				check = false;
+		}
+//		std::cout << "Here Char: -" << arr[i][j] << "- Val:" << (int)arr[i][j] << std::endl;
+		if (!check || arr[i].length() == 0 || arr[i][j - 1] == 9)
+		{
+//			std::cout << "continue" << std::endl;
+			continue;
+		}
 		if (arr[i].find(";") == std::string::npos
-			&& arr[i].find("location {") == std::string::npos)
+			&& arr[i].find("location ") == std::string::npos
+			&& arr[i].find("}") == std::string::npos)
 			parseError("expected semicolon at line ", lineNum);
+		if (arr[i].find("location ") != std::string::npos)
+		{
+			size_t j = arr[i].find("location ") + 9;
+			for ( ; arr[i][j] != '{'; j++)
+				if (arr[i][j] != '{')
+					break;
+			if (arr[i].find("{") == j)
+				parseError("expected location path at line ", lineNum);
+		}
 		for (size_t l = 0; l < arr[i].length(); l++)
 		{
 			if (arr[i][l] == '{') { brack++; }
@@ -199,7 +221,6 @@ void ServerConfig::checkSyntax(std::vector<std::string> & arr)
 				parseError("expected block before } at line ", lineNum);
 			if (arr[i][l] == ';') { break; }
 		}
-		lineNum++;
 	}
 	if (brack > 0)
 		parseError("server block not closed at line ", lineNum);

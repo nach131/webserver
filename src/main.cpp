@@ -6,14 +6,14 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/04/30 13:52:33 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/11 14:35:05 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 // #include "../inc/ClientParsing.hpp"
 // #include "Colors.hpp"
-# include "WebServer.hpp"
-# include "ServerConfig.hpp"
+#include "WebServer.hpp"
+#include "ServerConfig.hpp"
 #include "AdminServer.hpp"
 
 void checkArg(int argc, char **argv)
@@ -23,7 +23,9 @@ void checkArg(int argc, char **argv)
 	else
 	{
 		std::string name(argv[1]);
-		if (name.compare(name.length() - 4, 4, ".cnf") || name.find(".cnf", name.find(".cnf") + 4) != std::string::npos)
+		if (name.find(".conf") == std::string::npos ||
+			name.compare(name.length() - 5, 5, ".conf") ||
+			name.find(".conf", name.find(".conf") + 5) != std::string::npos)
 			throw std::runtime_error(RED "File is not a configuration file!" RESET);
 		std::ifstream in(argv[1]);
 		if (!in.good())
@@ -35,9 +37,9 @@ int main(int argc, char **argv)
 {
 	try
 	{
-		(void)argc;
-		(void)argv;
-		//		checkArg(argc, argv);
+//		(void)argc;
+//		(void)argv;
+		checkArg(argc, argv);
 
 // TODO
 		ServerConfig config("./conf_web/mime.type");	// comprobar que exita el fichero mime.type
