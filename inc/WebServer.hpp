@@ -16,8 +16,9 @@
 # include "Colors.hpp"
 # include <map>
 # include <fstream>
-# include <iostream>
-# include <sstream>
+#include <sstream>
+#include <csignal>
+#include <iostream>
 # include <functional>
 
 int start();

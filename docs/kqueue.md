@@ -25,3 +25,5 @@ Aqui podemos almacenar cualquier tipo de datos que desees en este campo para que
 
 3. **Identificadores de objetos**: En algunos casos, el campo `udata` puede utilizarse simplemente para almacenar un identificador único asociado con el evento. Esto puede ser útil cuando necesitas asociar un evento con un objeto específico en tu programa.
 
+TODO ver este enlace para ver una guia sobre el kqueue
+https://habr.com/en/articles/600123/

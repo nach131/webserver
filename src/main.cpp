@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/11 14:35:05 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/12 23:08:37 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,13 @@
 #include "WebServer.hpp"
 #include "ServerConfig.hpp"
 #include "AdminServer.hpp"
+
+void setSignals(int sig)
+{
+	std::cout << std::endl
+			  << "ADIOSSSSSSSSSSSSSS" << std::endl;
+	exit(sig);
+}
 
 void checkArg(int argc, char **argv)
 {
@@ -37,11 +44,10 @@ int main(int argc, char **argv)
 {
 	try
 	{
-//		(void)argc;
-//		(void)argv;
+		signal(SIGINT, &setSignals);
 		checkArg(argc, argv);
 
-// TODO
+		// TODO
 		ServerConfig config("./conf_web/mime.type");	// comprobar que exita el fichero mime.type
 		config.loadConf(argv[1]);
 
