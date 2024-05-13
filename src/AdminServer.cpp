@@ -6,13 +6,13 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/13 13:56:10 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/13 17:13:34 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "AdminServer.hpp"
 
-#define NUM_CLIENTS 10
+// #define NUM_CLIENTS 10
 #define MAX_EVENTS 32
 #define MAX_MSG_SIZE 8192
 
@@ -169,7 +169,9 @@ void printResponse(std::string header, std::string content)
 struct client_data
 {
 	int fd;
-} clients[NUM_CLIENTS];
+	std::string path;
+	std::string prePath;
+} clients[MAX_EVENTS];
 
 int getConnect(int fd)
 {
@@ -179,7 +181,7 @@ int getConnect(int fd)
 	return -1;
 }
 
-int addConnet(int fd)
+int addConnect(int fd)
 {
 	if (fd < 1)
 		return -1;
@@ -219,7 +221,7 @@ void AdminServer::run(int sockfd, int kq)
 			if (evList[i].ident == (unsigned long)sockfd)
 			{
 				int fd = accept(evList[i].ident, (struct sockaddr *)&addr, &socklen);
-				if (addConnet(fd) == 0)
+				if (addConnect(fd) == 0)
 				{
 					// EV_SET(&evSet, fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
 					// EV_FLAG0 PAR LA PRIMERA PETICION
