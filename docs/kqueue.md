@@ -26,7 +26,7 @@ Aqui podemos almacenar cualquier tipo de datos que desees en este campo para que
 
 
 
-## Eventos
+## Eventos filtros 
 
 En el contexto de `kqueue`, puedes usar varios eventos además de `EVFILT_READ`
 
@@ -41,3 +41,6 @@ En el contexto de `kqueue`, puedes usar varios eventos además de `EVFILT_READ`
 5. **EVFILT_VNODE**: Este evento se utiliza para notificar cambios en los atributos de un archivo o directorio en el sistema de archivos. Puedes usarlo para detectar cambios en archivos o directorios y realizar acciones en consecuencia.
 
 6. **EVFILT_PROC**: Este evento se utiliza para monitorear procesos. Puedes usarlo para recibir notificaciones cuando un proceso se inicia, se detiene o se cierra.
+
+TODO
+CREO QUE PARA LOS CGI USAREMOS EVFILT_PROC

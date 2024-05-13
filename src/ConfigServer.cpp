@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ConfigServer.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelona>        +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 20:29:26 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/07 13:44:03 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/11 18:55:52 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void ConfigServer::print() const
 	std::cout << "API Forward: " << _apiForward << std::endl;
 	std::cout << "API Port: " << _apiPort << std::endl;
 	std::cout << "first GET: " << _first << std::endl;
-	std::cout << "pre Path: " << _prePath << std::endl;
+	std::cout << "prePath: " << _prePath << std::endl;
 
 	std::cout << "Locations:" << std::endl;
 	for (std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.begin(); it != _locations.end(); ++it)

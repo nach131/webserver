@@ -28,7 +28,8 @@ struct kevent {
     short filter;        // Tipo de filtro de evento (por ejemplo, EVFILT_READ, EVFILT_WRITE)
     u_short flags;       // Opciones para controlar el comportamiento del evento
     u_int fflags;        // Opciones específicas del filtro de evento (por ejemplo, NOTE_READ, NOTE_WRITE)
-    intptr_t data;       // Datos adicionales asociados con el evento
+    intptr_t data;       // Datos adicionales asociados con el evento, si el filtro es EVFILT_READ
+                        // es el numero de bytes que hay para leer en el socket
     void *udata;         // Puntero de usuario para datos adicionales (opcionalmente utilizado por el usuario)
 };
 ```

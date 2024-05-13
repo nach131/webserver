@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/10 19:55:27 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/13 13:56:10 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,8 +222,8 @@ void AdminServer::run(int sockfd, int kq)
 				if (addConnet(fd) == 0)
 				{
 					// EV_SET(&evSet, fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
-					// EV_FLAG1 PAR LA PRIMERA PETICION
-					EV_SET(&evSet, fd, EVFILT_READ, EV_ADD | EV_FLAG1, 0, 0, NULL);
+					// EV_FLAG0 PAR LA PRIMERA PETICION
+					EV_SET(&evSet, fd, EVFILT_READ, EV_ADD | EV_FLAG0, 0, 0, NULL);
 					kevent(kq, &evSet, 1, NULL, 0, NULL);
 					// send_welcome_msg(fd);
 				}
@@ -243,7 +243,23 @@ void AdminServer::run(int sockfd, int kq)
 			} // read message from client
 			else if (evList[i].filter == EVFILT_READ)
 			{
-				std::cout << RED << "ESTO ES AKI\n";
+
+				//=========================================================================
+				// Manejo de flags para la primera peticion
+				if (evSet.flags & EV_FLAG0)
+				{
+					std::cout << "CON EV_FLAG0" << std::endl;
+					EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & EV_FLAG0, 0, 0, NULL);
+					kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
+				}
+				else if (evSet.flags | EV_FLAG0)
+				{
+					std::cout << "SIN EV_FLAG0" << std::endl;
+				}
+
+				// Colocar el evento en EVFILT_WRITE para enviar la respuesta
+				EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
+				kevent(kq, &evSet, 1, NULL, 0, NULL);
 
 				//=================DESDE AQUI==============================================
 				// Recibir datos del cliente
@@ -269,21 +285,23 @@ void AdminServer::run(int sockfd, int kq)
 				// TODO
 				printResponse(response.getHeader(), response.getContent());
 
-				//=========================================================================
-				// Manejo de flags para la primera lectura
-				if (evSet.flags & EV_FLAG1)
-				{
-					std::cout << "CON EV_FLAG1" << std::endl;
-					EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & ~EV_FLAG1, 0, 0, NULL);
-				}
-				else if (evSet.flags | EV_FLAG1)
-				{
-					std::cout << "SIN EV_FLAG1" << std::endl;
-				}
+				_config.print();
 
 				//=========================================================================
-				sendResGet(evList[i].ident, response.getHeader(), response.getContent());
+				_header = response.getHeader();
+				_content = response.getContent();
 				//=========================================================================
+			}
+			// Escribir en el socket cuando esté listo para escribir
+			else if (evList[i].filter == EVFILT_WRITE)
+			{
+				std::cout << "ESTO ES EVFILT_WRITE" << std::endl;
+				// Enviar la respuesta al cliente
+				sendResGet(evList[i].ident, _header, _content);
+
+				// Después de enviar la respuesta, eliminar el evento EVFILT_WRITE
+				EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
+				kevent(kq, &evSet, 1, NULL, 0, NULL);
 			}
 		}
 	}

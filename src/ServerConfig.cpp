@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/02 20:12:59 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/12 14:43:35 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,24 +20,35 @@ void ServerConfig::loadConf(const std::string &filename)
 {
 	(void)filename;
 	_serverName = "locahost";
-	_rootDirectory = "dist/";
+	_rootDirectory = "./dist";
 
-	_errorPages[404] = "config_web/error/404/index.html";
-	_errorPages[405] = "config_web/error/405/index.html";
+	_errorPages[404] = "./config_web/error/404/index.html";
+	_errorPages[405] = "./config_web/error/405/index.html";
 
+	// root
 	_locations["/"] = std::map<std::string, std::string>();
 	_locations["/"]["autoindex"] = "off";
 	_locations["/"]["allow_methods"] = "DELETE POST GET";
+	// files
 	_locations["/files"] = std::map<std::string, std::string>();
+	_locations["/files"]["root"] = "./dist";
 	_locations["/files"]["autoindex"] = "on";
+	_locations["/files"]["index"] = "files.html";
 	_locations["/files"]["allow_methods"] = "GET";
+	// colors
+	_locations["/colors"] = std::map<std::string, std::string>();
+	_locations["/colors"]["root"] = "./dist";
+	_locations["/colors"]["autoindex"] = "off";
+	_locations["/colors"]["index"] = "colors.html";
+	_locations["/colors"]["allow_methods"] = "GET";
+	// cgi
 	_locations["/cgi_bin"] = std::map<std::string, std::string>();
 	_locations["/cgi_bin"]["autoindex"] = "off";
 	_locations["/cgi_bin"]["allow_methods"] = "GET";
 	_locations["/cgi_bin"]["root"] = "./";
-	_locations["/cgi_bin"]["index"] = "calc.py";
-	_locations["/cgi_bin"]["cgi_path"] = "/usr/bin/python3 /bin/bash";
-	_locations["/cgi_bin"]["cgi_ext"] = "cgi_ext .py .sh";
+	_locations["/cgi_bin"]["index"] = "photo.py";
+	_locations["/cgi_bin"]["cgi_path"] = "/bin/bash";
+	_locations["/cgi_bin"]["cgi_ext"] = ".py";
 }
 
 void ServerConfig::print() const
@@ -53,7 +64,7 @@ void ServerConfig::print() const
 	std::cout << "API Forward: " << _apiForward << std::endl;
 	std::cout << "API Port: " << _apiPort << std::endl;
 	std::cout << "first GET: " << _first << std::endl;
-	std::cout << "pre Path: " << _prePath << std::endl;
+	std::cout << "prePath: " << _prePath << std::endl;
 
 	std::cout << "Locations:" << std::endl;
 	for (std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.begin(); it != _locations.end(); ++it)
