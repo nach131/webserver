@@ -37,7 +37,7 @@ $(OBJS_D)/%.o:src/%.cpp
 
 $(NAME):	$(OBJ)
 			@printf "$(CYAN)Compiling $(MAGENTA)$(NAME)$(RESET)\n"
-			$(CC) $(CFLAGS) $(FSANIT) $(OBJ) -o $(NAME)
+			@$(CC) $(CFLAGS) $(FSANIT) $(OBJ) -o $(NAME)
 			@printf "$(DONE)DONE$(RESET)\n"
 
 all:		$(NAME)

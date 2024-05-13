@@ -24,6 +24,7 @@ Aqui podemos almacenar cualquier tipo de datos que desees en este campo para que
 
 3. **Identificadores de objetos**: En algunos casos, el campo `udata` puede utilizarse simplemente para almacenar un identificador único asociado con el evento. Esto puede ser útil cuando necesitas asociar un evento con un objeto específico en tu programa.
 
+<<<<<<< HEAD
 
 
 ## Eventos
@@ -41,3 +42,7 @@ En el contexto de `kqueue`, puedes usar varios eventos además de `EVFILT_READ`
 5. **EVFILT_VNODE**: Este evento se utiliza para notificar cambios en los atributos de un archivo o directorio en el sistema de archivos. Puedes usarlo para detectar cambios en archivos o directorios y realizar acciones en consecuencia.
 
 6. **EVFILT_PROC**: Este evento se utiliza para monitorear procesos. Puedes usarlo para recibir notificaciones cuando un proceso se inicia, se detiene o se cierra.
+=======
+TODO ver este enlace para ver una guia sobre el kqueue
+https://habr.com/en/articles/600123/
+>>>>>>> 5fbc4ae91df505788fb1ab35c9b38a32ad4f70d8

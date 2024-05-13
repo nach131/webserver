@@ -6,7 +6,11 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2024/05/08 17:54:29 by nmota-bu         ###   ########.fr       */
+=======
+/*   Updated: 2024/05/11 13:25:41 by vduchi           ###   ########.fr       */
+>>>>>>> 5fbc4ae91df505788fb1ab35c9b38a32ad4f70d8
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +149,7 @@ void printEvent(const struct kevent &event)
 	std::cout << RESET;
 }
 
-void printPeticion(const std::string buffer)
+void printPeticion(const char *buffer)
 {
 	std::cout << CYAN "[ Mensaje del cliente: ]\n"
 			  << buffer << RESET << std::endl;
@@ -166,12 +170,19 @@ void printResponse(std::string header, std::string content)
 
 void AdminServer::run()
 {
-	int sockfd, newsockfd;
+	// int sockfd, newsockfd;
+	// socklen_t client;
+	// char buffer[1024];
+	// struct sockaddr_in serverAddr, clientAddr;
+	// int n;
+
+	int newsockfd;
 	socklen_t client;
-	char buffer[1024];
-	struct sockaddr_in serverAddr, clientAddr;
+	// char buffer[1024];
+	struct sockaddr_in clientAddr;
 	int n;
 
+	/*
 	// Configurar la dirección del servidor
 	memset(&serverAddr, 0, sizeof(serverAddr));
 	serverAddr.sin_family = AF_INET;
@@ -200,6 +211,7 @@ void AdminServer::run()
 
 	// Escuchar por conexiones entrantes
 	listen(sockfd, 5);
+	*/
 
 	std::cout << "sockfd: " << sockfd << std::endl;
 	std::cout << "Servidor esperando conexiones..." << std::endl;	
@@ -211,13 +223,18 @@ void AdminServer::run()
 	if (kq == 0)
 	{
 		std::cerr << "Error creating kqueue: " << strerror(errno) << std::endl;
-		close(sockfd);
+		close(_config.getServerSocket());
 		return;
 	}
 
 	// Configurar evento para el socket de escucha
+<<<<<<< HEAD
 	struct kevent eventRead;
 	EV_SET(&eventRead, sockfd, EVFILT_READ, EV_ADD, 0, 0, NULL);
+=======
+	struct kevent change;
+	EV_SET(&change, _config.getServerSocket(), EVFILT_READ, EV_ADD, 0, 0, NULL);
+>>>>>>> 5fbc4ae91df505788fb1ab35c9b38a32ad4f70d8
 
 	// Registro de sockfd para eventos de lectura
 	if (kevent(kq, &eventRead, 1, NULL, 0, NULL) == -1)
@@ -261,6 +278,7 @@ void AdminServer::run()
 
 		for (int i = 0; i < nev; ++i)
 		{
+<<<<<<< HEAD
 			std::cout << "i: "<< i << ", nev: " << nev << std::endl;
 			
 
@@ -283,9 +301,12 @@ if (events[i].ident == (unsigned long)sockfd)
 
 
 			if (events[i].ident == (unsigned long)sockfd)
+=======
+			if (events[i].ident == (unsigned long)_config.getServerSocket())
+>>>>>>> 5fbc4ae91df505788fb1ab35c9b38a32ad4f70d8
 			{
 				// Aceptar la conexión entrante
-				newsockfd = accept(sockfd, (struct sockaddr *)&clientAddr, &client);
+				newsockfd = accept(_config.getServerSocket(), (struct sockaddr *)&clientAddr, &client);
 				// newsockfd = -1; // error
 				if (newsockfd < 0)
 				{
@@ -311,8 +332,8 @@ if (events[i].ident == (unsigned long)sockfd)
 				else
 				{
 					// Recibir datos del cliente
-					memset(buffer, 0, sizeof(buffer));
-					n = recv(newsockfd, buffer, sizeof(buffer), 0);
+					// memset(buffer, 0, sizeof(buffer));
+					n = recv(newsockfd, _config.getBuffer(), 1024, 0);
 					if (n < 0)
 					{
 						std::cerr << "Error al recibir datos: " << strerror(errno) << std::endl;
@@ -322,10 +343,10 @@ if (events[i].ident == (unsigned long)sockfd)
 
 					//===================PETICION==============================================
 					// TODO
-					printPeticion(buffer);
+					printPeticion(_config.getBuffer());
 					//===================PARSING==============================================
 
-					HTTPRequest request(buffer);
+					HTTPRequest request(_config.getBuffer());
 					// TODO
 					request.print();
 
@@ -352,7 +373,7 @@ if (events[i].ident == (unsigned long)sockfd)
 							uploadFile(newsockfd);
 						}
 						else
-							sendResPost(newsockfd, response.getHeader().c_str(), response.getContent(), buffer);
+							sendResPost(newsockfd, response.getHeader().c_str(), response.getContent(), _config.getBuffer());
 					}
 
 					else if (request.getHeader("Method") == "DELETE")
@@ -374,5 +395,5 @@ if (events[i].ident == (unsigned long)sockfd)
 	}
 
 	// Cerrar el socket del servidor (esto no se alcanzará)
-	close(sockfd);
+	close(_config.getServerSocket());
 }

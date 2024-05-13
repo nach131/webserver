@@ -6,20 +6,22 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/08 19:36:41 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/11 13:26:20 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SERVERCONFIG_HPP
 # define SERVERCONFIG_HPP
 
-# include <map>
-# include <vector>
-# include <fstream>
-# include <sstream>
-# include <iostream>
-# include "Colors.hpp"
-# include "MIMETypeReader.hpp"
+#include <map>
+#include <vector>
+#include <fstream>
+#include <sstream>
+#include <iostream>
+#include <string.h>
+#include <netinet/in.h>
+#include "Colors.hpp"
+#include "MIMETypeReader.hpp"
 
 //class MIMETypeReader;
 
@@ -41,6 +43,10 @@ class ServerConfig
 		bool _first;
 		int _port;
 		int _apiPort;
+		int _serverSocketFd;
+		char *_buffer;
+		// std::string _buffer;
+		struct sockaddr_in _serverAddress;
 		std::string _serverName;
 		std::string _rootDirectory;
 		std::string _apiForward;
@@ -59,14 +65,19 @@ class ServerConfig
 		void print() const;
 		
 		int getPort() const;
+		int getApiPort() const;
+		int getServerSocket() const;
+		std::string getApiForward() const;
 		std::string getServerName() const;
 		std::string getRootDirectory() const;
 		std::string getErrorPage(int errorCode) const;
-		std::string getApiForward() const;
-		int getApiPort() const;
-		std::map<std::string, std::map<std::string, std::string> > getLocation() const;
 		std::string getContentType(const std::string &extension) const;
-		
+		std::map<std::string, std::map<std::string, std::string> > getLocation() const;
+
+		char *getBuffer() const;
+		void setBuffer(char *buf);
+		// struct sockaddr_in getServerAddress() const; No se si es necesario
+
 		bool getFirst() const;
 		std::string getPrePath() const;
 		
@@ -75,8 +86,9 @@ class ServerConfig
 
 		int checkLine(std::string & line);
 		void checkSyntax(std::vector<std::string> & arr);
+		void parseError(std::string, int);
 
-		class ConfErrorException : std::runtime_error
+		class ConfErrorException : public std::runtime_error
 		{
 			public:
 				ConfErrorException(const std::string &);
