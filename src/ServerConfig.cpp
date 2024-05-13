@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerConfig.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/11 14:34:23 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/13 20:15:52 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,44 +49,51 @@ ServerConfig::~ServerConfig() { delete _buffer; }
 
 void ServerConfig::loadConf(const std::string &filename)
 {
-	(void)filename;
-	_serverName = "locahost";
-	_rootDirectory = "dist/";
+	// (void)filename;
+	// _serverName = "locahost";
+	// _rootDirectory = "dist/";
 
-	_errorPages[404] = "config_web/error/404/index.html";
-	_errorPages[405] = "config_web/error/405/index.html";
+	// _errorPages[404] = "config_web/error/404/index.html";
+	// _errorPages[405] = "config_web/error/405/index.html";
 
-	_locations["/"] = std::map<std::string, std::string>();
-	_locations["/"]["autoindex"] = "off";
-	_locations["/"]["allow_methods"] = "DELETE POST GET";
-	_locations["/files"] = std::map<std::string, std::string>();
-	_locations["/files"]["autoindex"] = "on";
-	_locations["/files"]["allow_methods"] = "GET";
-	_locations["/cgi_bin"] = std::map<std::string, std::string>();
-	_locations["/cgi_bin"]["autoindex"] = "off";
-	_locations["/cgi_bin"]["allow_methods"] = "GET";
-	_locations["/cgi_bin"]["root"] = "./";
-	_locations["/cgi_bin"]["index"] = "calc.py";
-	_locations["/cgi_bin"]["cgi_path"] = "/usr/bin/python3 /bin/bash";
-	_locations["/cgi_bin"]["cgi_ext"] = "cgi_ext .py .sh";
+	// _locations["/"] = std::map<std::string, std::string>();
+	// _locations["/"]["autoindex"] = "off";
+	// _locations["/"]["allow_methods"] = "DELETE POST GET";
+	// _locations["/files"] = std::map<std::string, std::string>();
+	// _locations["/files"]["autoindex"] = "on";
+	// _locations["/files"]["allow_methods"] = "GET";
+	// _locations["/cgi_bin"] = std::map<std::string, std::string>();
+	// _locations["/cgi_bin"]["autoindex"] = "off";
+	// _locations["/cgi_bin"]["allow_methods"] = "GET";
+	// _locations["/cgi_bin"]["root"] = "./";
+	// _locations["/cgi_bin"]["index"] = "calc.py";
+	// _locations["/cgi_bin"]["cgi_path"] = "/usr/bin/python3 /bin/bash";
+	// _locations["/cgi_bin"]["cgi_ext"] = "cgi_ext .py .sh";
 
-//	std::string line;
-//	std::ifstream in(filename);
-//	std::vector<std::string> arr;
-//	
-//	if (!in.good())
-//		throw e_cee("File doesn't exist");
-//	
-//	while (getline(in, line))
-//	{
-//		std::cout << "Line: -" << (int)(line[0] - 48) << "- -" << line[0] << "- -" << line[1] << "-" << std::endl;
-//		arr.push_back(line);
-//	}
-//	in.close();
-//	try { checkSyntax(arr); }
-//	catch (std::runtime_error & ex) { throw e_cee(ex.what()); }
-//	std::cout << "Syntax correct!" << std::endl;
-//	exit(0);
+	std::string line;
+	std::ifstream in(filename);
+	std::vector<std::string> arr;
+
+	if (!in.good())
+		throw e_cee("File doesn't exist");
+
+	while (getline(in, line))
+	{
+		std::cout << "Line: -" << (int)(line[0] - 48) << "- -" << line[0] << "- -" << line[1] << "-" << std::endl;
+		arr.push_back(line);
+	}
+	in.close();
+	try
+	{
+		checkSyntax(arr);
+		fillVariables(arr);
+	}
+	catch (std::runtime_error &ex)
+	{
+		throw e_cee(ex.what());
+	}
+	std::cout << "Syntax correct!" << std::endl;
+	exit(0);
 }
 
 void ServerConfig::print() const
@@ -231,6 +238,14 @@ void ServerConfig::parseError(std::string str, int n)
 	std::stringstream ss;
 	ss << str << n;
 	throw std::runtime_error(ss.str());
+}
+
+void ServerConfig::fillVariables(std::vector<std::string> &arr)
+{
+	std::string line, el;
+	for (size_t i = 0; i < arr.size(); i++)
+	{
+	}
 }
 
 ServerConfig::ConfErrorException::ConfErrorException (const std::string & msg)

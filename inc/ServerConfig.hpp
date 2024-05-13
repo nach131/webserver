@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerConfig.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/11 13:26:20 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/13 20:14:17 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,20 +21,10 @@
 #include <string.h>
 #include <netinet/in.h>
 #include "Colors.hpp"
+#include "Location.hpp"
 #include "MIMETypeReader.hpp"
 
 //class MIMETypeReader;
-
-class Location
-{
-	private:
-		Location();
-		std::map<std::string, std::string> _val;
-
-	public:
-		Location(const std::vector<std::string> &, size_t &);
-		~Location();
-};
 
 class ServerConfig
 {
@@ -63,7 +53,7 @@ class ServerConfig
 		
 		void loadConf(const std::string &filename);
 		void print() const;
-		
+
 		int getPort() const;
 		int getApiPort() const;
 		int getServerSocket() const;
@@ -80,13 +70,15 @@ class ServerConfig
 
 		bool getFirst() const;
 		std::string getPrePath() const;
-		
-		void setFirst(bool action);
-		void setPrePath(const std::string &path);
 
-		int checkLine(std::string & line);
-		void checkSyntax(std::vector<std::string> & arr);
+		void setFirst(bool);
+		void setPrePath(const std::string &);
+
+		int checkLine(std::string &);
+		void checkSyntax(std::vector<std::string> &);
 		void parseError(std::string, int);
+
+		void fillVariables(std::vector<std::string> &);
 
 		class ConfErrorException : public std::runtime_error
 		{
