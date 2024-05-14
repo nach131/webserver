@@ -2,15 +2,16 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <string>
 
 int main(int argc, char **argv)
 {
 	std::string line = "Hola     que    tal";
 	std::stringstream ss(line);
-	std::string el;
+	std::string key, value;
 
-	while (getline(el, ss))
+	while (ss >> key >> value)
 	{
-		std::cout << "Word: -" << el << "-" << std::endl;
+		std::cout << "Key: -" << key << "- -" << value << "-" << std::endl;
 	}
 }

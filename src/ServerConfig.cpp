@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/13 20:15:52 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/14 18:46:48 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,6 @@ void ServerConfig::loadConf(const std::string &filename)
 		throw e_cee(ex.what());
 	}
 	std::cout << "Syntax correct!" << std::endl;
-	exit(0);
 }
 
 void ServerConfig::print() const
@@ -193,20 +192,12 @@ void ServerConfig::checkSyntax(std::vector<std::string> & arr)
 	{
 		lineNum++;
 		check = true;
-//		std::cout << "Num: " << lineNum << " Line ->" << arr[i] << std::endl;
 		size_t j = 0;
-		for ( ; arr[i][j] != 0; j++)
-		{
-//			std::cout << "Char: -" << arr[i][j] << "- Val:" << (int)arr[i][j] << std::endl;
+		for (; arr[i][j] != 0; j++)
 			if (arr[i][j] == '#')
 				check = false;
-		}
-//		std::cout << "Here Char: -" << arr[i][j] << "- Val:" << (int)arr[i][j] << std::endl;
 		if (!check || arr[i].length() == 0 || arr[i][j - 1] == 9)
-		{
-//			std::cout << "continue" << std::endl;
 			continue;
-		}
 		if (arr[i].find(";") == std::string::npos
 			&& arr[i].find("location ") == std::string::npos
 			&& arr[i].find("}") == std::string::npos)
@@ -228,6 +219,17 @@ void ServerConfig::checkSyntax(std::vector<std::string> & arr)
 				parseError("expected block before } at line ", lineNum);
 			if (arr[i][l] == ';') { break; }
 		}
+		std::string key, value;
+		std::stringstream ss(arr[i]);
+		ss >> key;
+		if (!_kv.checkKey(key))
+			parseError("Key " + key + " not valid", lineNum);
+		while (ss >> value)
+		{
+			if (_kv.checkValue(key, value))
+				addValue(key, value);
+			// TODO Controlar la key y si existe, cojer el valor
+		}
 	}
 	if (brack > 0)
 		parseError("server block not closed at line ", lineNum);
@@ -242,9 +244,14 @@ void ServerConfig::parseError(std::string str, int n)
 
 void ServerConfig::fillVariables(std::vector<std::string> &arr)
 {
-	std::string line, el;
+	std::string el;
 	for (size_t i = 0; i < arr.size(); i++)
 	{
+		std::stringstream ss(arr[i]);
+		while (ss >> el)
+		{
+			// TODO Controlar la key y si existe, cojer el valor
+		}
 	}
 }
 

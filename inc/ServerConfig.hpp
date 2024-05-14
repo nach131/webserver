@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/13 20:14:17 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/14 18:33:41 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include <string.h>
 #include <netinet/in.h>
 #include "Colors.hpp"
+#include "KeyValue.hpp"
 #include "Location.hpp"
 #include "MIMETypeReader.hpp"
 
@@ -45,6 +46,7 @@ class ServerConfig
 		std::map<std::string, std::map<std::string, std::string> > _locations;
 		std::map<std::string, std::string> _gen;
 		std::multimap<std::string, Location *> _loc;
+		KeyValue _kv;
 		MIMETypeReader _mime;
 
 	public:
