@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/15 11:51:45 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/15 21:30:51 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,11 @@ void ServerConfig::loadConf(const std::string &filename)
 	_locations["/_TEST"]["autoindex"] = "off";
 	_locations["/_TEST"]["root"] = "/Users/nacho/Dropbox/00_42Barcelona/42Barcelona/C5/webserver/dist";
 	_locations["/_TEST"]["allow_methods"] = "GET";
+// EARTH
+	_locations["/earth"] = std::map<std::string, std::string>();
+	_locations["/earth"]["autoindex"] = "off";
+	_locations["/earth"]["root"] = "/Users/nacho/Dropbox/00_42Barcelona/42Barcelona/C5/webserver/dist_1";
+	_locations["/earth"]["allow_methods"] = "GET";
 
 	// NO ALLOWED
 	_locations["/nada"] = std::map<std::string, std::string>();

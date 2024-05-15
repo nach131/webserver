@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/15 18:05:12 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/15 21:24:26 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,10 +107,12 @@ void HTTPRes::methodGet()
 	std::string path = _request.getHeader("Path");
 
 	std::cout << MAGENTA;
-	if (isFile(path))
-		file();
-	else
-		folder();
+
+	isFile(path) ? file() : folder();
+	// if (isFile(path))
+	// 	file();
+	// else
+	// 	folder();
 
 	std::cout << RESET;
 }
