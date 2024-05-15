@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/15 17:48:10 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/15 18:05:12 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,64 +48,11 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config) : _request(re
 
 HTTPRes::~HTTPRes() {}
 
-void HTTPRes::rootPath()
-{
-
-	std::string path = _request.getHeader("Path");
-	std::string extension = getExtension(path);
-
-	_content = readFile("./dist/index.html");
-
-	if (!_content.empty())
-		_header.addOne(_request.getHeader("Version"), "200 OK");
-	else
-		_header.addOne(_request.getHeader("Version"), "404 Not Found");
-
-	// esto es solo para la raiz
-	_header.addField("Content-Type", "text/html; charset=UTF-8");
-}
-
-std::string const HTTPRes::OtherPath() const
-{
-	std::string path;
-	if (_config->getFirst() == false)
-		path = _config->getRootDirectory() + _request.getHeader("Path");
-	else
-	{
-		std::string post = _request.getHeader("Path");
-		path = _config->getPrePath() + post;
-		// TODO hay que quitar los locates del pricipo de los errores
-		// Error al abrir el archivo ./conf_web/error/404/files/script.js
-	}
-	std::cout << MAGENTA << path << RESET << std::endl;
-	return path;
-}
-
-void HTTPRes::rootOtherFiles()
-{
-	// std::string path = _request.getHeader("Path");
-	std::string path = OtherPath();
-
-	std::string extension = getExtension(path);
-
-	// _content = readFile(_config->getRootDirectory() + path);
-	_content = readFile(path);
-
-	// comprueba si el fichero a pasar tiene datos
-	if (!_content.empty())
-	{
-		_header.addOne(_request.getHeader("Version"), "200 OK");
-		_header.addField("Content-Type", _config->getContentType(extension));
-	}
-	else
-		error404();
-}
-
 //=========================================================================
 
-void HTTPRes::createContent(std::string filePath)
+void HTTPRes::createContent(std::string filePath, bool file)
 {
-_content = readFile(filePath);
+	_content = readFile(filePath);
 
 	// comprueba si el fichero a pasar tiene datos
 	if (!_content.empty())
@@ -115,7 +62,7 @@ _content = readFile(filePath);
 		_header.addField("Content-Type", _config->getContentType(extension));
 	}
 	else
-		error404();
+	    file ? error404() : error403();
 }
 
 void HTTPRes::folder()
@@ -126,14 +73,20 @@ void HTTPRes::folder()
 	std::string filePath;
 
 	if (index.empty())
-		filePath = _config->getRoot(_location) + _request.getHeader("Path") + "index.html";
+	{
+		if (_location == "/")
+			filePath = _config->getRoot(_location) + _request.getHeader("Path") + "index.html";
+		else
+			filePath = _config->getRoot(_location) + _request.getHeader("Path") + "/index.html";
+	}
 	else
 		filePath = _config->getRoot(_location) + _request.getHeader("Path") + "/" + index;
 
+	std::cout << _location << std::endl;
 	std::cout << index << std::endl;
 	std::cout << filePath << std::endl;
 
-	createContent(filePath);
+	createContent(filePath, false);
 }
 
 void HTTPRes::file()
@@ -146,62 +99,20 @@ void HTTPRes::file()
 	std::cout << _config->getRoot(_location) << std::endl;
 	std::cout << filePath << std::endl;
 
-
-	createContent(filePath);
-
+	createContent(filePath, true);
 }
 
 void HTTPRes::methodGet()
 {
 	std::string path = _request.getHeader("Path");
 
-	std::cout << _location << std::endl;
-
 	std::cout << MAGENTA;
 	if (isFile(path))
 		file();
 	else
 		folder();
-		
+
 	std::cout << RESET;
-
-	//=========================================================================
-
-	// if (path == "/")
-	// {
-	// 	// TODO
-	// 	// si no hay index.html, enviar 403 Forbidden
-	// 	std::cout << ORANGE << "RAIZ\n";
-	// 	rootPath();
-	// }
-	// // si tiene extension.
-	// else if (isFile(path))
-	// 	rootOtherFiles();
-	// else if (!isFile(path))
-	// {
-	// 	std::cout << ORANGE << "Es una carpeta\n"
-	// 			  << RESET;
-
-	// 	if (isUrlAllowed(path))
-	// 	{
-	// 		// AQUI LOS LOCATION PERMITIDOS
-	// 		std::cout << ORANGE << "PERMITIDO\n"
-	// 				  << RESET;
-	// 	}
-	// 	else
-	// 	{
-	// 		// AQUI error 404
-	// 		std::cout << RED << "NO PERMITIDO\n"
-	// 				  << RESET;
-	// 		error404();
-	// 	}
-	// }
-	// // else
-	// // {
-	// // 	std::cout << ORANGE << "otros dentro de raiz\n"
-	// // 			  << RESET;
-	// // 	_header.addField("Extenxion", "Otros");
-	// // }
 }
 
 void HTTPRes::exploreFiles()
@@ -254,10 +165,13 @@ std::string const HTTPRes::getContent() const { return _content; }
 
 void HTTPRes::error404()
 {
-	// TODO
 	_header.addOne(_request.getHeader("Version"), "404 Not Found");
 	_content = readFile("./conf_web/error/basico/404.html");
-	// poner el path en variable
-	_config->setFirst(false);
-	_config->setPrePath("./conf_web/error/404");
 }
+
+void HTTPRes::error403()
+{
+	_header.addOne(_request.getHeader("Version"), "403 Forbidden");
+	_content = readFile("./conf_web/error/basico/403.html");
+}
+
