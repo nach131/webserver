@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/15 14:26:57 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/15 17:48:10 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,18 +27,18 @@ void HTTPRes::last()
 HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config) : _request(request), _config(config)
 {
 	std::string method = request.getHeader("Method");
-	std::string path = _request.getLocation();
+	_location = _request.getLocation();
 
-	if (method == "GET" && _config->isLocationAllowed(path) && _config->isMethodAllowed(path, "GET") && _config->isLocationOn(path))
+	if (method == "GET" && _config->isLocationAllowed(_location) && _config->isMethodAllowed(_location, "GET") && _config->isLocationOn(_location))
 	{
 		std::cout << "FILES EXPLORER" << std::endl;
 		exploreFiles();
 	}
-	else if (method == "GET" && _config->isLocationAllowed(path) && _config->isMethodAllowed(path, "GET"))
+	else if (method == "GET" && _config->isLocationAllowed(_location) && _config->isMethodAllowed(_location, "GET"))
 		methodGet();
-	else if (method == "POST" && _config->isMethodAllowed(path, "POST"))
+	else if (method == "POST" && _config->isMethodAllowed(_location, "POST"))
 		methodPost();
-	else if (method == "DELETE" && _config->isMethodAllowed(path, "DELETE"))
+	else if (method == "DELETE" && _config->isMethodAllowed(_location, "DELETE"))
 		methodDelete();
 	else
 		methodErr();
@@ -103,34 +103,66 @@ void HTTPRes::rootOtherFiles()
 
 //=========================================================================
 
-void HTTPRes::locateOK(const std::string &path)
+void HTTPRes::createContent(std::string filePath)
 {
-	std::string absolutePath;
-	std::string rootPath = _config->getRoot(path);
-	std::string index = _config->getIndex(path);
+_content = readFile(filePath);
 
-	absolutePath = rootPath + path;
-	std::cout << absolutePath << std::endl;
-	if (!index.empty())
-		std::cout << " index: " << index << std::endl;
+	// comprueba si el fichero a pasar tiene datos
+	if (!_content.empty())
+	{
+		std::string extension = getExtension(filePath);
+		_header.addOne(_request.getHeader("Version"), "200 OK");
+		_header.addField("Content-Type", _config->getContentType(extension));
+	}
 	else
-		std::cout << " index: " << "index.html" << std::endl;
+		error404();
+}
+
+void HTTPRes::folder()
+{
+	std::cout << "CARPETA" << std::endl;
+
+	std::string index = _config->getIndex(_location);
+	std::string filePath;
+
+	if (index.empty())
+		filePath = _config->getRoot(_location) + _request.getHeader("Path") + "index.html";
+	else
+		filePath = _config->getRoot(_location) + _request.getHeader("Path") + "/" + index;
+
+	std::cout << index << std::endl;
+	std::cout << filePath << std::endl;
+
+	createContent(filePath);
+}
+
+void HTTPRes::file()
+{
+	std::cout << "ES FICHERO" << std::endl;
+
+	std::string filePath = _config->getRoot(_location) + _request.getHeader("Path");
+
+	std::cout << _location << std::endl;
+	std::cout << _config->getRoot(_location) << std::endl;
+	std::cout << filePath << std::endl;
+
+
+	createContent(filePath);
+
 }
 
 void HTTPRes::methodGet()
 {
 	std::string path = _request.getHeader("Path");
 
+	std::cout << _location << std::endl;
+
 	std::cout << MAGENTA;
 	if (isFile(path))
-	{
-		std::cout << "ES FICHERO" << std::endl;
-		rootOtherFiles();
-	}
+		file();
 	else
-	{
-		std::cout << "CARPETA" << std::endl;
-	}
+		folder();
+		
 	std::cout << RESET;
 
 	//=========================================================================
