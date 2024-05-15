@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 00:08:38 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/22 15:15:49 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/15 12:30:21 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ public:
     HTTPRequest(const char *);
     ~HTTPRequest();
     const std::string &getHeader(const std::string name) const;
+     std::string getLocation() ;
 
     const std::map<std::string, std::string> &getMap() const;
 

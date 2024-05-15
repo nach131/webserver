@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/13 17:13:34 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/14 11:39:14 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,7 +175,7 @@ struct client_data
 
 int getConnect(int fd)
 {
-	for (int i = 0; i < NUM_CLIENTS; i++)
+	for (int i = 0; i < MAX_EVENTS; i++)
 		if (clients[i].fd == fd)
 			return i;
 	return -1;
@@ -223,7 +223,6 @@ void AdminServer::run(int sockfd, int kq)
 				int fd = accept(evList[i].ident, (struct sockaddr *)&addr, &socklen);
 				if (addConnect(fd) == 0)
 				{
-					// EV_SET(&evSet, fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
 					// EV_FLAG0 PAR LA PRIMERA PETICION
 					EV_SET(&evSet, fd, EVFILT_READ, EV_ADD | EV_FLAG0, 0, 0, NULL);
 					kevent(kq, &evSet, 1, NULL, 0, NULL);

@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/12 14:43:35 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/15 11:51:45 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,27 +28,38 @@ void ServerConfig::loadConf(const std::string &filename)
 	// root
 	_locations["/"] = std::map<std::string, std::string>();
 	_locations["/"]["autoindex"] = "off";
+	_locations["/"]["root"] = "/Users/nacho/Dropbox/00_42Barcelona/42Barcelona/C5/webserver/dist";
 	_locations["/"]["allow_methods"] = "DELETE POST GET";
 	// files
 	_locations["/files"] = std::map<std::string, std::string>();
-	_locations["/files"]["root"] = "./dist";
 	_locations["/files"]["autoindex"] = "on";
-	_locations["/files"]["index"] = "files.html";
+	_locations["/files"]["root"] = "/Users/nacho/Dropbox/00_42Barcelona/42Barcelona/C5/webserver/dist";
 	_locations["/files"]["allow_methods"] = "GET";
+	_locations["/files"]["index"] = "files.html";
 	// colors
 	_locations["/colors"] = std::map<std::string, std::string>();
-	_locations["/colors"]["root"] = "./dist";
 	_locations["/colors"]["autoindex"] = "off";
-	_locations["/colors"]["index"] = "colors.html";
+	_locations["/colors"]["root"] = "/Users/nacho/Dropbox/00_42Barcelona/42Barcelona/C5/webserver/dist";
 	_locations["/colors"]["allow_methods"] = "GET";
+	_locations["/colors"]["index"] = "colors.html";
 	// cgi
 	_locations["/cgi_bin"] = std::map<std::string, std::string>();
 	_locations["/cgi_bin"]["autoindex"] = "off";
+	_locations["/cgi_bin"]["root"] = "/Users/nacho/Dropbox/00_42Barcelona/42Barcelona/C5/webserver";
 	_locations["/cgi_bin"]["allow_methods"] = "GET";
-	_locations["/cgi_bin"]["root"] = "./";
 	_locations["/cgi_bin"]["index"] = "photo.py";
-	_locations["/cgi_bin"]["cgi_path"] = "/bin/bash";
+	_locations["/cgi_bin"]["cgi_path"] = "/usr/bin/python3";
 	_locations["/cgi_bin"]["cgi_ext"] = ".py";
+	// TEST
+	_locations["/_TEST"] = std::map<std::string, std::string>();
+	_locations["/_TEST"]["autoindex"] = "off";
+	_locations["/_TEST"]["root"] = "/Users/nacho/Dropbox/00_42Barcelona/42Barcelona/C5/webserver/dist";
+	_locations["/_TEST"]["allow_methods"] = "GET";
+
+	// NO ALLOWED
+	_locations["/nada"] = std::map<std::string, std::string>();
+	_locations["/nada"]["allow_methods"] = "";
+
 }
 
 void ServerConfig::print() const
@@ -57,7 +68,7 @@ void ServerConfig::print() const
 	std::cout << "[ Server Configuration ]" << std::endl;
 	std::cout << "Port: " << _port << std::endl;
 	std::cout << "Server Name: " << _serverName << std::endl;
-	std::cout << "Root Directory: " << _rootDirectory << std::endl;
+	// std::cout << "Root Directory: " << _rootDirectory << std::endl;
 	std::cout << "Error Pages:" << std::endl;
 	for (std::map<int, std::string>::const_iterator it = _errorPages.begin(); it != _errorPages.end(); ++it)
 		std::cout << "  " << it->first << ": " << it->second << std::endl;
@@ -106,6 +117,66 @@ std::string ServerConfig::getContentType(const std::string &extension) const
 	return _mime.getContentType(extension);
 }
 
+std::string ServerConfig::getRoot(const std::string &location) const {
+    std::map<std::string, std::map<std::string, std::string> >::const_iterator locIt = _locations.find(location);
+    if (locIt != _locations.end()) {
+        std::map<std::string, std::string>::const_iterator rootIt = locIt->second.find("root");
+        if (rootIt != locIt->second.end()) {
+            return rootIt->second;
+        }
+    }
+    return "";
+}
+
+std::string ServerConfig::getIndex(const std::string &location) const {
+    std::map<std::string, std::map<std::string, std::string> >::const_iterator locIt = _locations.find(location);
+    if (locIt != _locations.end()) {
+        std::map<std::string, std::string>::const_iterator rootIt = locIt->second.find("index");
+        if (rootIt != locIt->second.end()) {
+            return rootIt->second;
+        }
+    }
+    return "";
+}
+
+bool ServerConfig::isLocationAllowed(const std::string &path)
+{
+	std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.find(path);
+	if (it != _locations.end())
+		return true;
+	return false;
+}
+
+bool ServerConfig::isMethodAllowed(const std::string &path, const std::string &method) 
+{
+	std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.find(path);
+	for (std::map<std::string, std::string>::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
+	{
+		std::istringstream iss(it2->second);
+		std::string word;
+		while (iss >> word) // Leer cada palabra separada por espacios
+			if (word == method)
+				return true;
+	}
+	return false;
+}
+
+bool ServerConfig::isLocationOn(const std::string &path) 
+{
+	std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.find(path);
+	  if (it != _locations.end()) {
+        std::map<std::string, std::string>::const_iterator autoindexIt = it->second.find("autoindex");
+        if (autoindexIt != it->second.end()) {
+			if(autoindexIt->second == "on")
+            return true;
+        }
+    }
+    return false;
+}
+
+
+//=========================================================================
+
 bool ServerConfig::getFirst() const { return _first;}
 
 std::string ServerConfig::getPrePath() const {return _prePath;}
@@ -113,3 +184,8 @@ std::string ServerConfig::getPrePath() const {return _prePath;}
 void ServerConfig::setFirst(bool action){	_first = action;}
 
 void ServerConfig::setPrePath(const std::string &path) { _prePath = path; }
+
+
+// TODO 
+// poner 404 en location leerlo y ponerlo en una map con los string
+// si no hay 404 poner un generico como el de ejemplo

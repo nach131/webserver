@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:34:48 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/01 21:11:16 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/15 12:15:13 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,5 +28,6 @@ std::string readFile(const std::string &filePath);
 std::string getExtension(const std::string &path);
 std::string extractEndpoint(const std::string &url);
 bool isFile(const std::string& path);
+std::vector<std::string> split(const std::string &str, char delimiter);
 
 #endif

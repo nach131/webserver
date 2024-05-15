@@ -6,11 +6,12 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/04/30 10:23:09 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/15 14:02:52 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HTTPRequest.hpp"
+#include "WebServer.hpp"
 
 HTTPRequest::HTTPRequest(const char *buf)
 {
@@ -68,6 +69,15 @@ HTTPRequest::~HTTPRequest() {}
 const std::map<std::string, std::string> &HTTPRequest::getMap() const { return _map; }
 
 const std::string &HTTPRequest::getHeader(const std::string name) const { return _map.find(name)->second; }
+
+ std::string HTTPRequest::getLocation()  
+{
+	std::string path = getHeader("Path");
+	if (path == "/" || path == "/index.html") 
+		return "/";
+	 std::vector<std::string> parts = split(path, '/');
+	return "/" + parts[0];
+}
 
 void HTTPRequest::print()
 {

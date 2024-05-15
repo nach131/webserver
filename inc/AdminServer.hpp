@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:26:56 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/11 12:50:44 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/14 14:28:15 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ public:
 	~AdminServer();
 
 	void run(int sockfd, int kq);
+
+
 };
 
 #endif

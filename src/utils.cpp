@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/01 19:57:20 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/15 12:15:06 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,27 @@ std::string extractEndpoint(const std::string &url)
 	return endpoint;
 }
 
+ // Retorna true si:
+    // 1. Se encontró un punto ('.') en la cadena (found != std::string::npos).
+    // 2. El punto no es el último carácter de la cadena (found != path.size() - 1).
 bool isFile(const std::string& path) {
     std::size_t found = path.find_last_of(".");
     return (found != std::string::npos && found != path.size() - 1);
 }
+
+
+// Función para separar un string por un delimitador
+std::vector<std::string> split(const std::string &str, char delimiter) {
+    std::vector<std::string> tokens;
+    std::istringstream stream(str);
+    std::string token;
+
+    while (std::getline(stream, token, delimiter)) {
+        if (!token.empty()) {
+            tokens.push_back(token);
+        }
+    }
+
+    return tokens;
+}
+

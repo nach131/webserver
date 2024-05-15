@@ -2,6 +2,8 @@
 
 PUT http://localhost:8080
 
-### get
+### colors
+POST http://localhost:8080/colors
 
-GET http://localhost:8080/files`
+### get files
+GET http://localhost:8080/files

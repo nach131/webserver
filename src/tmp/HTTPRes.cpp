@@ -6,11 +6,21 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/15 14:26:57 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/14 11:36:51 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HTTPRes.hpp"
+
+bool HTTPRes::isUrlAllowed(const std::string &url) const
+{
+	std::map<std::string, std::map<std::string, std::string>> location = _config->getLocation();
+
+	std::map<std::string, std::map<std::string, std::string>>::const_iterator it = location.find(url);
+	if (it != location.end())
+		return true;
+	return false;
+}
 
 void HTTPRes::last()
 {
@@ -26,22 +36,60 @@ void HTTPRes::last()
 
 HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config) : _request(request), _config(config)
 {
-	std::string method = request.getHeader("Method");
-	std::string path = _request.getLocation();
 
-	if (method == "GET" && _config->isLocationAllowed(path) && _config->isMethodAllowed(path, "GET") && _config->isLocationOn(path))
+	std::string path = request.getHeader("Path");
+
+	std::string method = request.getHeader("Method");
+	if (method == "GET")
 	{
-		std::cout << "FILES EXPLORER" << std::endl;
-		exploreFiles();
+		if (path == "/")
+		{
+			// TODO
+			// si no hay index.html, enviar 403 Forbidden
+			std::cout << ORANGE << "RAIZ\n";
+			rootPath();
+		}
+		// si tiene extension.
+		else if (isFile(path))
+			rootOtherFiles();
+		else if (!isFile(path))
+		{
+			std::cout << ORANGE << "Es una carpeta\n"
+					  << RESET;
+
+			if (isUrlAllowed(path))
+			{
+				// AQUI LOS LOCATION PERMITIDOS
+				std::cout << ORANGE << "PERMITIDO\n"
+						  << RESET;
+			}
+			else
+			{
+				// AQUI error 404
+				std::cout << RED << "NO PERMITIDO\n"
+						  << RESET;
+				error404();
+			}
+		}
+		// else
+		// {
+		// 	std::cout << ORANGE << "otros dentro de raiz\n"
+		// 			  << RESET;
+		// 	_header.addField("Extenxion", "Otros");
+		// }
 	}
-	else if (method == "GET" && _config->isLocationAllowed(path) && _config->isMethodAllowed(path, "GET"))
-		methodGet();
-	else if (method == "POST" && _config->isMethodAllowed(path, "POST"))
+	else if (method == "POST")
+	{
 		methodPost();
-	else if (method == "DELETE" && _config->isMethodAllowed(path, "DELETE"))
-		methodDelete();
+	}
+	else if (method == "DELETE")
+	{
+		void methodDelete();
+	}
 	else
-		methodErr();
+	{
+		void methodErr();
+	}
 
 	last();
 }
@@ -101,83 +149,6 @@ void HTTPRes::rootOtherFiles()
 		error404();
 }
 
-//=========================================================================
-
-void HTTPRes::locateOK(const std::string &path)
-{
-	std::string absolutePath;
-	std::string rootPath = _config->getRoot(path);
-	std::string index = _config->getIndex(path);
-
-	absolutePath = rootPath + path;
-	std::cout << absolutePath << std::endl;
-	if (!index.empty())
-		std::cout << " index: " << index << std::endl;
-	else
-		std::cout << " index: " << "index.html" << std::endl;
-}
-
-void HTTPRes::methodGet()
-{
-	std::string path = _request.getHeader("Path");
-
-	std::cout << MAGENTA;
-	if (isFile(path))
-	{
-		std::cout << "ES FICHERO" << std::endl;
-		rootOtherFiles();
-	}
-	else
-	{
-		std::cout << "CARPETA" << std::endl;
-	}
-	std::cout << RESET;
-
-	//=========================================================================
-
-	// if (path == "/")
-	// {
-	// 	// TODO
-	// 	// si no hay index.html, enviar 403 Forbidden
-	// 	std::cout << ORANGE << "RAIZ\n";
-	// 	rootPath();
-	// }
-	// // si tiene extension.
-	// else if (isFile(path))
-	// 	rootOtherFiles();
-	// else if (!isFile(path))
-	// {
-	// 	std::cout << ORANGE << "Es una carpeta\n"
-	// 			  << RESET;
-
-	// 	if (isUrlAllowed(path))
-	// 	{
-	// 		// AQUI LOS LOCATION PERMITIDOS
-	// 		std::cout << ORANGE << "PERMITIDO\n"
-	// 				  << RESET;
-	// 	}
-	// 	else
-	// 	{
-	// 		// AQUI error 404
-	// 		std::cout << RED << "NO PERMITIDO\n"
-	// 				  << RESET;
-	// 		error404();
-	// 	}
-	// }
-	// // else
-	// // {
-	// // 	std::cout << ORANGE << "otros dentro de raiz\n"
-	// // 			  << RESET;
-	// // 	_header.addField("Extenxion", "Otros");
-	// // }
-}
-
-void HTTPRes::exploreFiles()
-{
-	_header.addOne(_request.getHeader("Version"), "200 OK");
-	_content = "FILE EXPLORER ";
-}
-
 void HTTPRes::methodPost()
 {
 	std::cout << "==========POST==========\n";
@@ -206,14 +177,15 @@ void HTTPRes::methodPost()
 
 void HTTPRes::methodDelete()
 {
-	std::cout << "==========DELETE==========\n";
+	std::cout << "==========DELTE==========\n";
 }
 
 void HTTPRes::methodErr()
 {
-	std::cout << "==========methodErr==========\n";
+	std::cout << "==========ERROR==========\n";
 	_header.addOne(_request.getHeader("Version"), "405 Method Not Allowed");
-	_content = readFile("./conf_web/error/basico/405.html");
+	_header.addField("Date", DateField());
+	_header.addField("42-Barcelona", "nmota-bu, vduchi");
 }
 
 std::string const HTTPRes::getHeader() const { return _header.getHeader(); }
@@ -224,8 +196,11 @@ void HTTPRes::error404()
 {
 	// TODO
 	_header.addOne(_request.getHeader("Version"), "404 Not Found");
-	_content = readFile("./conf_web/error/basico/404.html");
+	_content = readFile("./conf_web/error/404/index.html");
 	// poner el path en variable
 	_config->setFirst(false);
 	_config->setPrePath("./conf_web/error/404");
 }
+
+COPIA ANTES DE HACER CAMBIOS
+	primero metodos,

@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:32 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/02 19:40:05 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/15 14:08:51 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,19 @@ private:
 	HTTPRequest _request;
 	ServerConfig *_config;
 	std::string _content;
-    std::map<std::string, std::map<std::string, std::string> >  _locations; 
+    // std::map<std::string, std::map<std::string, std::string> >  _locations;
 
-	bool isUrlAllowed(const std::string& url) const ;
+	// bool isMethodAllowed(const std::string &path, const std::string &method) const;
+	std::string getRootLocate(const std::string &path) const;
+
 	void rootPath();
 	void rootOtherFiles();
 	void last();
 void error404();
 
 	std::string const OtherPath() const;
+
+	void locateOK(const std::string &path);
 
 public:
 	HTTPRes(const HTTPRequest &request, ServerConfig *config);
@@ -54,6 +58,8 @@ void methodGet();
 void methodPost();
 void methodDelete();
 void methodErr();
+
+void exploreFiles();
 
 // bool isUrlAllowed(const std::string& url, const std::string& method) const ;
 
