@@ -6,13 +6,13 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/16 14:28:53 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/16 17:47:54 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 // #include "../inc/ClientParsing.hpp"
 #include "Colors.hpp"
-// #include "WebServer.hpp"
+#include "WebServer.hpp"
 #include "ServerConfig.hpp"
 #include "AdminServer.hpp"
 
@@ -50,8 +50,8 @@ int main(int argc, char **argv)
 		ServerConfig config("./conf_web/mime.type");	// comprobar que exita el fichero mime.type
 		config.loadConf(argv[1]);
 
-		// AdminServer server(config);
-		// server.run();
+		AdminServer server(config);
+		server.run();
 		// config.print();
 	}
 	catch (const ServerConfig::ConfErrorException &e)

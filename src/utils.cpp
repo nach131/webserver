@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/01 19:57:20 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/16 17:42:27 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,4 +83,15 @@ std::string extractEndpoint(const std::string &url)
 bool isFile(const std::string& path) {
     std::size_t found = path.find_last_of(".");
     return (found != std::string::npos && found != path.size() - 1);
+}
+
+void takeOutSemiColumn(std::string &val)
+{
+	size_t i = 0;
+	size_t j = val.length() - 1;
+	for (; i < val.length(); i++)
+		if (val[i] == ';')
+			break;
+	for (; j >= i; j--)
+		val.pop_back();
 }

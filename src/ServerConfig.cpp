@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/16 15:08:04 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/16 17:45:49 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ void ServerConfig::loadConf(const std::string &filename)
 	{
 		checkSyntax(arr);
 		fillVariables(arr);
+		printLocations();
 	}
 	catch (std::runtime_error &ex)
 	{
@@ -120,6 +121,24 @@ void ServerConfig::print() const
 	std::cout << RESET;
 }
 
+void ServerConfig::printLocations()
+{
+	for (std::map<std::string, Location *>::iterator it = _loc.begin(); it != _loc.end(); it++)
+	{
+		std::cout << CYAN;
+		std::cout << "[ Location ]" << std::endl;
+		std::cout << "Path: " << it->first << std::endl;
+		std::cout << "Root: " << it->second->getRoot() << std::endl;
+		std::cout << "Index: " << it->second->getIndex() << std::endl;
+		std::cout << "Methods: " << it->second->getMethods() << std::endl;
+		std::cout << "AutoIndex: " << it->second->getAutoIndex() << std::endl;
+		std::map<std::string, std::string> tmp = it->second->getCGI();
+		for (std::map<std::string, std::string>::iterator it2 = tmp.begin(); it2 != tmp.end(); it2++)
+			std::cout << "Key: " << it2->first << " Value: " << it2->second << std::endl;
+		std::cout << RESET;
+	}
+}
+
 int ServerConfig::getPort() const { return _port; }
 
 int ServerConfig::getApiPort() const { return _apiPort; }
@@ -147,9 +166,9 @@ std::string ServerConfig::getContentType(const std::string &extension) const
 	return _mime.getContentType(extension);
 }
 
-std::map<std::string, std::map<std::string, std::string> > ServerConfig::getLocation() const
+std::map<std::string, Location *> ServerConfig::getLocation() const
 {
-	return _locations;
+	return _loc;
 }
 
 void ServerConfig::setBuffer(char *buf) { _buffer = buf; }
@@ -189,7 +208,6 @@ bool ServerConfig::findClosure(std::string &val)
 
 void ServerConfig::checkSyntax(std::vector<std::string> & arr)
 {
-	bool check = true;
 	int brack = 1, lineNum = 1;
 	std::stringstream ss;
 
@@ -202,12 +220,16 @@ void ServerConfig::checkSyntax(std::vector<std::string> & arr)
 	for (size_t i = 1; i < arr.size(); i++)
 	{
 		lineNum++;
-		check = true;
 		size_t j = 0;
+		bool check = false;
 		for (; arr[i][j] != 0; j++)
-			if (arr[i][j] == '#')
-				check = false;
-		if (!check || arr[i].length() == 0 || arr[i][j - 1] == '\t')
+		{
+			if (arr[i][j] != '#' && arr[i][j] != ' ' && arr[i][j] != '\t')
+				check = true;
+			else if (arr[i][j] == '#')
+				break;
+		}
+		if (!check || arr[i].length() == 0)
 			continue;
 		std::cout << "Array line: " << arr[i] << std::endl;
 		if (arr[i].find(";") == std::string::npos
@@ -249,15 +271,27 @@ void ServerConfig::checkSyntax(std::vector<std::string> & arr)
 					else
 						value.append(" " + el);
 				}
+				takeOutSemiColumn(value);
+				std::cout << CYAN << "Key: -" << key << "- Value: -" << value << "-" << RESET << std::endl;
 				if (key == "error_page" || key == "allow_methods")
-					_kv.checkComplex(key, value) ?: parseError("", lineNum);
-				std::cout << "Key: -" << key << "- Value: -" << value << "-" << std::endl;
-				// while (ss >> value)
-				// {
-				// if (_kv.checkValue(key, value))
-				// addValue(key, value);
-				// TODO Controlar la key y si existe, cojer el valor
-				// }
+				{
+					try
+					{
+						_kv.checkComplex(key, value);
+					}
+					catch (std::exception &ex)
+					{
+						parseError(ex.what(), lineNum);
+					}
+					// while (ss >> value)
+					// {
+					// if (_kv.checkValue(key, value))
+					// addValue(key, value);
+					// TODO Controlar la key y si existe, cojer el valor
+					// }
+				}
+				else if (_kv.checkValue(key, value))
+					parseError("Value " + value + " not valid for key " + key + " at line ", lineNum);
 			}
 		}
 	}
@@ -275,13 +309,19 @@ bool ServerConfig::parseError(std::string str, int n)
 
 void ServerConfig::fillVariables(std::vector<std::string> &arr)
 {
-	std::string el;
+	std::string el, value;
 	for (size_t i = 0; i < arr.size(); i++)
 	{
 		std::stringstream ss(arr[i]);
-		while (ss >> el)
+		if (arr[i].find("location") != std::string::npos)
 		{
-			// TODO Controlar la key y si existe, cojer el valor
+			ss >> el >> el;
+			std::cout << RED << "Location path: " << el << RESET << std::endl;
+			Location *newLoc = new Location(arr, i);
+			_loc[el] = newLoc;
+		}
+		else if (arr[i].find("}") == std::string::npos || findClosure(arr[i]))
+		{
 		}
 	}
 }

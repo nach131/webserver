@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/16 14:49:18 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/16 16:15:11 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,9 +86,8 @@ bool KeyValue::checkLocation(std::string &val)
 	return true;
 }
 
-bool KeyValue::checkComplex(std::string &key, std::string &val)
+void KeyValue::checkComplex(std::string &key, std::string &val)
 {
 	(void)key;
 	(void)val;
-	return true;
 }
