@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/16 09:57:41 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/16 11:47:40 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,6 @@ void ServerConfig::loadConf(const std::string &filename)
 	_locations["/cgi_bin"]["root"] = "/Users/nacho/Dropbox/00_42Barcelona/42Barcelona/C5/webserver";
 	_locations["/cgi_bin"]["allow_methods"] = "GET";
 	_locations["/cgi_bin"]["index"] = "photo.py";
-	_locations["/cgi_bin"]["cgi_path"] = "/usr/bin/python3";
-	_locations["/cgi_bin"]["cgi_ext"] = ".py";
 	// TEST
 	_locations["/_TEST"] = std::map<std::string, std::string>();
 	_locations["/_TEST"]["autoindex"] = "off";
