@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 # Imprime las cabeceras HTTP requeridas
-# print("Content-Type: text/html")  # Indica que se va a enviar HTML
-# print()  # Imprime una línea en blanco para indicar el final de las cabeceras
+print("Content-Type: text/html")  # Indica que se va a enviar HTML
+print()  # Imprime una línea en blanco para indicar el final de las cabeceras
 
 # Imprime el cuerpo de la respuesta HTML
 print("<html>")
@@ -38,6 +38,6 @@ print("      <main class=\"index\">")
 print("        <div class=\"masthead\">")
 print("            <h1 class=\"portada\">Random Image CGI</h1>")
 print("        </div>")
-print("      </main>") 
+print("      </\main>")
 print("    </body>")
 print("</html>")

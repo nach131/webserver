@@ -6,15 +6,15 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/14 11:39:14 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/16 10:51:29 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "AdminServer.hpp"
 
 // #define NUM_CLIENTS 10
-#define MAX_EVENTS 32
-#define MAX_MSG_SIZE 8192
+// #define MAX_EVENTS 32
+// #define MAX_MSG_SIZE 8192
 
 AdminServer::AdminServer(const ServerConfig &config) : _config(config) {}
 

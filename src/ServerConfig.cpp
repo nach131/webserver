@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/15 21:30:51 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/16 09:57:41 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,18 +28,18 @@ void ServerConfig::loadConf(const std::string &filename)
 	// root
 	_locations["/"] = std::map<std::string, std::string>();
 	_locations["/"]["autoindex"] = "off";
-	_locations["/"]["root"] = "/Users/nacho/Dropbox/00_42Barcelona/42Barcelona/C5/webserver/dist";
+	_locations["/"]["root"] = "./dist";
 	_locations["/"]["allow_methods"] = "DELETE POST GET";
 	// files
 	_locations["/files"] = std::map<std::string, std::string>();
 	_locations["/files"]["autoindex"] = "on";
-	_locations["/files"]["root"] = "/Users/nacho/Dropbox/00_42Barcelona/42Barcelona/C5/webserver/dist";
+	_locations["/files"]["root"] = "./dist";
 	_locations["/files"]["allow_methods"] = "GET";
 	_locations["/files"]["index"] = "files.html";
 	// colors
 	_locations["/colors"] = std::map<std::string, std::string>();
 	_locations["/colors"]["autoindex"] = "off";
-	_locations["/colors"]["root"] = "/Users/nacho/Dropbox/00_42Barcelona/42Barcelona/C5/webserver/dist";
+	_locations["/colors"]["root"] = "./dist";
 	_locations["/colors"]["allow_methods"] = "GET";
 	_locations["/colors"]["index"] = "colors.html";
 	// cgi
@@ -53,12 +53,12 @@ void ServerConfig::loadConf(const std::string &filename)
 	// TEST
 	_locations["/_TEST"] = std::map<std::string, std::string>();
 	_locations["/_TEST"]["autoindex"] = "off";
-	_locations["/_TEST"]["root"] = "/Users/nacho/Dropbox/00_42Barcelona/42Barcelona/C5/webserver/dist";
+	_locations["/_TEST"]["root"] = "./dist";
 	_locations["/_TEST"]["allow_methods"] = "GET";
 // EARTH
 	_locations["/earth"] = std::map<std::string, std::string>();
 	_locations["/earth"]["autoindex"] = "off";
-	_locations["/earth"]["root"] = "/Users/nacho/Dropbox/00_42Barcelona/42Barcelona/C5/webserver/dist_1";
+	_locations["/earth"]["root"] = "./dist_1";
 	_locations["/earth"]["allow_methods"] = "GET";
 
 	// NO ALLOWED

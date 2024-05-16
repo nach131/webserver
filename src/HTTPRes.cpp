@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/15 21:24:26 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/16 11:29:02 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,19 +50,49 @@ HTTPRes::~HTTPRes() {}
 
 //=========================================================================
 
+std::string HTTPRes::execPython(const std::string &filePath)
+{
+	std::string result;
+	FILE *pipe = popen(("python3 " + filePath).c_str(), "r");
+	if (!pipe)
+	{
+		std::cerr << "Error: Failed to open pipe for Python script execution." << std::endl;
+		return result;
+	}
+
+	char buffer[MAX_MSG_SIZE];
+	while (fgets(buffer, sizeof(buffer), pipe) != NULL)
+		result += buffer;
+
+	int returnCode = pclose(pipe);
+	if (returnCode != 0)
+		std::cerr << "Error: Python script execution failed with return code " << returnCode << "." << std::endl;
+
+	// std::cout << result << std::endl;
+
+	return result;
+}
+
 void HTTPRes::createContent(std::string filePath, bool file)
 {
-	_content = readFile(filePath);
 
+	std::string extension = getExtension(filePath);
+
+	if (extension == "py")
+		_content = execPython(filePath);
+	else
+		_content = readFile(filePath);
 	// comprueba si el fichero a pasar tiene datos
 	if (!_content.empty())
 	{
-		std::string extension = getExtension(filePath);
 		_header.addOne(_request.getHeader("Version"), "200 OK");
+		if(extension == "py")
+		_header.addField("Content-Type", "text/html");
+		else
 		_header.addField("Content-Type", _config->getContentType(extension));
 	}
-	else
-	    file ? error404() : error403();
+	else // "false" = dentro de carpeta y no encuentra index.html
+		file ? error404() : error403();
 }
 
 void HTTPRes::folder()
@@ -176,4 +206,3 @@ void HTTPRes::error403()
 	_header.addOne(_request.getHeader("Version"), "403 Forbidden");
 	_content = readFile("./conf_web/error/basico/403.html");
 }
-
