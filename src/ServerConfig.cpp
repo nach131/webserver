@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/16 11:47:40 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/16 17:29:54 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,11 @@ void ServerConfig::loadConf(const std::string &filename)
 	_locations["/files"]["root"] = "./dist";
 	_locations["/files"]["allow_methods"] = "GET";
 	_locations["/files"]["index"] = "files.html";
+	// other files
+	_locations["/other_files"] = std::map<std::string, std::string>();
+	_locations["/other_files"]["autoindex"] = "on";
+	_locations["/other_files"]["root"] = "./dist";
+	_locations["/other_files"]["allow_methods"] = "GET";
 	// colors
 	_locations["/colors"] = std::map<std::string, std::string>();
 	_locations["/colors"]["autoindex"] = "off";

@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/15 12:15:06 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/16 19:26:01 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,3 +104,24 @@ std::vector<std::string> split(const std::string &str, char delimiter) {
     return tokens;
 }
 
+bool isMainRoot(const std::string &str)
+{
+	// Contador para el número de slashes encontrados
+	int slashCount = 0;
+
+	// Recorrer cada carácter de la cadena
+	for (std::string::const_iterator it = str.begin(); it != str.end(); ++it)
+	{
+		if (*it == '/')
+			++slashCount;
+	}
+
+	// Verificar si hay exactamente un slash
+	return (slashCount == 1);
+}
+
+void removeLastSlash(std::string &str)
+{
+	if (!str.empty() && str[str.length() - 1] == '/')
+		str.erase(str.length() - 1);
+}

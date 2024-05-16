@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:32 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/16 10:38:46 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/16 17:39:28 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,12 +49,12 @@ void error403();
 	void createContent(std::string filePath, bool file);
 	void folder();
 	void file();
+	// std::string execPython(const std::string &filePath);
 	std::string execPython(const std::string &filePath);
-	
-void methodGet();
 
-void exploreFiles();
+	void methodGet();
 
+	void exploreFiles();
 
 public:
 	HTTPRes(const HTTPRequest &request, ServerConfig *config);
