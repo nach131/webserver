@@ -6,20 +6,19 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/13 17:36:25 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/16 14:28:53 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 // #include "../inc/ClientParsing.hpp"
-// #include "Colors.hpp"
+#include "Colors.hpp"
 // #include "WebServer.hpp"
 #include "ServerConfig.hpp"
 #include "AdminServer.hpp"
 
 void setSignals(int sig)
 {
-	std::cout << std::endl
-			  << "ADIOSSSSSSSSSSSSSS" << std::endl;
+	std::cout << RESET << std::endl;
 	exit(sig);
 }
 

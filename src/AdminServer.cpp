@@ -3,14 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2024/05/08 17:54:29 by nmota-bu         ###   ########.fr       */
-=======
-/*   Updated: 2024/05/11 13:25:41 by vduchi           ###   ########.fr       */
->>>>>>> 5fbc4ae91df505788fb1ab35c9b38a32ad4f70d8
+/*   Updated: 2024/05/16 13:14:03 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,7 +209,7 @@ void AdminServer::run()
 	listen(sockfd, 5);
 	*/
 
-	std::cout << "sockfd: " << sockfd << std::endl;
+	std::cout << "sockfd: " << _config.getServerSocket() << std::endl;
 	std::cout << "Servidor esperando conexiones..." << std::endl;	
 
 	//=========================================================================
@@ -228,13 +224,8 @@ void AdminServer::run()
 	}
 
 	// Configurar evento para el socket de escucha
-<<<<<<< HEAD
 	struct kevent eventRead;
-	EV_SET(&eventRead, sockfd, EVFILT_READ, EV_ADD, 0, 0, NULL);
-=======
-	struct kevent change;
-	EV_SET(&change, _config.getServerSocket(), EVFILT_READ, EV_ADD, 0, 0, NULL);
->>>>>>> 5fbc4ae91df505788fb1ab35c9b38a32ad4f70d8
+	EV_SET(&eventRead, _config.getServerSocket(), EVFILT_READ, EV_ADD, 0, 0, NULL);
 
 	// Registro de sockfd para eventos de lectura
 	if (kevent(kq, &eventRead, 1, NULL, 0, NULL) == -1)
@@ -245,7 +236,7 @@ void AdminServer::run()
 
 	// Configurar evento para el socket de escucha para escritura
 	struct kevent eventWrite;
-	EV_SET(&eventWrite, sockfd, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
+	EV_SET(&eventWrite, _config.getServerSocket(), EVFILT_WRITE, EV_ADD, 0, 0, NULL);
 
 	// Registro de sockfd para eventos de escritura
 	if (kevent(kq, &eventWrite, 1, NULL, 0, NULL) == -1)
@@ -278,32 +269,7 @@ void AdminServer::run()
 
 		for (int i = 0; i < nev; ++i)
 		{
-<<<<<<< HEAD
-			std::cout << "i: "<< i << ", nev: " << nev << std::endl;
-			
-
-if (events[i].ident == (unsigned long)sockfd)
-{
-    // Verifica si el evento es para lectura o escritura
-
-		std::cout << CYAN << "toma: " << events[i].filter << std::endl;
-
-    if (events[i].filter == EVFILT_READ)
-    {
-        std::cout << CYAN << "EVENTO lectura" << RESET << std::endl;
-    }
-    else if (events[i].filter == EVFILT_WRITE)
-    {
-        std::cout << CYAN << "EVENTO escritura" << RESET << std::endl;
-    }
-}
-
-
-
-			if (events[i].ident == (unsigned long)sockfd)
-=======
 			if (events[i].ident == (unsigned long)_config.getServerSocket())
->>>>>>> 5fbc4ae91df505788fb1ab35c9b38a32ad4f70d8
 			{
 				// Aceptar la conexión entrante
 				newsockfd = accept(_config.getServerSocket(), (struct sockaddr *)&clientAddr, &client);

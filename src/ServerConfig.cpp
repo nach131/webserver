@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/14 18:46:48 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/16 15:08:04 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void ServerConfig::loadConf(const std::string &filename)
 
 	while (getline(in, line))
 	{
-		std::cout << "Line: -" << (int)(line[0] - 48) << "- -" << line[0] << "- -" << line[1] << "-" << std::endl;
+		std::cout << "Line: -" << line << std::endl;
 		arr.push_back(line);
 	}
 	in.close();
@@ -176,16 +176,27 @@ int ServerConfig::checkLine(std::string & line)
 	return 0;
 }
 
+bool ServerConfig::findClosure(std::string &val)
+{
+	bool check = false;
+	for (size_t i = 0; i < val.length(); i++)
+	{
+		if (val[i] != ' ' && val[i] != '\t' && val[i] != '}')
+			check = true;
+	}
+	return check;
+}
+
 void ServerConfig::checkSyntax(std::vector<std::string> & arr)
 {
 	bool check = true;
 	int brack = 1, lineNum = 1;
 	std::stringstream ss;
 
-	for (std::vector<std::string>::iterator it = arr.begin(); it != arr.end(); it++)
-	{
-		std::cout << "Array line: " << *it << std::endl;
-	}
+	// for (std::vector<std::string>::iterator it = arr.begin(); it != arr.end(); it++)
+	// {
+	// std::cout << "Array line: " << arr[i] << std::endl;
+	// }
 	if (arr[0].find("server {") == std::string::npos)
 		parseError("server declaration incorrect at line ", lineNum);
 	for (size_t i = 1; i < arr.size(); i++)
@@ -196,8 +207,9 @@ void ServerConfig::checkSyntax(std::vector<std::string> & arr)
 		for (; arr[i][j] != 0; j++)
 			if (arr[i][j] == '#')
 				check = false;
-		if (!check || arr[i].length() == 0 || arr[i][j - 1] == 9)
+		if (!check || arr[i].length() == 0 || arr[i][j - 1] == '\t')
 			continue;
+		std::cout << "Array line: " << arr[i] << std::endl;
 		if (arr[i].find(";") == std::string::npos
 			&& arr[i].find("location ") == std::string::npos
 			&& arr[i].find("}") == std::string::npos)
@@ -219,27 +231,46 @@ void ServerConfig::checkSyntax(std::vector<std::string> & arr)
 				parseError("expected block before } at line ", lineNum);
 			if (arr[i][l] == ';') { break; }
 		}
-		std::string key, value;
-		std::stringstream ss(arr[i]);
-		ss >> key;
-		if (!_kv.checkKey(key))
-			parseError("Key " + key + " not valid", lineNum);
-		while (ss >> value)
+		if (arr[i].find("}") == std::string::npos || findClosure(arr[i]))
 		{
-			if (_kv.checkValue(key, value))
-				addValue(key, value);
-			// TODO Controlar la key y si existe, cojer el valor
+			if (arr[i].find("location") != std::string::npos)
+				_kv.checkLocation(arr[i]) ? true : parseError("Location value is not valid at line ", lineNum);
+			else
+			{
+				std::string el, key, value;
+				std::stringstream ss(arr[i]);
+				ss >> key;
+				if (!_kv.checkKey(key))
+					parseError("Key " + key + " not valid at line ", lineNum);
+				while (ss >> el)
+				{
+					if (value[0] == '\0')
+						value.append(el);
+					else
+						value.append(" " + el);
+				}
+				if (key == "error_page" || key == "allow_methods")
+					_kv.checkComplex(key, value) ?: parseError("", lineNum);
+				std::cout << "Key: -" << key << "- Value: -" << value << "-" << std::endl;
+				// while (ss >> value)
+				// {
+				// if (_kv.checkValue(key, value))
+				// addValue(key, value);
+				// TODO Controlar la key y si existe, cojer el valor
+				// }
+			}
 		}
 	}
 	if (brack > 0)
 		parseError("server block not closed at line ", lineNum);
 }
 
-void ServerConfig::parseError(std::string str, int n)
+bool ServerConfig::parseError(std::string str, int n)
 {
 	std::stringstream ss;
 	ss << str << n;
 	throw std::runtime_error(ss.str());
+	return false;
 }
 
 void ServerConfig::fillVariables(std::vector<std::string> &arr)

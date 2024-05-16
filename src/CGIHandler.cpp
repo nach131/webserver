@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/12 23:08:32 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/16 13:15:32 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ CGIHandler::~CGIHandler() {}
 
 void CGIHandler::runCGI()
 {
+	(void)_kq;
 	int p[2], status;
 	pid_t pid;
 

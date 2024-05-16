@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/14 18:33:41 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/16 14:35:12 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,10 @@ class ServerConfig
 		void setPrePath(const std::string &);
 
 		int checkLine(std::string &);
+		bool findClosure(std::string &);
 		void checkSyntax(std::vector<std::string> &);
-		void parseError(std::string, int);
+
+		bool parseError(std::string, int);
 
 		void fillVariables(std::vector<std::string> &);
 
