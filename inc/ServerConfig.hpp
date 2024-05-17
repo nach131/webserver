@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/16 17:45:45 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/17 13:05:51 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ class ServerConfig
 		std::map<int, std::string> _errorPages;
 		std::map<std::string, std::map<std::string, std::string> > _locations;
 		std::map<std::string, std::string> _gen;
-		std::map<std::string, Location *> _loc;
+		std::map<std::string, std::map<std::string, std::string> > _loc;
 		KeyValue _kv;
 		MIMETypeReader _mime;
 
@@ -65,7 +65,7 @@ class ServerConfig
 		std::string getRootDirectory() const;
 		std::string getErrorPage(int errorCode) const;
 		std::string getContentType(const std::string &extension) const;
-		std::map<std::string, Location *> getLocation() const;
+		std::map<std::string, std::map<std::string, std::string> > getLocation() const;
 
 		char *getBuffer() const;
 		void setBuffer(char *buf);

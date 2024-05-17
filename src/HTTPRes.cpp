@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/16 17:48:15 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/17 13:06:57 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 bool HTTPRes::isUrlAllowed(const std::string &url) const
 {
-	std::map<std::string, Location *> location = _config->getLocation();
+	std::map<std::string, std::map<std::string, std::string> > location = _config->getLocation();
 
-	std::map<std::string, Location *>::const_iterator it = location.find(url);
+	std::map<std::string, std::map<std::string, std::string> >::const_iterator it = location.find(url);
 	if (it != location.end())
 		return true;
 	return false;

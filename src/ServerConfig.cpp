@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/16 17:45:49 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/17 13:09:22 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ void ServerConfig::print() const
 	std::cout << "pre Path: " << _prePath << std::endl;
 
 	std::cout << "Locations:" << std::endl;
-	for (std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.begin(); it != _locations.end(); ++it)
+	for (std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _loc.begin(); it != _loc.end(); ++it)
 	{
 		std::cout << "  " << it->first << ":" << std::endl;
 		for (std::map<std::string, std::string>::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
@@ -123,19 +123,12 @@ void ServerConfig::print() const
 
 void ServerConfig::printLocations()
 {
-	for (std::map<std::string, Location *>::iterator it = _loc.begin(); it != _loc.end(); it++)
+	std::cout << "Locations:" << std::endl;
+	for (std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _loc.begin(); it != _loc.end(); ++it)
 	{
-		std::cout << CYAN;
-		std::cout << "[ Location ]" << std::endl;
-		std::cout << "Path: " << it->first << std::endl;
-		std::cout << "Root: " << it->second->getRoot() << std::endl;
-		std::cout << "Index: " << it->second->getIndex() << std::endl;
-		std::cout << "Methods: " << it->second->getMethods() << std::endl;
-		std::cout << "AutoIndex: " << it->second->getAutoIndex() << std::endl;
-		std::map<std::string, std::string> tmp = it->second->getCGI();
-		for (std::map<std::string, std::string>::iterator it2 = tmp.begin(); it2 != tmp.end(); it2++)
-			std::cout << "Key: " << it2->first << " Value: " << it2->second << std::endl;
-		std::cout << RESET;
+		std::cout << "  " << it->first << ":" << std::endl;
+		for (std::map<std::string, std::string>::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
+			std::cout << "    " << it2->first << ": " << it2->second << std::endl;
 	}
 }
 
@@ -166,7 +159,7 @@ std::string ServerConfig::getContentType(const std::string &extension) const
 	return _mime.getContentType(extension);
 }
 
-std::map<std::string, Location *> ServerConfig::getLocation() const
+std::map<std::string, std::map<std::string, std::string> > ServerConfig::getLocation() const
 {
 	return _loc;
 }
@@ -315,10 +308,28 @@ void ServerConfig::fillVariables(std::vector<std::string> &arr)
 		std::stringstream ss(arr[i]);
 		if (arr[i].find("location") != std::string::npos)
 		{
-			ss >> el >> el;
-			std::cout << RED << "Location path: " << el << RESET << std::endl;
-			Location *newLoc = new Location(arr, i);
-			_loc[el] = newLoc;
+			std::string path;
+			ss >> path >> path;
+			std::cout << RED << "Location path: " << path << RESET << std::endl;
+			// Location *newLoc = new Location(arr, i);
+			// _loc[el] = newLoc;
+			for (i++; findClosure(arr[i]); i++)
+			{
+				std::string el, key, value;
+				std::stringstream ss(arr[i]);
+				ss >> key;
+				while (ss >> el)
+				{
+					if (value[0] == '\0')
+						value.append(el);
+					else
+						value.append(" " + el);
+				}
+				takeOutSemiColumn(value);
+				std::cout << "Location key: " << key << " Val: " << value << std::endl;
+				// _loc[path] = std::map<std::string, std::string>();
+				_loc[path][key] = value;
+			}
 		}
 		else if (arr[i].find("}") == std::string::npos || findClosure(arr[i]))
 		{
