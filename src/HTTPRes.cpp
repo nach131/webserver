@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/16 20:34:09 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/17 11:51:08 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void HTTPRes::last()
 {
-	_header.addField("Cookie", _request.getHeader("Cookie"));
+	// _header.addField("Cookie", _request.getHeader("Cookie"));
 
 	_header.addField("Content-Length", std::to_string(_content.length()));
 	_header.addField("ETag", generateETag(_content));
@@ -99,6 +99,10 @@ void HTTPRes::createContent(std::string filePath, bool file)
 	}
 	else // "false" = dentro de carpeta y no encuentra index.html
 		file ? error404() : error403();
+
+	std::cout << "header: " << _header.getHeader() << std::endl;
+
+	std::cout << "content: " << _content << std::endl;
 }
 
 void HTTPRes::folder()

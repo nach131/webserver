@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:34:48 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/16 19:24:14 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/17 11:34:42 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <iostream>
 # include <sstream>
 # include <functional>
+#include <vector>
 
 #define MAX_EVENTS 32
 #define MAX_MSG_SIZE 8192
