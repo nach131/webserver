@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/16 17:42:27 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/18 16:38:45 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,4 +94,12 @@ void takeOutSemiColumn(std::string &val)
 			break;
 	for (; j >= i; j--)
 		val.pop_back();
+}
+
+bool parseError(std::string str, int n)
+{
+	std::stringstream ss;
+	ss << str << n;
+	throw std::runtime_error(ss.str());
+	return false;
 }

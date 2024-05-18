@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:34:48 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/16 17:41:53 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/18 16:38:53 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,5 +30,6 @@ std::string getExtension(const std::string &path);
 std::string extractEndpoint(const std::string &url);
 bool isFile(const std::string& path);
 void takeOutSemiColumn(std::string &val);
+bool parseError(std::string str, int n);
 
 #endif

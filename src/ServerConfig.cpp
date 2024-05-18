@@ -6,11 +6,11 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/17 13:09:22 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/18 17:41:55 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/ServerConfig.hpp"
+#include "ServerConfig.hpp"
 
 ServerConfig::ServerConfig(const std::string &mimeFilePath) : _first(true), _port(8080), _apiPort(3000), _apiForward("192.168.1.20"), _mime(mimeFilePath) // Valores por defecto
 {
@@ -292,13 +292,13 @@ void ServerConfig::checkSyntax(std::vector<std::string> & arr)
 		parseError("server block not closed at line ", lineNum);
 }
 
-bool ServerConfig::parseError(std::string str, int n)
-{
-	std::stringstream ss;
-	ss << str << n;
-	throw std::runtime_error(ss.str());
-	return false;
-}
+// bool ServerConfig::parseError(std::string str, int n)
+// {
+// 	std::stringstream ss;
+// 	ss << str << n;
+// 	throw std::runtime_error(ss.str());
+// 	return false;
+// }
 
 void ServerConfig::fillVariables(std::vector<std::string> &arr)
 {

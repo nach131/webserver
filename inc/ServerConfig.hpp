@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/17 13:05:51 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/18 16:39:02 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 #include <netinet/in.h>
 #include "Colors.hpp"
 #include "KeyValue.hpp"
-#include "Location.hpp"
+#include "WebServer.hpp"
 #include "MIMETypeReader.hpp"
 
 //class MIMETypeReader;
@@ -36,7 +36,6 @@ class ServerConfig
 		int _apiPort;
 		int _serverSocketFd;
 		char *_buffer;
-		// std::string _buffer;
 		struct sockaddr_in _serverAddress;
 		std::string _serverName;
 		std::string _rootDirectory;
@@ -80,8 +79,6 @@ class ServerConfig
 		int checkLine(std::string &);
 		bool findClosure(std::string &);
 		void checkSyntax(std::vector<std::string> &);
-
-		bool parseError(std::string, int);
 
 		void fillVariables(std::vector<std::string> &);
 
