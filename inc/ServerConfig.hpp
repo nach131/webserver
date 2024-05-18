@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/15 11:38:44 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/18 04:13:54 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,6 @@ private:
     std::string _apiForward;
     std::map<std::string, std::map<std::string, std::string> > _locations;
     MIMETypeReader _mime;
-    bool _first;
-    std::string _prePath;
 
 public:
     ServerConfig(const std::string &mimeFilePath);

@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/10 19:31:02 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/17 23:41:11 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,43 +31,6 @@ void checkArg(int argc, char **argv)
 			throw std::runtime_error(RED "File error!" RESET);
 	}
 }
-
-// int createSocket()
-// {
-// 	// Crear socket
-// 	int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-// 	// sockfd = socket(AF_MAX, SOCK_STREAM, 0); // Error socket
-// 	if (sockfd < 0)
-// 	{
-// 		std::string errorMsg = RED "Error creating socket:\n";
-// 		errorMsg += CYAN;
-// 		errorMsg += strerror(errno);
-// 		throw std::runtime_error(errorMsg);
-// 	}
-
-// 	// Configurar la dirección del servidor
-// 	struct sockaddr_in serverAddr;
-// 	memset(&serverAddr, 0, sizeof(serverAddr));
-// 	serverAddr.sin_family = AF_INET; // direccion del servidor IPv4
-// 	serverAddr.sin_port = htons(8080);				// Puerto del servidor
-// 	serverAddr.sin_addr.s_addr = htonl(INADDR_ANY); // Escuchar en todas las interfaces de red
-
-// 	// Enlazar el socket a la dirección del servidor
-// 	if (bind(sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0)
-// 	{
-// 		std::string errorMsg = RED "Socket binding error:\n";
-// 		errorMsg += CYAN + std::to_string(ntohs(serverAddr.sin_port)) + " ";
-// 		errorMsg += strerror(errno);
-// 		throw std::runtime_error(errorMsg);
-// 	}
-
-// 	// Escuchar por conexiones entrantes
-// 	listen(sockfd, 5);
-
-// 	std::cout << "Servidor esperando conexiones..." << std::endl;
-
-// 	return sockfd;
-// }
 
 int createSocket()
 {

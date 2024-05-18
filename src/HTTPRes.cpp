@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/17 11:51:08 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/18 03:45:16 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void HTTPRes::last()
 HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config) : _request(request), _config(config)
 {
 	std::string method = _request.getHeader("Method");
-	_location = _request.getLocation();
+	_location = _request.getLocation(); // getLocation en config y devuelve un map 
 	// bool  fav = _location == "/favicon.ico";
 
 	std::cout << ORANGE;
@@ -100,9 +100,9 @@ void HTTPRes::createContent(std::string filePath, bool file)
 	else // "false" = dentro de carpeta y no encuentra index.html
 		file ? error404() : error403();
 
-	std::cout << "header: " << _header.getHeader() << std::endl;
-
-	std::cout << "content: " << _content << std::endl;
+// TODO
+	// std::cout << "header: " << _header.getHeader() << std::endl;
+	// std::cout << "content: " << _content << std::endl;
 }
 
 void HTTPRes::folder()

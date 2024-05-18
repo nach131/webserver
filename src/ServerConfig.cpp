@@ -6,13 +6,13 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/17 14:15:20 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/18 04:14:17 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ServerConfig.hpp"
 
-ServerConfig::ServerConfig(const std::string &mimeFilePath) : _port(8080), _apiPort(3000), _apiForward("192.168.1.20"), _mime(mimeFilePath), _first(true) {} // Valores por defecto
+ServerConfig::ServerConfig(const std::string &mimeFilePath) : _port(8080), _apiPort(3000), _apiForward("192.168.1.20"), _mime(mimeFilePath) {} // Valores por defecto
 
 ServerConfig::~ServerConfig() {}
 
@@ -47,6 +47,16 @@ void ServerConfig::loadConf(const std::string &filename)
 	_locations["/colors"]["root"] = "./dist";
 	_locations["/colors"]["allow_methods"] = "GET";
 	_locations["/colors"]["index"] = "colors.html";
+	// file on location
+	_locations["/astronaut/toma.html"] = std::map<std::string, std::string>();
+	_locations["/astronaut/toma.html"]["autoindex"] = "off";
+	_locations["/astronaut/toma.html"]["root"] = "./dist/_TEST";
+	_locations["/astronaut/toma.html"]["allow_methods"] = "GET";
+	// Alias "redirecred URL" tine que buscar index.html
+	_locations["/tomate/mas/otra/cosa.html"] = std::map<std::string, std::string>();
+	_locations["/tomate/mas/otra/cosa.html"]["autoindex"] = "off";
+	_locations["/tomate/mas/otra/cosa.html"]["alias"] = "./dist/files";
+	_locations["/tomate/mas/otra/cosa.html"]["allow_methods"] = "GET";
 	// cgi
 	_locations["/cgi_bin"] = std::map<std::string, std::string>();
 	_locations["/cgi_bin"]["autoindex"] = "off";
@@ -58,16 +68,14 @@ void ServerConfig::loadConf(const std::string &filename)
 	_locations["/_TEST"]["autoindex"] = "off";
 	_locations["/_TEST"]["root"] = "./dist";
 	_locations["/_TEST"]["allow_methods"] = "GET";
-// EARTH
+	// EARTH
 	_locations["/earth"] = std::map<std::string, std::string>();
 	_locations["/earth"]["autoindex"] = "off";
 	_locations["/earth"]["root"] = "./dist_1";
 	_locations["/earth"]["allow_methods"] = "GET";
-
 	// NO ALLOWED
 	_locations["/nada"] = std::map<std::string, std::string>();
 	_locations["/nada"]["allow_methods"] = "";
-
 }
 
 void ServerConfig::print() const
@@ -82,8 +90,6 @@ void ServerConfig::print() const
 		std::cout << "  " << it->first << ": " << it->second << std::endl;
 	std::cout << "API Forward: " << _apiForward << std::endl;
 	std::cout << "API Port: " << _apiPort << std::endl;
-	std::cout << "first GET: " << _first << std::endl;
-	std::cout << "prePath: " << _prePath << std::endl;
 
 	std::cout << "Locations:" << std::endl;
 	for (std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.begin(); it != _locations.end(); ++it)
@@ -125,26 +131,32 @@ std::string ServerConfig::getContentType(const std::string &extension) const
 	return _mime.getContentType(extension);
 }
 
-std::string ServerConfig::getRoot(const std::string &location) const {
-    std::map<std::string, std::map<std::string, std::string> >::const_iterator locIt = _locations.find(location);
-    if (locIt != _locations.end()) {
-        std::map<std::string, std::string>::const_iterator rootIt = locIt->second.find("root");
-        if (rootIt != locIt->second.end()) {
-            return rootIt->second;
-        }
-    }
-    return "";
+std::string ServerConfig::getRoot(const std::string &location) const
+{
+	std::map<std::string, std::map<std::string, std::string> >::const_iterator locIt = _locations.find(location);
+	if (locIt != _locations.end())
+	{
+		std::map<std::string, std::string>::const_iterator rootIt = locIt->second.find("root");
+		if (rootIt != locIt->second.end())
+		{
+			return rootIt->second;
+		}
+	}
+	return "";
 }
 
-std::string ServerConfig::getIndex(const std::string &location) const {
-    std::map<std::string, std::map<std::string, std::string> >::const_iterator locIt = _locations.find(location);
-    if (locIt != _locations.end()) {
-        std::map<std::string, std::string>::const_iterator rootIt = locIt->second.find("index");
-        if (rootIt != locIt->second.end()) {
-            return rootIt->second;
-        }
-    }
-    return "";
+std::string ServerConfig::getIndex(const std::string &location) const
+{
+	std::map<std::string, std::map<std::string, std::string> >::const_iterator locIt = _locations.find(location);
+	if (locIt != _locations.end())
+	{
+		std::map<std::string, std::string>::const_iterator rootIt = locIt->second.find("index");
+		if (rootIt != locIt->second.end())
+		{
+			return rootIt->second;
+		}
+	}
+	return "";
 }
 
 bool ServerConfig::isLocationAllowed(const std::string &path)
@@ -155,7 +167,7 @@ bool ServerConfig::isLocationAllowed(const std::string &path)
 	return false;
 }
 
-bool ServerConfig::isMethodAllowed(const std::string &path, const std::string &method) 
+bool ServerConfig::isMethodAllowed(const std::string &path, const std::string &method)
 {
 	std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.find(path);
 	for (std::map<std::string, std::string>::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
@@ -169,31 +181,31 @@ bool ServerConfig::isMethodAllowed(const std::string &path, const std::string &m
 	return false;
 }
 
-bool ServerConfig::isLocationOn(const std::string &path) 
+bool ServerConfig::isLocationOn(const std::string &path)
 {
 	std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.find(path);
-	  if (it != _locations.end()) {
-        std::map<std::string, std::string>::const_iterator autoindexIt = it->second.find("autoindex");
-        if (autoindexIt != it->second.end()) {
-			if(autoindexIt->second == "on")
-            return true;
-        }
-    }
-    return false;
+	if (it != _locations.end())
+	{
+		std::map<std::string, std::string>::const_iterator autoindexIt = it->second.find("autoindex");
+		if (autoindexIt != it->second.end())
+		{
+			if (autoindexIt->second == "on")
+				return true;
+		}
+	}
+	return false;
 }
-
 
 //=========================================================================
 
-bool ServerConfig::getFirst() const { return _first;}
+// bool ServerConfig::getFirst() const { return _first; }
 
-std::string ServerConfig::getPrePath() const {return _prePath;}
+// std::string ServerConfig::getPrePath() const { return _prePath; }
 
-void ServerConfig::setFirst(bool action){	_first = action;}
+// void ServerConfig::setFirst(bool action) { _first = action; }
 
-void ServerConfig::setPrePath(const std::string &path) { _prePath = path; }
+// void ServerConfig::setPrePath(const std::string &path) { _prePath = path; }
 
-
-// TODO 
+// TODO
 // poner 404 en location leerlo y ponerlo en una map con los string
 // si no hay 404 poner un generico como el de ejemplo
