@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/18 04:14:17 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/19 14:11:15 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void ServerConfig::loadConf(const std::string &filename)
 	_locations["/files"] = std::map<std::string, std::string>();
 	_locations["/files"]["autoindex"] = "on";
 	_locations["/files"]["root"] = "./dist";
-	_locations["/files"]["allow_methods"] = "GET";
+	_locations["/files"]["allow_methods"] = "GET POST DELETE";
 	_locations["/files"]["index"] = "files.html";
 	// other files
 	_locations["/other_files"] = std::map<std::string, std::string>();
@@ -167,34 +167,56 @@ bool ServerConfig::isLocationAllowed(const std::string &path)
 	return false;
 }
 
-bool ServerConfig::isMethodAllowed(const std::string &path, const std::string &method)
-{
-	std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.find(path);
-	for (std::map<std::string, std::string>::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
-	{
-		std::istringstream iss(it2->second);
-		std::string word;
-		while (iss >> word) // Leer cada palabra separada por espacios
-			if (word == method)
-				return true;
-	}
-	return false;
-}
 
-bool ServerConfig::isLocationOn(const std::string &path)
-{
-	std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.find(path);
-	if (it != _locations.end())
-	{
-		std::map<std::string, std::string>::const_iterator autoindexIt = it->second.find("autoindex");
-		if (autoindexIt != it->second.end())
-		{
-			if (autoindexIt->second == "on")
-				return true;
-		}
-	}
-	return false;
-}
+// PASADO A LOCATION
+// bool ServerConfig::isMethodAllowed(const std::string &path, const std::string &method)
+// {
+// 	std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.find(path);
+// 	for (std::map<std::string, std::string>::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
+// 	{
+// 		std::istringstream iss(it2->second);
+// 		std::string word;
+// 		while (iss >> word) // Leer cada palabra separada por espacios
+// 			if (word == method)
+// 				return true;
+// 	}
+// 	return false;
+// }
+
+// PASADO A LOCATION
+// bool ServerConfig::isLocationOn(const std::string &path)
+// {
+// 	std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.find(path);
+// 	if (it != _locations.end())
+// 	{
+// 		std::map<std::string, std::string>::const_iterator autoindexIt = it->second.find("autoindex");
+// 		if (autoindexIt != it->second.end())
+// 		{
+// 			if (autoindexIt->second == "on")
+// 				return true;
+// 		}
+// 	}
+// 	return false;
+// }
+
+
+// Obtiene la configuración de la ubicación correspondiente al path
+    LocationResult ServerConfig::getLocationConfig(const std::string &path) {
+        std::string best_match = "/";
+        std::map<std::string, std::map<std::string, std::string> >::iterator it;
+        for (it = _locations.begin(); it != _locations.end(); ++it) {
+            if (path.find(it->first) == 0 && it->first.length() > best_match.length()) {
+                best_match = it->first;
+            }
+        }
+
+        LocationResult result;
+        result.name = best_match;
+        result.config = _locations[best_match];
+        return result;
+    }
+
+
 
 //=========================================================================
 

@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/18 04:13:54 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/19 14:41:42 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 
 #include "MIMETypeReader.hpp"
 #include "Colors.hpp"
+#include "Location.hpp"
 
 class MIMETypeReader;
 
@@ -45,22 +46,23 @@ public:
     std::string getServerName() const;
     std::string getRootDirectory() const;
     std::string getErrorPage(int errorCode) const;
+
     std::string getApiForward() const;
     int getApiPort() const;
+    
     std::map<std::string, std::map<std::string, std::string> > getLocation() const;
     std::string getContentType(const std::string &extension) const;
     std::string getRoot(const std::string &location) const ;
     std::string getIndex(const std::string &location) const ;
+    
     bool isLocationAllowed(const std::string &path);
-    bool isMethodAllowed(const std::string &path, const std::string &method);
+    // bool isMethodAllowed(const std::string &path, const std::string &method);
     bool isLocationOn(const std::string &path);
 
+// std::map<std::string, std::string> getLocationConfig(const std::string& path, std::string *location);
+    LocationResult getLocationConfig(const std::string &path);
 
-    bool getFirst() const;
-    std::string getPrePath() const;
 
-    void setFirst(bool action);
-    void setPrePath(const std::string &path);
 };
 
 #endif

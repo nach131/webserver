@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/16 16:11:18 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/18 18:49:20 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ const std::map<std::string, std::string> &HTTPRequest::getMap() const { return _
 
 const std::string &HTTPRequest::getHeader(const std::string name) const { return _map.find(name)->second; }
 
+// esto esta mal hay que componerlo bien
  std::string HTTPRequest::getLocation()  
 {
 	std::string path = getHeader("Path");

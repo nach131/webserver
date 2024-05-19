@@ -6,10 +6,11 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/18 03:45:16 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/19 15:25:42 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "Location.hpp"
 #include "HTTPRes.hpp"
 
 void HTTPRes::last()
@@ -24,30 +25,65 @@ void HTTPRes::last()
 	_header.addField("42-Barcelona", "nmota-bu, vduchi");
 }
 
+#include <map>
+
 HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config) : _request(request), _config(config)
 {
+
+	
 	std::string method = _request.getHeader("Method");
-	_location = _request.getLocation(); // getLocation en config y devuelve un map 
-	// bool  fav = _location == "/favicon.ico";
+	std::string path =_request.getHeader("Path");
+	
+	_locationConf.init(_config->getLocationConfig(path), path);
+
 
 	std::cout << ORANGE;
-	std::cout << "_location: " << _location << std::endl;
-	std::cout << "Path: " << _request.getHeader("Path") << std::endl;
-	std::cout << "is file: " << isFile(_request.getHeader("Path")) << std::endl;
+	_locationConf.print();
+	// std::cout << "locationName: " << _locationConf.getName()<< std::endl;
+	// std::cout << "realPath: " << _locationConf.realPath()<< std::endl;
 	std::cout << RESET;
+	// std::cout << "autoIndexOn: " << _locationConf.autoIndexOn()<< std::endl;
+	// std::cout << "methodAllowed: " << _locationConf.methodAllowed(method)<< std::endl;
+	// std::cout << "realPath: " << _locationConf.realPath()<< std::endl;
 
-	if (method == "GET" && _config->isLocationAllowed(_location) && _config->isMethodAllowed(_location, "GET") && _config->isLocationOn(_location))
-	{
-		exploreFiles();
-	}
-	else if ((method == "GET" && _config->isLocationAllowed(_location) && _config->isMethodAllowed(_location, "GET")) || isFile(_request.getHeader("Path")))
-		methodGet();
-	else if (method == "POST" && _config->isMethodAllowed(_location, "POST"))
-		methodPost();
-	else if (method == "DELETE" && _config->isMethodAllowed(_location, "DELETE"))
-		methodDelete();
-	else
-		methodErr();
+
+
+	//=========================================================================
+
+	// if (!_locationConf.methodAllowed(method))
+	// 	methodErr();
+	// else
+	// {
+	// 	if(_locationConf.autoIndexOn() && method == "GET" )
+	// 	std::cout << " index On\n";
+	// 			// exploreFiles();
+	// 	else if (!_locationConf.autoIndexOn() && method == "GET")
+	// 	std::cout << " index Off\n";
+	// // 	methodGet();
+
+	// }
+
+	//=========================================================================
+	// _location = _request.getLocation(); // getLocation en config y devuelve un map
+	// bool  fav = _location == "/favicon.ico";
+
+	// std::cout << "_location: " << _location << std::endl;
+	// std::cout << "is file: " << isFile(_request.getHeader("Path")) << std::endl;
+
+	// if (method == "GET" && _config->isLocationAllowed(_location) && _config->isMethodAllowed(_location, "GET") && _config->isLocationOn(_location))
+	// {
+	// 	exploreFiles();
+	// }
+	// else if ((method == "GET" && _config->isLocationAllowed(_location) && _config->isMethodAllowed(_location, "GET")) || isFile(_request.getHeader("Path")))
+	// 	methodGet();
+	// else if (method == "POST" && _config->isMethodAllowed(_location, "POST"))
+	// 	methodPost();
+	// else if (method == "DELETE" && _config->isMethodAllowed(_location, "DELETE"))
+	// 	methodDelete();
+	// else
+	// 	methodErr();
+
+	//=========================================================================
 
 	last();
 }
@@ -100,54 +136,54 @@ void HTTPRes::createContent(std::string filePath, bool file)
 	else // "false" = dentro de carpeta y no encuentra index.html
 		file ? error404() : error403();
 
-// TODO
+	// TODO
 	// std::cout << "header: " << _header.getHeader() << std::endl;
 	// std::cout << "content: " << _content << std::endl;
 }
 
 void HTTPRes::folder()
 {
-	std::cout << "CARPETA" << std::endl;
+	// std::cout << "CARPETA" << std::endl;
 
-	std::string index = _config->getIndex(_location);
-	bool autoindex = _config->isLocationOn(_location);
-	std::string filePath;
+	// std::string index = _config->getIndex(_location);
+	// bool autoindex = _config->isLocationOn(_location);
+	// std::string filePath;
 
-	if (index.empty())
-	{
-		if (_location == "/")
-			filePath = _config->getRoot(_location) + _request.getHeader("Path") + "index.html";
-		else
-			filePath = _config->getRoot(_location) + _request.getHeader("Path") + "/index.html";
-	}
-	else
-		filePath = _config->getRoot(_location) + _request.getHeader("Path") + "/" + index;
+	// if (index.empty())
+	// {
+	// 	if (_location == "/")
+	// 		filePath = _config->getRoot(_location) + _request.getHeader("Path") + "index.html";
+	// 	else
+	// 		filePath = _config->getRoot(_location) + _request.getHeader("Path") + "/index.html";
+	// }
+	// else
+	// 	filePath = _config->getRoot(_location) + _request.getHeader("Path") + "/" + index;
 
-	// TODO
-	std::cout << " _location: " << _location << std::endl;
-	std::cout << " autoindex: " << autoindex << std::endl;
-	std::cout << " index: " << index << std::endl;
-	std::cout << " filePath: " << filePath << std::endl;
+	// // TODO
+	// std::cout << " _location: " << _location << std::endl;
+	// std::cout << " autoindex: " << autoindex << std::endl;
+	// std::cout << " index: " << index << std::endl;
+	// std::cout << " filePath: " << filePath << std::endl;
 
-	createContent(filePath, false);
+	// createContent(filePath, false);
 }
 
 void HTTPRes::file()
 {
-	std::cout << "ES FICHERO" << std::endl;
-	std::string filePath;
+// 	std::cout << "ES FICHERO" << std::endl;
+// 	std::string filePath;
 
-	if (isMainRoot(_location))
-		filePath = _config->getRoot("/") + _request.getHeader("Path");
-	else
-		filePath = _config->getRoot(_location) + _request.getHeader("Path");
+// 	if (isMainRoot(_location))
+// 		filePath = _config->getRoot("/") + _request.getHeader("Path");
+// 	else
+// 		filePath = _config->getRoot(_location) + _request.getHeader("Path");
 
-	// TODO
-	std::cout << "_location: " << _location << std::endl;
-	std::cout << "root: " << _config->getRoot(_location) << std::endl;
-	std::cout << "filePath: " << filePath << std::endl;
+// 	// TODO
+// 	std::cout << "_location: " << _location << std::endl;
+// 	std::cout << "root: " << _config->getRoot(_location) << std::endl;
+// 	std::cout << "filePath: " << filePath << std::endl;
 
-	createContent(filePath, true);
+// 	createContent(filePath, true);
 }
 
 void HTTPRes::methodGet()
@@ -188,29 +224,29 @@ std::string toma(const std::string &filePath, const std::string &dirPath, const 
 void HTTPRes::exploreFiles()
 {
 
-	std::string rootFolder = _config->getRoot(_location);
-	std::string path = _request.getHeader("Path");
-	removeLastSlash(path);
+// 	std::string rootFolder = _config->getRoot(_location);
+// 	std::string path = _request.getHeader("Path");
+// 	removeLastSlash(path);
 
-	std::string folderPath = rootFolder + path;
+// 	std::string folderPath = rootFolder + path;
 
-	// TODO
-	std::cout << "FILES EXPLORER" << std::endl;
-	std::cout << "Path: " << path << std::endl;
-	std::cout << "root: " << rootFolder << std::endl;
-	std::cout << "folderPath: " << folderPath << std::endl;
+// 	// TODO
+// 	std::cout << "FILES EXPLORER" << std::endl;
+// 	std::cout << "Path: " << path << std::endl;
+// 	std::cout << "root: " << rootFolder << std::endl;
+// 	std::cout << "folderPath: " << folderPath << std::endl;
 
-	// std::string py = "/Users/nacho/Dropbox/00_42Barcelona/42Barcelona/C5/webserver/cgi_bin/explorer.py";
-	if (!isFile(path))
-	{
-		std::string py = "./cgi_bin/explorer.py";
-		_header.addOne(_request.getHeader("Version"), "200 OK");
-		_header.addField("Content-Type", "text/html");
+// 	// std::string py = "/Users/nacho/Dropbox/00_42Barcelona/42Barcelona/C5/webserver/cgi_bin/explorer.py";
+// 	if (!isFile(path))
+// 	{
+// 		std::string py = "./cgi_bin/explorer.py";
+// 		_header.addOne(_request.getHeader("Version"), "200 OK");
+// 		_header.addField("Content-Type", "text/html");
 
-		_content = toma(py, folderPath, path);
-	}
-	else
-		createContent(folderPath, true);
+// 		_content = toma(py, folderPath, path);
+// 	}
+// 	else
+// 		createContent(folderPath, true);
 }
 
 void HTTPRes::methodPost()

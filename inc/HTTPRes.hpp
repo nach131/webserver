@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:32 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/16 17:39:28 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/19 14:03:05 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,20 +19,24 @@
 #include "HTTPRequest.hpp"
 #include "HTTPHeader.hpp"
 #include "WebServer.hpp"
+#include "Location.hpp"
 #include "ServerConfig.hpp"
 
 class HTTPHeader;
 class HTTPRequest;
 class ServerConfig;
+class Location;
 
 class HTTPRes
 {
 private:
 	HTTPHeader _header;
+	std::string _content;
+	
 	HTTPRequest _request;
 	ServerConfig *_config;
-	std::string _content;
-	std::string _location;
+	// std::string _location;
+	Location _locationConf;
 
 	std::string getRootLocate(const std::string &path) const;
 
@@ -48,12 +52,11 @@ void error403();
 	void locateOK(const std::string &path);
 	void createContent(std::string filePath, bool file);
 	void folder();
-	void file();
-	// std::string execPython(const std::string &filePath);
 	std::string execPython(const std::string &filePath);
 
 	void methodGet();
 
+	void file();
 	void exploreFiles();
 
 public:

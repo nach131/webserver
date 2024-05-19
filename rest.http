@@ -2,8 +2,19 @@
 
 PUT http://localhost:8080
 
-### colors
-POST http://localhost:8080/colors
+### earth
+POST http://localhost:8080/earth
+
+DELETE http://localhost:8080/earth
 
 ### get files
 GET http://localhost:8080/files
+
+### colors
+GET   http://localhost:8080/colors
+
+### archivo html
+GET   http://localhost:8080/astronaut/toma.html
+
+### alias
+GET   http://localhost:8080/tomate/mas/otra/cosa.html
