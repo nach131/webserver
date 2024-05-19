@@ -6,16 +6,16 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/16 16:04:19 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/19 16:09:49 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef KEYVALUE_HPP
 #define KEYVALUE_HPP
 
+#include "WebServer.hpp"
 #include <map>
 #include <vector>
-#include <iostream>
 
 class KeyValue
 {
@@ -27,12 +27,11 @@ public:
 	KeyValue();
 	~KeyValue();
 
-	bool checkKey(std::string &key);
-	bool checkValue(std::string &key, std::string &val);
-	bool checkInt(std::string &val);
-	bool checkString(std::string &val);
-	bool checkLocation(std::string &val);
-	void checkComplex(std::string &key, std::string &val);
+	bool checkKey(std::string &);
+	bool checkValue(std::string &, std::string &);
+	bool checkComplex(std::string &, std::string &, int);
+
+	std::string checkType(std::string &);
 };
 
 #endif

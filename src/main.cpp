@@ -6,12 +6,11 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/18 17:41:06 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/19 16:09:28 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 // #include "../inc/ClientParsing.hpp"
-#include "Colors.hpp"
 #include "WebServer.hpp"
 #include "ServerConfig.hpp"
 #include "AdminServer.hpp"
@@ -47,6 +46,60 @@ void checkArg(int argc, char **argv, std::vector<std::string> &content)
 	// 	}
 }
 
+int checkLine(std::string &line)
+{
+	size_t l = 0;
+	while (line[l] == ' ' || line[l] == '\t')
+		l++;
+	if (line[l] != '#' && line[l] != '\0')
+		return 1;
+	return 0;
+}
+
+void checkKeysAndValues(std::vector<std::string> &content, int &start)
+{
+	KeyValue kv;
+	std::string key, value;
+	for (size_t i = 0; i < content.size(); i++)
+	{
+		if (content[i].find("server") != std::string::npos && content[i].find("name") == std::string::npos)
+			continue;
+		if (content[i].find("location") != std::string::npos)
+		{
+			std::string newLine(content[i], content[i].find("location") + 8);
+			if (newLine[0] != ' ' || newLine.find(";") != std::string::npos) // || newLine.find(" {") == std::string::npos) para controlar espacio antes de {
+				parseError("location not declared correctly at line ", start + i + 1);
+			// std::cout << "New Line: -" << newLine << "-" << std::endl;
+		}
+		else if (checkLine(content[i]) &&
+				 content[i].find("{") == std::string::npos &&
+				 content[i].find("}") == std::string::npos)
+		{
+			std::string el;
+			std::stringstream ss(content[i]);
+			ss >> key;
+			ss >> value;
+			while (ss >> el)
+			{
+				value.append(" " + el);
+				if (value.find(";") != std::string::npos)
+					break;
+			}
+			value.erase(value.find(";"), value.find("0"));
+			std::cout << "Key: -" << key << "- Value: -" << value << "-" << std::endl;
+			if (key == "error_page" || key == "allow_methods")
+			{
+				if (kv.checkComplex(key, value, start + i + 1))
+					parseError("", start + i + 1);
+			}
+			else if (kv.checkKey(key))
+				parseError("key is not allowed at line ", start + i + 1);
+			else if (kv.checkValue(key, value))
+				parseError("value is not acceptable for key at line ", start + i + 1);
+		}
+	}
+}
+
 std::vector<std::string> checkOneServer(std::vector<std::string> &content, int start, int len)
 {
 	int brack = 0;
@@ -73,10 +126,10 @@ std::vector<std::string> checkOneServer(std::vector<std::string> &content, int s
 	// Test for semicolumn
 	for (size_t i = 0; i < sCont.size(); i++)
 	{
-		size_t l = 0;
-		while (sCont[i][l] == ' ' || sCont[i][l] == '\t')
-			l++;
-		if (sCont[i][l] != '#' && sCont[i][l] != '\0' &&
+		// size_t l = 0;
+		// while (sCont[i][l] == ' ' || sCont[i][l] == '\t')
+		// 	l++;
+		if (checkLine(sCont[i]) &&
 			(sCont[i].find("server") == std::string::npos ||
 			 (sCont[i].find("server") != std::string::npos && sCont[i].find("name") != std::string::npos)) &&
 			sCont[i].find("location") == std::string::npos &&
@@ -85,6 +138,7 @@ std::vector<std::string> checkOneServer(std::vector<std::string> &content, int s
 			sCont[i].find(";") == std::string::npos)
 			parseError("expected semicolumn at the end of the line ", start + i + 1);
 	}
+	checkKeysAndValues(sCont, start);
 	return sCont;
 }
 
@@ -142,7 +196,7 @@ int main(int argc, char **argv)
 	}
 	catch (const std::exception &e)
 	{
-		std::cerr << "Error: " << e.what() << std::endl;
+		std::cerr << RED << "Error: " << e.what() << RESET << std::endl;
 		return EXIT_FAILURE;
 	}
 	return EXIT_SUCCESS;

@@ -6,20 +6,19 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:34:48 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/18 16:38:53 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/19 16:09:49 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WEBSERVER_H__
 # define WEBSERVER_H__
 
-# include "Colors.hpp"
-# include <map>
-# include <fstream>
+#include "Colors.hpp"
+#include <fstream>
 #include <sstream>
 #include <csignal>
 #include <iostream>
-# include <functional>
+#include <functional>
 
 int start();
 

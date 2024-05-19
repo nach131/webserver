@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/16 16:15:11 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/19 16:09:26 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ KeyValue::KeyValue()
 	_pairs["error_page"] = "int";
 	_pairs["server_name"] = "string";
 	_pairs["allow_methods"] = "string";
-	_pairs["client_max_body_size"] = "string";
+	_pairs["client_max_body_size"] = "int";
 	_pairs["cgi_ext"] = "string";
 	_pairs["cgi_path"] = "string";
 }
@@ -50,44 +50,53 @@ bool KeyValue::checkKey(std::string &key)
 	std::vector<std::string>::iterator it = _keys.begin();
 	for (; it != _keys.end(); it++)
 		if (*it == key)
-			return true;
-	return false;
+			return false;
+	return true;
 }
 
 bool KeyValue::checkValue(std::string &key, std::string &val)
 {
 	bool check = false;
-	val = val[-1];
-	std::cout << "Value is " << val << std::endl;
 	std::map<std::string, std::string>::iterator it = _pairs.begin();
 	for (; it != _pairs.end(); it++)
-	{
 		if (key == it->first)
-			check = val == "string" ? checkString(val) : checkInt(val);
-	}
+			check = checkType(val) == it->second ? false : true;
 	return check;
 }
 
-bool KeyValue::checkString(std::string &val)
+bool KeyValue::checkComplex(std::string &key, std::string &val, int lineNum)
 {
-	(void)val;
+	int err = 0, count = 0;
+	std::string el;
+	if (key == "error_page")
+	{
+		std::stringstream s(val), ss(val);
+		s >> el;
+		if (checkType(el) == "string")
+			parseError("error number is not a number at line ", lineNum);
+		err = std::atoi(el.c_str());
+		while (s >> el)
+			count++;
+		if (count > 1)
+			parseError("too many arguments for error_page at line ", lineNum);
+		s.str("");
+		s.clear();
+	}
+	else
+	{
+		std::stringstream ss(val);
+		while (ss >> el)
+			if (el != "GET" && el != "POST" && el != "DELETE")
+				parseError("method not allowed at line ", lineNum);
+	}
 	return false;
 }
 
-bool KeyValue::checkInt(std::string &val)
+std::string KeyValue::checkType(std::string &val)
 {
-	(void)val;
-	return false;
-}
-
-bool KeyValue::checkLocation(std::string &val)
-{
-	(void)val;
-	return true;
-}
-
-void KeyValue::checkComplex(std::string &key, std::string &val)
-{
-	(void)key;
-	(void)val;
+	bool isInt = true;
+	for (size_t i = 0; i < val.length(); i++)
+		if (val[i] < '0' || val[i] > '9')
+			isInt = false;
+	return isInt ? "int" : "string";
 }

@@ -6,23 +6,16 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/18 16:39:02 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/19 16:10:17 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SERVERCONFIG_HPP
 # define SERVERCONFIG_HPP
 
-#include <map>
-#include <vector>
-#include <fstream>
-#include <sstream>
-#include <iostream>
+#include "KeyValue.hpp"
 #include <string.h>
 #include <netinet/in.h>
-#include "Colors.hpp"
-#include "KeyValue.hpp"
-#include "WebServer.hpp"
 #include "MIMETypeReader.hpp"
 
 //class MIMETypeReader;

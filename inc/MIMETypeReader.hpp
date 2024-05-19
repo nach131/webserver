@@ -3,21 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   MIMETypeReader.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 20:00:54 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/04/22 20:16:43 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/19 16:10:42 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MIMETYPEREADER_HPP
 #define MIMETYPEREADER_HPP
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
 #include <map>
 #include <vector>
+#include <sstream>
+#include <fstream>
+#include <iostream>
 #include <algorithm>
 
 class MIMETypeReader

@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/18 17:41:55 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/19 15:56:58 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -249,7 +249,9 @@ void ServerConfig::checkSyntax(std::vector<std::string> & arr)
 		if (arr[i].find("}") == std::string::npos || findClosure(arr[i]))
 		{
 			if (arr[i].find("location") != std::string::npos)
-				_kv.checkLocation(arr[i]) ? true : parseError("Location value is not valid at line ", lineNum);
+			{
+				// _kv.checkLocation(arr[i]) ? true : parseError("Location value is not valid at line ", lineNum);
+			}
 			else
 			{
 				std::string el, key, value;
@@ -270,7 +272,7 @@ void ServerConfig::checkSyntax(std::vector<std::string> & arr)
 				{
 					try
 					{
-						_kv.checkComplex(key, value);
+						_kv.checkComplex(key, value, lineNum);
 					}
 					catch (std::exception &ex)
 					{
