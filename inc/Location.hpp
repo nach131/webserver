@@ -27,7 +27,6 @@ class Location
 {
 private:
 	LocationResult _location;
-std::string const &getRoot() const ;
 std::string const &getAlias() const ;
 std::string const &getIndex() const ;
 
@@ -39,7 +38,9 @@ public:
 
 	bool autoIndexOn();
 	bool methodAllowed(const std::string &method);
+std::string const &getRoot() const ;
 	std::string const &realPath() const;
+	std::string const &getName() const;
 
 	void print();
 

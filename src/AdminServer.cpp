@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/19 15:38:03 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/19 17:52:08 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -286,7 +286,7 @@ void AdminServer::run(int sockfd, int kq)
 				// TODO
 				printResponse(response.getHeader(), response.getContent());
 
-				_config.print();
+				// _config.print();
 
 				//=========================================================================
 				_header = response.getHeader();

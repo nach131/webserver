@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/19 15:25:42 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/19 19:38:26 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,10 @@ void HTTPRes::last()
 HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config) : _request(request), _config(config)
 {
 
-	
 	std::string method = _request.getHeader("Method");
-	std::string path =_request.getHeader("Path");
-	
-	_locationConf.init(_config->getLocationConfig(path), path);
+	std::string path = _request.getHeader("Path");
 
+	_locationConf.init(_config->getLocationConfig(path), path);
 
 	std::cout << ORANGE;
 	_locationConf.print();
@@ -46,19 +44,27 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config) : _request(re
 	// std::cout << "methodAllowed: " << _locationConf.methodAllowed(method)<< std::endl;
 	// std::cout << "realPath: " << _locationConf.realPath()<< std::endl;
 
-
-
 	//=========================================================================
 
-	// if (!_locationConf.methodAllowed(method))
-	// 	methodErr();
+	if (!_locationConf.methodAllowed(method))
+		methodErr();
+	else if (_locationConf.autoIndexOn())
+	{
+		exploreFiles();
+	}
+
+	else
+	{
+		std::cout << "WEB\n";
+	}
+
 	// else
 	// {
-	// 	if(_locationConf.autoIndexOn() && method == "GET" )
-	// 	std::cout << " index On\n";
-	// 			// exploreFiles();
-	// 	else if (!_locationConf.autoIndexOn() && method == "GET")
-	// 	std::cout << " index Off\n";
+	// 	// if(_locationConf.autoIndexOn() && method == "GET" )
+	// 	// std::cout << " index On\n";
+	// 	// 		// exploreFiles();
+	// 	// else if (!_locationConf.autoIndexOn() && method == "GET")
+	// 	// std::cout << " index Off\n";
 	// // 	methodGet();
 
 	// }
@@ -170,20 +176,20 @@ void HTTPRes::folder()
 
 void HTTPRes::file()
 {
-// 	std::cout << "ES FICHERO" << std::endl;
-// 	std::string filePath;
+	// 	std::cout << "ES FICHERO" << std::endl;
+	// 	std::string filePath;
 
-// 	if (isMainRoot(_location))
-// 		filePath = _config->getRoot("/") + _request.getHeader("Path");
-// 	else
-// 		filePath = _config->getRoot(_location) + _request.getHeader("Path");
+	// 	if (isMainRoot(_location))
+	// 		filePath = _config->getRoot("/") + _request.getHeader("Path");
+	// 	else
+	// 		filePath = _config->getRoot(_location) + _request.getHeader("Path");
 
-// 	// TODO
-// 	std::cout << "_location: " << _location << std::endl;
-// 	std::cout << "root: " << _config->getRoot(_location) << std::endl;
-// 	std::cout << "filePath: " << filePath << std::endl;
+	// 	// TODO
+	// 	std::cout << "_location: " << _location << std::endl;
+	// 	std::cout << "root: " << _config->getRoot(_location) << std::endl;
+	// 	std::cout << "filePath: " << filePath << std::endl;
 
-// 	createContent(filePath, true);
+	// 	createContent(filePath, true);
 }
 
 void HTTPRes::methodGet()
@@ -198,10 +204,11 @@ void HTTPRes::methodGet()
 	std::cout << RESET;
 }
 
-std::string toma(const std::string &filePath, const std::string &dirPath, const std::string &rootFolder)
+std::string toma(const std::string &py, const std::string &dirPath, const std::string &locate)
 {
 	std::string result;
-	FILE *pipe = popen(("python3 " + filePath + " " + dirPath + " " + rootFolder).c_str(), "r");
+
+	FILE *pipe = popen(("python3 " + py + " " + dirPath + " " + locate).c_str(), "r");
 	if (!pipe)
 	{
 		std::cerr << "Error: Failed to open pipe for Python script execution." << std::endl;
@@ -216,37 +223,34 @@ std::string toma(const std::string &filePath, const std::string &dirPath, const 
 	if (returnCode != 0)
 		std::cerr << "Error: Python script execution failed with return code " << returnCode << "." << std::endl;
 
-	// std::cout << result << std::endl;
+	std::cout << result << std::endl;
 
 	return result;
 }
 
 void HTTPRes::exploreFiles()
 {
+	// TODO
+	std::cout << "FILES EXPLORER" << std::endl;
 
-// 	std::string rootFolder = _config->getRoot(_location);
-// 	std::string path = _request.getHeader("Path");
-// 	removeLastSlash(path);
+	std::string realpath = _locationConf.realPath();
+	std::string rootPath = _locationConf.getRoot();
 
-// 	std::string folderPath = rootFolder + path;
+	if (!isFile(realpath))
+	{
+		std::cout << "CARPETA\n";
 
-// 	// TODO
-// 	std::cout << "FILES EXPLORER" << std::endl;
-// 	std::cout << "Path: " << path << std::endl;
-// 	std::cout << "root: " << rootFolder << std::endl;
-// 	std::cout << "folderPath: " << folderPath << std::endl;
+		std::string py = "./cgi_bin/explorer.py";
+		_header.addOne(_request.getHeader("Version"), "200 OK");
+		_header.addField("Content-Type", "text/html");
 
-// 	// std::string py = "/Users/nacho/Dropbox/00_42Barcelona/42Barcelona/C5/webserver/cgi_bin/explorer.py";
-// 	if (!isFile(path))
-// 	{
-// 		std::string py = "./cgi_bin/explorer.py";
-// 		_header.addOne(_request.getHeader("Version"), "200 OK");
-// 		_header.addField("Content-Type", "text/html");
-
-// 		_content = toma(py, folderPath, path);
-// 	}
-// 	else
-// 		createContent(folderPath, true);
+		_content = toma(py, realpath, _locationConf.getName());
+	}
+	else
+	{
+		std::cout << "ES FILE\n";
+		createContent(realpath, true);
+	}
 }
 
 void HTTPRes::methodPost()

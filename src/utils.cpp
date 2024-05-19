@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/16 19:26:01 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/19 19:17:40 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,28 +80,48 @@ std::string extractEndpoint(const std::string &url)
 	return endpoint;
 }
 
- // Retorna true si:
-    // 1. Se encontró un punto ('.') en la cadena (found != std::string::npos).
-    // 2. El punto no es el último carácter de la cadena (found != path.size() - 1).
-bool isFile(const std::string& path) {
-    std::size_t found = path.find_last_of(".");
-    return (found != std::string::npos && found != path.size() - 1);
-}
+//  // Retorna true si:
+//     // 1. Se encontró un punto ('.') en la cadena (found != std::string::npos).
+//     // 2. El punto no es el último carácter de la cadena (found != path.size() - 1).
+bool isFile(const std::string &path)
+{
+	std::string adjustedPath = path;
 
+	// Si el primer carácter es '.', eliminarlo
+	if (!path.empty() && path[0] == '.')
+	{
+		adjustedPath = path.substr(1);
+	}
+
+	std::size_t found = adjustedPath.find_last_of(".");
+	return (found != std::string::npos && found != path.size() - 1);
+}
+// #include <sys/stat.h>
+
+// bool isFile(const std::string& path) {
+//     struct stat statbuf;
+//     if (stat(path.c_str(), &statbuf) != 0) {
+//         return false; // No se pudo acceder a la ruta
+//     }
+//     return S_ISREG(statbuf.st_mode); // Verifica si es un archivo regular
+// }
 
 // Función para separar un string por un delimitador
-std::vector<std::string> split(const std::string &str, char delimiter) {
-    std::vector<std::string> tokens;
-    std::istringstream stream(str);
-    std::string token;
+std::vector<std::string> split(const std::string &str, char delimiter)
+{
+	std::vector<std::string> tokens;
+	std::istringstream stream(str);
+	std::string token;
 
-    while (std::getline(stream, token, delimiter)) {
-        if (!token.empty()) {
-            tokens.push_back(token);
-        }
-    }
+	while (std::getline(stream, token, delimiter))
+	{
+		if (!token.empty())
+		{
+			tokens.push_back(token);
+		}
+	}
 
-    return tokens;
+	return tokens;
 }
 
 bool isMainRoot(const std::string &str)
