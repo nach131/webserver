@@ -10,6 +10,37 @@ def generate_directory_listing(directory_path, root_path):
     html = """<html>
 <head>
     <title>Index of {}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        pre {
+            font-family: monospace;
+        }
+        .directory-listing {
+            display: table;
+            width: 100%;
+        }
+        .directory-item {
+            display: table-row;
+        }
+        .directory-item a {
+            display: table-cell;
+            text-decoration: none;
+            color: #0000FF;
+            padding-right: 20px;
+        }
+        .directory-item span {
+            display: table-cell;
+            padding-right: 20px;
+        }
+        .directory-item .size {
+            text-align: right;
+        }
+        hr {
+            margin: 20px 0;
+        }
+    </style>
 </head>
 <body>
     <h1>Index of {}</h1>
