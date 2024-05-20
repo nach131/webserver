@@ -40,7 +40,7 @@ def generate_directory_listing(directory_path, root_location):
         .directory-item a {
             display: table-cell;
             text-decoration: none;
-            color: #0000FF;
+            # color: #0000FF;
             padding-right: 20px;
         }
         .directory-item span {

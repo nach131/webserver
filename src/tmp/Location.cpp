@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 17:46:33 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/20 20:15:58 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/20 18:39:51 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,39 +18,36 @@ Location::~Location() {}
 
 void Location::init(const LocationResult &location, const std::string &path, const std::string &referer)
 {
-	_location = location;
+
 	std::cout << "LOCATION\n";
+
+	_location = location;
 
 	std::string pathMod = path;
 	removeLastSlash(pathMod);
-
-	std::cout << "pathMod: " << pathMod << std::endl;
 
 	std::string alias = getAlias();
 	std::string root = getRoot();
 	std::string index = getIndex();
 	bool autoindex = autoIndexOn();
 
-	if (_location.name == path && !index.empty() && !autoindex)
+	if (_location.name == path && !index.empty() && autoindex == false)
 	{
 		std::cout << "one\n";
-		// if (path == "/")
-		// {
-		// std::cout << "one if\n";
-		// 	_location.realPath = root + path + "/" + index;
-		// }
-		if (root == "./")
+		if (path == "/")
 		{
-			std::cout << "one  if 1\n";
-			_location.realPath = "." + path + "/" + index;
-		}
-		else
-		{
-			std::cout << "else \n";
+			std::cout << "one if\n";
 			_location.realPath = root + path + "/" + index;
 		}
+		else
+
+		// else if (root == "./")
+		{
+			std::cout << "one else\n";
+			_location.realPath = "." + path + "/" + index;
+		}
 	}
-	else if (_location.name == path && index.empty() && !autoindex)
+	else if (_location.name == path && index.empty()  && autoindex == false && alias.empty())
 	{
 		std::cout << "dos\n";
 		if (path == "/")
@@ -58,19 +55,13 @@ void Location::init(const LocationResult &location, const std::string &path, con
 			std::cout << "dos if\n";
 			_location.realPath = root + path + "/" + "index.html";
 		}
-		else if (!alias.empty())
+		else
 		{
-			std::cout << "dos else if 1\n";
-			_location.realPath = alias + "/index.html";
+			std::cout << "dos else\n";
+			_location.realPath = root + path + "/" + index;
 		}
-		else if (!alias.empty())
-		{
-			std::cout << "dos else  if 2\n";
-			_location.realPath = root + "/index.html";
-		}
-
 	}
-	else if (path == "/" && index.empty() && !autoindex)
+	else if (path == "/" && index.empty() && autoindex == false)
 	{
 		std::cout << "tres\n";
 		_location.realPath = root + path + "/" + "index.html";
@@ -78,7 +69,10 @@ void Location::init(const LocationResult &location, const std::string &path, con
 	else if (!alias.empty())
 	{
 		std::cout << "cuatro\n";
-		_location.realPath = alias;
+		if (index.empty())
+			_location.realPath = alias + "/" + "index.html";
+		else
+			_location.realPath = alias;
 	}
 	else if (_location.name == pathMod && !root.empty())
 	{
@@ -87,26 +81,31 @@ void Location::init(const LocationResult &location, const std::string &path, con
 	}
 	else if (!root.empty() && !referer.empty())
 	{
-		// _location.realPath = root + path;
-		if (_location.name == "/")
+		std::cout << "seis\n";
+		if (!alias.empty())
 		{
-
 			std::cout << "seis if\n";
-			_location.realPath = root + referer = pathMod;
-		}
-		else if (isFile(pathMod))
-		{
+
 			_location.realPath = root + path;
 		}
 		else
 		{
 			std::cout << "seis else\n";
-			// _location.realPath = root + referer + path;
-			_location.realPath = root + path;
+
+			_location.realPath = alias;
 		}
 	}
 	else
+	{
 		std::cout << "else\n";
+		_location.realPath = root + path;
+	}
+
+	std::cout << RED;
+	std::cout << "pathMod: " << pathMod << std::endl;
+
+	std::cout << _location.realPath << std::endl;
+	std::cout << RESET;
 }
 
 void Location::print()

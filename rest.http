@@ -18,3 +18,4 @@ GET   http://localhost:8080/astronaut/toma.html
 
 ### alias
 GET   http://localhost:8080/tomate/mas/otra/cosa.html
+
