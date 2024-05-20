@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 17:46:33 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/19 19:01:35 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/20 13:12:07 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,22 +16,66 @@ Location::Location() {}
 
 Location::~Location() {}
 
-void Location::init(const LocationResult &location, const std::string &path)
+void Location::init(const LocationResult &location, const std::string &path, const std::string &referer)
 {
 	_location = location;
 	std::cout << "LOCATION\n";
+
+std::string pathMod = path;
+removeLastSlash(pathMod);
+
+std::cout << "pathMod: " << pathMod << std::endl;
 
 	std::string alias = getAlias();
 	std::string root = getRoot();
 	std::string index = getIndex();
 	bool autoindex = autoIndexOn();
 
-	if (_location.name == path && index != "" && !autoindex)
-		_location.realPath = root + path + "/" + index;
+	if (_location.name == path && index != "" && autoindex == false)
+	{
+		std::cout << "one\n";
+		if (path == "/")
+			_location.realPath = root + path + "/" + index;
+		else if (root == "./")
+			_location.realPath = "." + path + "/" + index;
+	}
+	else if (_location.name == path && index == "" && autoindex == false)
+	{
+		std::cout << "dos\n";
+		if (path == "/")
+			_location.realPath = root + path + "/" + "index.html";
+	}
+	else if (path == "/" && index == "" && autoindex == false)
+	{
+		std::cout << "tres\n";
+		_location.realPath = root + path + "/" + "index.html";
+	}
 	else if (alias != "")
+	{
+		std::cout << "cuatro\n";
 		_location.realPath = alias;
-	else if (root != "")
+	}
+	else if (_location.name == pathMod && root != "")
+	{
+		std::cout << "cinco\n";
+		_location.realPath = root + pathMod;
+	}
+	else if (root != "" && referer != "")
+	{
+		std::cout << "seis\n";
+		// std::cout << extractEndpoint(referer) << std::endl;
+
+		// std::cout <<"root: " << root << std::endl;
+		// std::cout  << "path: "<< path << std::endl;
+
 		_location.realPath = root + path;
+		// _location.realPath = root + "/" + extractEndpoint(referer) + pathMod;
+
+		// std::cout << "realPath" << _location.realPath << std::endl;
+	}
+	else
+			std::cout << "else\n";
+
 }
 
 void Location::print()

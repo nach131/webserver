@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/19 14:11:15 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/19 20:11:32 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,8 @@ void ServerConfig::loadConf(const std::string &filename)
 	// cgi
 	_locations["/cgi_bin"] = std::map<std::string, std::string>();
 	_locations["/cgi_bin"]["autoindex"] = "off";
-	_locations["/cgi_bin"]["root"] = "/Users/nmota-bu/Desktop/webserver";
+	// _locations["/cgi_bin"]["root"] = "/Users/nmota-bu/Desktop/webserver";
+	_locations["/cgi_bin"]["root"] = "./";
 	_locations["/cgi_bin"]["allow_methods"] = "GET";
 	_locations["/cgi_bin"]["index"] = "photo.py";
 	// TEST 403 Forbidden

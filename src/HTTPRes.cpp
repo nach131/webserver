@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/19 19:38:26 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/20 13:12:51 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,22 +27,55 @@ void HTTPRes::last()
 
 #include <map>
 
+std::string removeBeforeNumber(const std::string &url, const std::string &host)
+{
+
+	std::cout << "HOST: " << host << std::endl;
+
+	std::string result = url;
+	// std::size_t pos = result.find("8080"); // Buscar el número "8080"
+	std::size_t pos = result.find("localhost:8080"); // Buscar el número "8080"
+	// std::size_t pos = result.find(toma); // Buscar el número "8080"
+
+	if (pos != std::string::npos)
+	{
+		// Encontrar la siguiente barra después del número
+		pos = result.find("/", pos);
+		if (pos != std::string::npos)
+		{
+			// Eliminar todo lo anterior e incluyendo la barra
+			// result = result.substr(pos + 1);
+			result = result.substr(pos);
+		}
+		else
+		{
+			// Si no hay barra después del número, eliminar todo lo anterior e incluyendo el número
+			result = "";
+		}
+	}
+
+	return result;
+}
+
 HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config) : _request(request), _config(config)
 {
 
 	std::string method = _request.getHeader("Method");
 	std::string path = _request.getHeader("Path");
+	std::string referer = _request.getHeader("Referer");
+	std::string host = _request.getHeader("Host");
 
-	_locationConf.init(_config->getLocationConfig(path), path);
+	std::cout << "referer: " << referer << std::endl;
+	std::cout << "host: " << host << std::endl;
+	// http://localhost:8080/
+	std::string remove = removeBeforeNumber(referer, host);
+
+	_locationConf.init(_config->getLocationConfig(path), path, referer);
 
 	std::cout << ORANGE;
+	std::cout << "removeBeforeNumber: " << remove << std::endl;
 	_locationConf.print();
-	// std::cout << "locationName: " << _locationConf.getName()<< std::endl;
-	// std::cout << "realPath: " << _locationConf.realPath()<< std::endl;
 	std::cout << RESET;
-	// std::cout << "autoIndexOn: " << _locationConf.autoIndexOn()<< std::endl;
-	// std::cout << "methodAllowed: " << _locationConf.methodAllowed(method)<< std::endl;
-	// std::cout << "realPath: " << _locationConf.realPath()<< std::endl;
 
 	//=========================================================================
 
@@ -50,44 +83,25 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config) : _request(re
 		methodErr();
 	else if (_locationConf.autoIndexOn())
 	{
-		exploreFiles();
+		std::cout << "EXPLORER\n";
+		if (method == "GET")
+			exploreFiles();
+		else if (method == "POST")
+			std::cout << "EXPLORE POST\n";
+		else if (method == "DELETE")
+			std::cout << "EXPLORE DELETE\n";
 	}
-
 	else
 	{
 		std::cout << "WEB\n";
+		if (method == "GET")
+			// std::cout << "WEB GET\n";
+			createContent(_locationConf.realPath(), true);
+		else if (method == "POST")
+			std::cout << "WEB POST\n";
+		else if (method == "DELETE")
+			std::cout << "WEB DELETE\n";
 	}
-
-	// else
-	// {
-	// 	// if(_locationConf.autoIndexOn() && method == "GET" )
-	// 	// std::cout << " index On\n";
-	// 	// 		// exploreFiles();
-	// 	// else if (!_locationConf.autoIndexOn() && method == "GET")
-	// 	// std::cout << " index Off\n";
-	// // 	methodGet();
-
-	// }
-
-	//=========================================================================
-	// _location = _request.getLocation(); // getLocation en config y devuelve un map
-	// bool  fav = _location == "/favicon.ico";
-
-	// std::cout << "_location: " << _location << std::endl;
-	// std::cout << "is file: " << isFile(_request.getHeader("Path")) << std::endl;
-
-	// if (method == "GET" && _config->isLocationAllowed(_location) && _config->isMethodAllowed(_location, "GET") && _config->isLocationOn(_location))
-	// {
-	// 	exploreFiles();
-	// }
-	// else if ((method == "GET" && _config->isLocationAllowed(_location) && _config->isMethodAllowed(_location, "GET")) || isFile(_request.getHeader("Path")))
-	// 	methodGet();
-	// else if (method == "POST" && _config->isMethodAllowed(_location, "POST"))
-	// 	methodPost();
-	// else if (method == "DELETE" && _config->isMethodAllowed(_location, "DELETE"))
-	// 	methodDelete();
-	// else
-	// 	methodErr();
 
 	//=========================================================================
 
@@ -176,20 +190,20 @@ void HTTPRes::folder()
 
 void HTTPRes::file()
 {
-	// 	std::cout << "ES FICHERO" << std::endl;
-	// 	std::string filePath;
+	// 		std::cout << "ES FICHERO" << std::endl;
+	// 		std::string filePath;
 
-	// 	if (isMainRoot(_location))
-	// 		filePath = _config->getRoot("/") + _request.getHeader("Path");
-	// 	else
-	// 		filePath = _config->getRoot(_location) + _request.getHeader("Path");
+	// 		if (isMainRoot(_location))
+	// 			filePath = _config->getRoot("/") + _request.getHeader("Path");
+	// 		else
+	// 			filePath = _config->getRoot(_location) + _request.getHeader("Path");
 
-	// 	// TODO
-	// 	std::cout << "_location: " << _location << std::endl;
-	// 	std::cout << "root: " << _config->getRoot(_location) << std::endl;
-	// 	std::cout << "filePath: " << filePath << std::endl;
+	// 		// TODO
+	// 		std::cout << "_location: " << _location << std::endl;
+	// 		std::cout << "root: " << _config->getRoot(_location) << std::endl;
+	// 		std::cout << "filePath: " << filePath << std::endl;
 
-	// 	createContent(filePath, true);
+	// 		createContent(filePath, true);
 }
 
 void HTTPRes::methodGet()
@@ -204,11 +218,14 @@ void HTTPRes::methodGet()
 	std::cout << RESET;
 }
 
-std::string toma(const std::string &py, const std::string &dirPath, const std::string &locate)
+std::string pyExplorer(const std::string &py, const std::string &dirPath, const std::string &root_location)
 {
 	std::string result;
 
-	FILE *pipe = popen(("python3 " + py + " " + dirPath + " " + locate).c_str(), "r");
+	std::cout << "PY EXPLORER\n";
+	std::cout << "dirPath: " << dirPath << std::endl;
+
+	FILE *pipe = popen(("python3 " + py + " " + dirPath + " " + root_location).c_str(), "r");
 	if (!pipe)
 	{
 		std::cerr << "Error: Failed to open pipe for Python script execution." << std::endl;
@@ -223,18 +240,12 @@ std::string toma(const std::string &py, const std::string &dirPath, const std::s
 	if (returnCode != 0)
 		std::cerr << "Error: Python script execution failed with return code " << returnCode << "." << std::endl;
 
-	std::cout << result << std::endl;
-
 	return result;
 }
 
 void HTTPRes::exploreFiles()
 {
-	// TODO
-	std::cout << "FILES EXPLORER" << std::endl;
-
 	std::string realpath = _locationConf.realPath();
-	std::string rootPath = _locationConf.getRoot();
 
 	if (!isFile(realpath))
 	{
@@ -244,11 +255,11 @@ void HTTPRes::exploreFiles()
 		_header.addOne(_request.getHeader("Version"), "200 OK");
 		_header.addField("Content-Type", "text/html");
 
-		_content = toma(py, realpath, _locationConf.getName());
+		_content = pyExplorer(py, realpath, _locationConf.getRoot());
 	}
 	else
 	{
-		std::cout << "ES FILE\n";
+		std::cout << "FILE\n";
 		createContent(realpath, true);
 	}
 }

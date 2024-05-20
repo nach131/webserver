@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/19 19:17:40 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/20 11:32:35 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,27 +59,6 @@ std::string getExtension(const std::string &path)
 	return path.substr(pos + 1);
 }
 
-std::string extractEndpoint(const std::string &url)
-{
-	// Encuentra la última ocurrencia de "/"
-	size_t lastSlashPos = url.find_last_of("/");
-
-	std::string endpoint;
-	if (lastSlashPos != std::string::npos)
-		// Usa substr para obtener la subcadena que sigue después de la última "/"
-		endpoint = url.substr(lastSlashPos + 1);
-	else
-		// Si no se encuentra "/", devuelve la URL completa
-		endpoint = url;
-
-	// Elimina los caracteres de retorno de carro ("\r") del final de la cadena
-	size_t pos = endpoint.find_last_not_of("\r");
-	if (pos != std::string::npos)
-		endpoint.erase(pos + 1);
-
-	return endpoint;
-}
-
 //  // Retorna true si:
 //     // 1. Se encontró un punto ('.') en la cadena (found != std::string::npos).
 //     // 2. El punto no es el último carácter de la cadena (found != path.size() - 1).
@@ -89,9 +68,7 @@ bool isFile(const std::string &path)
 
 	// Si el primer carácter es '.', eliminarlo
 	if (!path.empty() && path[0] == '.')
-	{
 		adjustedPath = path.substr(1);
-	}
 
 	std::size_t found = adjustedPath.find_last_of(".");
 	return (found != std::string::npos && found != path.size() - 1);
@@ -116,9 +93,7 @@ std::vector<std::string> split(const std::string &str, char delimiter)
 	while (std::getline(stream, token, delimiter))
 	{
 		if (!token.empty())
-		{
 			tokens.push_back(token);
-		}
 	}
 
 	return tokens;
@@ -138,6 +113,27 @@ bool isMainRoot(const std::string &str)
 
 	// Verificar si hay exactamente un slash
 	return (slashCount == 1);
+}
+
+std::string extractEndpoint(const std::string &url)
+{
+	// Encuentra la última ocurrencia de "/"
+	size_t lastSlashPos = url.find_last_of("/");
+
+	std::string endpoint;
+	if (lastSlashPos != std::string::npos)
+		// Usa substr para obtener la subcadena que sigue después de la última "/"
+		endpoint = url.substr(lastSlashPos + 1);
+	else
+		// Si no se encuentra "/", devuelve la URL completa
+		endpoint = url;
+
+	// Elimina los caracteres de retorno de carro ("\r") del final de la cadena
+	size_t pos = endpoint.find_last_not_of("\r");
+	if (pos != std::string::npos)
+		endpoint.erase(pos + 1);
+
+	return endpoint;
 }
 
 void removeLastSlash(std::string &str)
