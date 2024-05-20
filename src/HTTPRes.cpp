@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/17 13:06:57 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/20 18:52:25 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,15 +117,15 @@ void HTTPRes::rootPath()
 std::string const HTTPRes::OtherPath() const
 {
 	std::string path;
-	if (_config->getFirst() == false)
-		path = _config->getRootDirectory() + _request.getHeader("Path");
-	else
-	{
-		std::string post = _request.getHeader("Path");
-		path = _config->getPrePath() + post;
-		// TODO hay que quitar los locates del pricipo de los errores
-		// Error al abrir el archivo ./conf_web/error/404/files/script.js
-	}
+	// if (_config->getFirst() == false)
+	// 	path = _config->getRootDirectory() + _request.getHeader("Path");
+	// else
+	// {
+	// 	std::string post = _request.getHeader("Path");
+	// 	path = _config->getPrePath() + post;
+	// 	// TODO hay que quitar los locates del pricipo de los errores
+	// 	// Error al abrir el archivo ./conf_web/error/404/files/script.js
+	// }
 	std::cout << MAGENTA << path << RESET << std::endl;
 	return path;
 }
@@ -199,6 +199,6 @@ void HTTPRes::error404()
 	_header.addOne(_request.getHeader("Version"), "404 Not Found");
 	_content = readFile("./conf_web/error/404/index.html");
 	// poner el path en variable
-	_config->setFirst(false);
-	_config->setPrePath("./conf_web/error/404");
+	// _config->setFirst(false);
+	// _config->setPrePath("./conf_web/error/404");
 }

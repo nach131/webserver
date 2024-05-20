@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:26:56 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/11 13:25:27 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/20 18:25:00 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,9 @@
 #include <sys/event.h>
 
 #include "ServerConfig.hpp"
-#include "Colors.hpp"
 #include "HTTPRes.hpp"
 #include "HTTPRequest.hpp"
 #include "HTTPHeader.hpp"
-#include "WebServer.hpp"
 
 class ServerConfig;
 

@@ -6,13 +6,13 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/19 15:56:58 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/20 19:20:45 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ServerConfig.hpp"
 
-ServerConfig::ServerConfig(const std::string &mimeFilePath) : _first(true), _port(8080), _apiPort(3000), _apiForward("192.168.1.20"), _mime(mimeFilePath) // Valores por defecto
+ServerConfig::ServerConfig(const std::vector<std::string> &content, const std::string &mimeFilePath) : _port(8080), _apiPort(3000), _apiForward("192.168.1.20"), _mime(mimeFilePath) // Valores por defecto
 {
 	memset(&_serverAddress, 0, sizeof(_serverAddress));
 	_serverAddress.sin_family = AF_INET;
@@ -43,6 +43,7 @@ ServerConfig::ServerConfig(const std::string &mimeFilePath) : _first(true), _por
 
 	_buffer = new char[1024];
 	memset(_buffer, 0, 1024);
+	fillVariables(content);
 }
 
 ServerConfig::~ServerConfig() { delete _buffer; }
@@ -70,30 +71,30 @@ void ServerConfig::loadConf(const std::string &filename)
 	// _locations["/cgi_bin"]["cgi_path"] = "/usr/bin/python3 /bin/bash";
 	// _locations["/cgi_bin"]["cgi_ext"] = "cgi_ext .py .sh";
 
-	std::string line;
-	std::ifstream in(filename);
-	std::vector<std::string> arr;
+	// std::string line;
+	// std::ifstream in(filename);
+	// std::vector<std::string> arr;
 
-	if (!in.good())
-		throw e_cee("File doesn't exist");
+	// if (!in.good())
+	// 	throw e_cee("File doesn't exist");
 
-	while (getline(in, line))
-	{
-		std::cout << "Line: -" << line << std::endl;
-		arr.push_back(line);
-	}
-	in.close();
-	try
-	{
-		checkSyntax(arr);
-		fillVariables(arr);
-		printLocations();
-	}
-	catch (std::runtime_error &ex)
-	{
-		throw e_cee(ex.what());
-	}
-	std::cout << "Syntax correct!" << std::endl;
+	// while (getline(in, line))
+	// {
+	// 	std::cout << "Line: -" << line << std::endl;
+	// 	arr.push_back(line);
+	// }
+	// in.close();
+	// try
+	// {
+	// 	checkSyntax(arr);
+	// 	fillVariables(arr);
+	// 	printLocations();
+	// }
+	// catch (std::runtime_error &ex)
+	// {
+	// 	throw e_cee(ex.what());
+	// }
+	// std::cout << "Syntax correct!" << std::endl;
 }
 
 void ServerConfig::print() const
@@ -108,11 +109,10 @@ void ServerConfig::print() const
 		std::cout << "  " << it->first << ": " << it->second << std::endl;
 	std::cout << "API Forward: " << _apiForward << std::endl;
 	std::cout << "API Port: " << _apiPort << std::endl;
-	std::cout << "first GET: " << _first << std::endl;
 	std::cout << "pre Path: " << _prePath << std::endl;
 
 	std::cout << "Locations:" << std::endl;
-	for (std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _loc.begin(); it != _loc.end(); ++it)
+	for (std::map<std::string, std::map<std::string, std::string>>::const_iterator it = _locations.begin(); it != _locations.end(); ++it)
 	{
 		std::cout << "  " << it->first << ":" << std::endl;
 		for (std::map<std::string, std::string>::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
@@ -124,7 +124,7 @@ void ServerConfig::print() const
 void ServerConfig::printLocations()
 {
 	std::cout << "Locations:" << std::endl;
-	for (std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _loc.begin(); it != _loc.end(); ++it)
+	for (std::map<std::string, std::map<std::string, std::string>>::const_iterator it = _locations.begin(); it != _locations.end(); ++it)
 	{
 		std::cout << "  " << it->first << ":" << std::endl;
 		for (std::map<std::string, std::string>::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
@@ -161,7 +161,7 @@ std::string ServerConfig::getContentType(const std::string &extension) const
 
 std::map<std::string, std::map<std::string, std::string> > ServerConfig::getLocation() const
 {
-	return _loc;
+	return _locations;
 }
 
 void ServerConfig::setBuffer(char *buf) { _buffer = buf; }
@@ -170,14 +170,7 @@ char *ServerConfig::getBuffer() const { return _buffer; }
 
 // struct sockaddr_in ServerConfig::getServerAddress() const { return _serverAddress; }
 
-bool ServerConfig::getFirst() const { return _first;}
-
-std::string ServerConfig::getPrePath() const {return _prePath;}
-
-void ServerConfig::setFirst(bool action){	_first = action;}
-
-void ServerConfig::setPrePath(const std::string &path) { _prePath = path; }
-
+/*
 int ServerConfig::checkLine(std::string & line)
 {
 	if (line[0] != 9 && line[0] != 0)
@@ -188,16 +181,6 @@ int ServerConfig::checkLine(std::string & line)
 	return 0;
 }
 
-bool ServerConfig::findClosure(std::string &val)
-{
-	bool check = false;
-	for (size_t i = 0; i < val.length(); i++)
-	{
-		if (val[i] != ' ' && val[i] != '\t' && val[i] != '}')
-			check = true;
-	}
-	return check;
-}
 
 void ServerConfig::checkSyntax(std::vector<std::string> & arr)
 {
@@ -293,6 +276,7 @@ void ServerConfig::checkSyntax(std::vector<std::string> & arr)
 	if (brack > 0)
 		parseError("server block not closed at line ", lineNum);
 }
+*/
 
 // bool ServerConfig::parseError(std::string str, int n)
 // {
@@ -302,20 +286,30 @@ void ServerConfig::checkSyntax(std::vector<std::string> & arr)
 // 	return false;
 // }
 
-void ServerConfig::fillVariables(std::vector<std::string> &arr)
+int ServerConfig::checkLine(const std::string &line)
 {
-	std::string el, value;
+	size_t l = 0;
+	while (line[l] == ' ' || line[l] == '\t')
+		l++;
+	if (line[l] != '#' && line[l] != '\0')
+		return 1;
+	return 0;
+}
+
+void ServerConfig::fillVariables(const std::vector<std::string> &arr)
+{
+	std::string el;
 	for (size_t i = 0; i < arr.size(); i++)
 	{
-		std::stringstream ss(arr[i]);
 		if (arr[i].find("location") != std::string::npos)
 		{
 			std::string path;
+			std::stringstream ss(arr[i]);
 			ss >> path >> path;
 			std::cout << RED << "Location path: " << path << RESET << std::endl;
 			// Location *newLoc = new Location(arr, i);
 			// _loc[el] = newLoc;
-			for (i++; findClosure(arr[i]); i++)
+			for (i++; checkLine(arr[i]); i++)
 			{
 				std::string el, key, value;
 				std::stringstream ss(arr[i]);
@@ -330,14 +324,19 @@ void ServerConfig::fillVariables(std::vector<std::string> &arr)
 				takeOutSemiColumn(value);
 				std::cout << "Location key: " << key << " Val: " << value << std::endl;
 				// _loc[path] = std::map<std::string, std::string>();
-				_loc[path][key] = value;
+				_locations[path][key] = value;
 			}
 		}
-		else if (arr[i].find("}") == std::string::npos || findClosure(arr[i]))
+		else if (checkLine(arr[i]) ||
+				 arr[i].find("{") != std::string::npos ||
+				 arr[i].find("}") != std::string::npos)
+			continue;
+		else
 		{
+			std::string key, value;
+			std::stringstream ss(arr[i]);
+			ss >> key >> value;
+			std::cout << "Key: -" << key << "- Value: -" << value << "-" << std::endl;
 		}
 	}
 }
-
-ServerConfig::ConfErrorException::ConfErrorException (const std::string & msg)
-	: std::runtime_error("\033[0;31mError: " + msg) {}
