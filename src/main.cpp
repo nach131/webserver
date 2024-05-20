@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/20 18:51:42 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/20 20:07:47 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,12 @@ void checkArg(int argc, char **argv)
 	// 	}
 }
 
+void printServers(std::vector<ServerConfig *> &servers)
+{
+	for (std::vector<ServerConfig *>::iterator it = servers.begin(); it != servers.end(); it++)
+		(*it)->print();
+}
+
 int main(int argc, char **argv)
 {
 	try
@@ -52,6 +58,7 @@ int main(int argc, char **argv)
 		checkArg(argc, argv);
 		FileContent fc(argv[1]);
 		fc.createServers(servers);
+		printServers(servers);
 		// createServers(content, servers);
 		std::cout << "Parsing ok" << std::endl;
 

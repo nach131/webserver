@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/19 16:09:26 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/20 20:13:54 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ KeyValue::~KeyValue()
 	_keys.clear();
 	_pairs.clear();
 }
+
+std::vector<std::string> KeyValue::getKeys() { return _keys; }
 
 bool KeyValue::checkKey(std::string &key)
 {

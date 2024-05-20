@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/20 19:23:28 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/20 20:39:30 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ public:
 
 	void print() const;
 	void printLocations();
-//	void loadConf(const std::string &);
 
 	int getPort() const;
 	int getApiPort() const;
@@ -63,6 +62,7 @@ public:
 
 	int checkLine(const std::string &line);
 
+	void addValue(std::stringstream &);
 	void fillVariables(const std::vector<std::string> &);
 };
 

@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/20 18:48:46 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/20 19:32:41 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ public:
 
 	void createServers(std::vector<ServerConfig *> &);
 	void checkKeysAndValues(std::vector<std::string> &, int &);
+	void createOneServer(std::vector<ServerConfig *> &, std::vector<std::string> &);
 
 	std::vector<std::string> checkOneServer(int &, int &);
 

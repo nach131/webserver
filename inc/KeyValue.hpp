@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/19 16:09:49 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/20 20:13:31 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ private:
 public:
 	KeyValue();
 	~KeyValue();
+
+	std::vector<std::string> getKeys();
 
 	bool checkKey(std::string &);
 	bool checkValue(std::string &, std::string &);
