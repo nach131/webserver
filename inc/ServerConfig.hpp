@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/20 19:11:53 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/20 19:23:28 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ private:
 	struct sockaddr_in _serverAddress;
 	std::map<int, std::string> _errorPages;
 	std::map<std::string, std::string> _gen;
-	std::map<std::string, std::map<std::string, std::string>> _locations;
+	std::map<std::string, std::map<std::string, std::string> > _locations;
 	KeyValue _kv;
 	MIMETypeReader _mime;
 
@@ -45,7 +45,7 @@ public:
 
 	void print() const;
 	void printLocations();
-	void loadConf(const std::string &);
+//	void loadConf(const std::string &);
 
 	int getPort() const;
 	int getApiPort() const;
@@ -55,7 +55,7 @@ public:
 	std::string getRootDirectory() const;
 	std::string getErrorPage(int errorCode) const;
 	std::string getContentType(const std::string &extension) const;
-	std::map<std::string, std::map<std::string, std::string>> getLocation() const;
+	std::map<std::string, std::map<std::string, std::string> > getLocation() const;
 
 	char *getBuffer() const;
 	void setBuffer(char *buf);

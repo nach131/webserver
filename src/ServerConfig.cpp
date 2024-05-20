@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/20 19:20:45 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/20 19:23:19 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ ServerConfig::ServerConfig(const std::vector<std::string> &content, const std::s
 
 ServerConfig::~ServerConfig() { delete _buffer; }
 
+/*
 void ServerConfig::loadConf(const std::string &filename)
 {
 	// (void)filename;
@@ -96,6 +97,7 @@ void ServerConfig::loadConf(const std::string &filename)
 	// }
 	// std::cout << "Syntax correct!" << std::endl;
 }
+*/
 
 void ServerConfig::print() const
 {
@@ -112,7 +114,7 @@ void ServerConfig::print() const
 	std::cout << "pre Path: " << _prePath << std::endl;
 
 	std::cout << "Locations:" << std::endl;
-	for (std::map<std::string, std::map<std::string, std::string>>::const_iterator it = _locations.begin(); it != _locations.end(); ++it)
+	for (std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.begin(); it != _locations.end(); ++it)
 	{
 		std::cout << "  " << it->first << ":" << std::endl;
 		for (std::map<std::string, std::string>::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
@@ -124,7 +126,7 @@ void ServerConfig::print() const
 void ServerConfig::printLocations()
 {
 	std::cout << "Locations:" << std::endl;
-	for (std::map<std::string, std::map<std::string, std::string>>::const_iterator it = _locations.begin(); it != _locations.end(); ++it)
+	for (std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.begin(); it != _locations.end(); ++it)
 	{
 		std::cout << "  " << it->first << ":" << std::endl;
 		for (std::map<std::string, std::string>::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
