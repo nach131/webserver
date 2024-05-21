@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/19 20:11:32 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/20 13:55:11 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,67 +168,21 @@ bool ServerConfig::isLocationAllowed(const std::string &path)
 	return false;
 }
 
-
-// PASADO A LOCATION
-// bool ServerConfig::isMethodAllowed(const std::string &path, const std::string &method)
-// {
-// 	std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.find(path);
-// 	for (std::map<std::string, std::string>::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
-// 	{
-// 		std::istringstream iss(it2->second);
-// 		std::string word;
-// 		while (iss >> word) // Leer cada palabra separada por espacios
-// 			if (word == method)
-// 				return true;
-// 	}
-// 	return false;
-// }
-
-// PASADO A LOCATION
-// bool ServerConfig::isLocationOn(const std::string &path)
-// {
-// 	std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.find(path);
-// 	if (it != _locations.end())
-// 	{
-// 		std::map<std::string, std::string>::const_iterator autoindexIt = it->second.find("autoindex");
-// 		if (autoindexIt != it->second.end())
-// 		{
-// 			if (autoindexIt->second == "on")
-// 				return true;
-// 		}
-// 	}
-// 	return false;
-// }
-
-
 // Obtiene la configuración de la ubicación correspondiente al path
-    LocationResult ServerConfig::getLocationConfig(const std::string &path) {
-        std::string best_match = "/";
-        std::map<std::string, std::map<std::string, std::string> >::iterator it;
-        for (it = _locations.begin(); it != _locations.end(); ++it) {
-            if (path.find(it->first) == 0 && it->first.length() > best_match.length()) {
-                best_match = it->first;
-            }
-        }
+LocationResult ServerConfig::getLocationConfig(const std::string &path)
+{
+	std::string best_match = "/";
+	std::map<std::string, std::map<std::string, std::string> >::iterator it;
+	for (it = _locations.begin(); it != _locations.end(); ++it)
+	{
+		if (path.find(it->first) == 0 && it->first.length() > best_match.length())
+		{
+			best_match = it->first;
+		}
+	}
 
-        LocationResult result;
-        result.name = best_match;
-        result.config = _locations[best_match];
-        return result;
-    }
-
-
-
-//=========================================================================
-
-// bool ServerConfig::getFirst() const { return _first; }
-
-// std::string ServerConfig::getPrePath() const { return _prePath; }
-
-// void ServerConfig::setFirst(bool action) { _first = action; }
-
-// void ServerConfig::setPrePath(const std::string &path) { _prePath = path; }
-
-// TODO
-// poner 404 en location leerlo y ponerlo en una map con los string
-// si no hay 404 poner un generico como el de ejemplo
+	LocationResult result;
+	result.name = best_match;
+	result.config = _locations[best_match];
+	return result;
+}

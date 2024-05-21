@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/20 13:12:51 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/20 20:38:27 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,55 +25,28 @@ void HTTPRes::last()
 	_header.addField("42-Barcelona", "nmota-bu, vduchi");
 }
 
-#include <map>
-
-std::string removeBeforeNumber(const std::string &url, const std::string &host)
-{
-
-	std::cout << "HOST: " << host << std::endl;
-
-	std::string result = url;
-	// std::size_t pos = result.find("8080"); // Buscar el número "8080"
-	std::size_t pos = result.find("localhost:8080"); // Buscar el número "8080"
-	// std::size_t pos = result.find(toma); // Buscar el número "8080"
-
-	if (pos != std::string::npos)
-	{
-		// Encontrar la siguiente barra después del número
-		pos = result.find("/", pos);
-		if (pos != std::string::npos)
-		{
-			// Eliminar todo lo anterior e incluyendo la barra
-			// result = result.substr(pos + 1);
-			result = result.substr(pos);
-		}
-		else
-		{
-			// Si no hay barra después del número, eliminar todo lo anterior e incluyendo el número
-			result = "";
-		}
-	}
-
-	return result;
-}
-
 HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config) : _request(request), _config(config)
 {
 
 	std::string method = _request.getHeader("Method");
 	std::string path = _request.getHeader("Path");
 	std::string referer = _request.getHeader("Referer");
-	std::string host = _request.getHeader("Host");
+	std::string referer_locat = removeBeforeNumber(referer, "8080");
 
 	std::cout << "referer: " << referer << std::endl;
-	std::cout << "host: " << host << std::endl;
-	// http://localhost:8080/
-	std::string remove = removeBeforeNumber(referer, host);
+	std::cout << "referer_locat: " << referer_locat << std::endl;
 
-	_locationConf.init(_config->getLocationConfig(path), path, referer);
+	std::string toma = removeFileName(referer_locat);
+
+	//=========================================================================
+	LocationResult tokemo = _config->getLocationConfig(removeFileName(referer_locat));
+
+	//=========================================================================
+
+	// si tiene referer cabiar path por referer con un if y no enviar refer
+	_locationConf.init(_config->getLocationConfig(path), path, referer_locat);
 
 	std::cout << ORANGE;
-	std::cout << "removeBeforeNumber: " << remove << std::endl;
 	_locationConf.print();
 	std::cout << RESET;
 
@@ -95,8 +68,14 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config) : _request(re
 	{
 		std::cout << "WEB\n";
 		if (method == "GET")
-			// std::cout << "WEB GET\n";
-			createContent(_locationConf.realPath(), true);
+		{
+			std::cout << "realPath: " << _locationConf.realPath() << std::endl;
+
+			if (isFile(_locationConf.realPath()))
+				createContent(_locationConf.realPath(), true);
+			else
+				error403();
+		}
 		else if (method == "POST")
 			std::cout << "WEB POST\n";
 		else if (method == "DELETE")
@@ -153,70 +132,23 @@ void HTTPRes::createContent(std::string filePath, bool file)
 		else
 			_header.addField("Content-Type", _config->getContentType(extension));
 	}
-	else // "false" = dentro de carpeta y no encuentra index.html
+	else
 		file ? error404() : error403();
-
-	// TODO
-	// std::cout << "header: " << _header.getHeader() << std::endl;
-	// std::cout << "content: " << _content << std::endl;
 }
 
-void HTTPRes::folder()
-{
-	// std::cout << "CARPETA" << std::endl;
+// 403 Forbidden cuando es web y va a carpta
 
-	// std::string index = _config->getIndex(_location);
-	// bool autoindex = _config->isLocationOn(_location);
-	// std::string filePath;
+// void HTTPRes::methodGet()
+// {
+// 	std::string path = _request.getHeader("Path");
 
-	// if (index.empty())
-	// {
-	// 	if (_location == "/")
-	// 		filePath = _config->getRoot(_location) + _request.getHeader("Path") + "index.html";
-	// 	else
-	// 		filePath = _config->getRoot(_location) + _request.getHeader("Path") + "/index.html";
-	// }
-	// else
-	// 	filePath = _config->getRoot(_location) + _request.getHeader("Path") + "/" + index;
+// 	// TODO
+// 	std::cout << MAGENTA;
 
-	// // TODO
-	// std::cout << " _location: " << _location << std::endl;
-	// std::cout << " autoindex: " << autoindex << std::endl;
-	// std::cout << " index: " << index << std::endl;
-	// std::cout << " filePath: " << filePath << std::endl;
+// 	isFile(path) ? file() : folder();
 
-	// createContent(filePath, false);
-}
-
-void HTTPRes::file()
-{
-	// 		std::cout << "ES FICHERO" << std::endl;
-	// 		std::string filePath;
-
-	// 		if (isMainRoot(_location))
-	// 			filePath = _config->getRoot("/") + _request.getHeader("Path");
-	// 		else
-	// 			filePath = _config->getRoot(_location) + _request.getHeader("Path");
-
-	// 		// TODO
-	// 		std::cout << "_location: " << _location << std::endl;
-	// 		std::cout << "root: " << _config->getRoot(_location) << std::endl;
-	// 		std::cout << "filePath: " << filePath << std::endl;
-
-	// 		createContent(filePath, true);
-}
-
-void HTTPRes::methodGet()
-{
-	std::string path = _request.getHeader("Path");
-
-	// TODO
-	std::cout << MAGENTA;
-
-	isFile(path) ? file() : folder();
-
-	std::cout << RESET;
-}
+// 	std::cout << RESET;
+// }
 
 std::string pyExplorer(const std::string &py, const std::string &dirPath, const std::string &root_location)
 {
@@ -260,7 +192,7 @@ void HTTPRes::exploreFiles()
 	else
 	{
 		std::cout << "FILE\n";
-		createContent(realpath, true);
+		createContent(realpath, false);
 	}
 }
 

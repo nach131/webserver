@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/20 11:32:35 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/20 20:36:32 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,4 +140,44 @@ void removeLastSlash(std::string &str)
 {
 	if (!str.empty() && str[str.length() - 1] == '/')
 		str.erase(str.length() - 1);
+}
+
+std::string removeBeforeNumber(const std::string &url, const std::string &host)
+{
+
+	std::cout << "HOST: " << host << std::endl;
+
+	std::string result = url;
+	// std::size_t pos = result.find("8080"); // Buscar el número "8080"
+	// TODO CUIDADO HARCODEADO
+	// std::size_t pos = result.find("localhost:8080"); // Buscar el número "8080"
+	std::size_t pos = result.find(host); // Buscar el número "8080"
+
+	if (pos != std::string::npos)
+	{
+		// Encontrar la siguiente barra después del número
+		pos = result.find("/", pos);
+		if (pos != std::string::npos)
+		{
+			// Eliminar todo lo anterior e incluyendo la barra
+			// result = result.substr(pos + 1);
+			result = result.substr(pos);
+		}
+		else
+			// Si no hay barra después del número, eliminar todo lo anterior e incluyendo el número
+			result = "";
+		// Eliminar cualquier carácter no deseado como '\r' al final de la cadena
+		if (!result.empty() && result.back() == '\r')
+			result.erase(result.size() - 1);
+	}
+
+	return result;
+}
+
+std::string removeFileName(const std::string &path)
+{
+	std::size_t pos = path.find_last_of('/');
+	if (pos != std::string::npos)
+		return path.substr(0, pos);
+	return path; // Si no hay barra, devolver el path completo (significa que no hay directorios, solo un fichero)
 }

@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:32 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/19 14:03:05 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/20 13:59:13 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void error403();
 
 	void methodGet();
 
-	void file();
+	// void file();
 	void exploreFiles();
 
 public:

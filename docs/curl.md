@@ -71,3 +71,16 @@ curl -X DELETE \
 
 ## Metodo no valido
 curl --location --request PATCH 'http://127.0.0.1:8080'
+
+
+##  enviar fichero
+
+curl -X POST -F "file=@/path/to/example.txt" http://example.com/upload
+
+##  múltiples campos
+curl -X POST -F "file=@/path/to/example.txt" -F "description=This is an example file" http://example.com/upload
+
+## Autenticación y otros encabezados
+curl -u username:password -X POST -F "file=@/path/to/file.txt" -H "Custom-Header: value" http://example.com/upload
+
+curl -u username:password -X POST -F "file=@./file.txt" -H "Custom-Header: value" http://localhost:8080
