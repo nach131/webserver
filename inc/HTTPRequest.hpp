@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 00:08:38 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/20 20:56:46 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/21 12:33:35 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ private:
     HTTPRequest &operator=(const HTTPRequest &);
 
 public:
-    HTTPRequest();
-    // HTTPRequest(const char *);
+    // HTTPRequest();
+    HTTPRequest(const char *);
     ~HTTPRequest();
     void getRequest(const char *);
     const std::string &getHeader(const std::string name) const;

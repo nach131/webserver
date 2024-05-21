@@ -6,4 +6,9 @@ asignar FD_ZERO
 agrupar FT_SET
 
 
+<<<<<<< HEAD
 https://nima101.github.io/io_multiplexing
+=======
+https://nima101.github.io/io_multiplexing
+
+>>>>>>> main

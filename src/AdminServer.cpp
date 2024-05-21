@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/20 21:00:31 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/21 12:13:39 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,7 +147,7 @@ void printEvent(const struct kevent &event)
 	std::cout << RESET;
 }
 
-void printPeticion(const std::string buffer)
+void printPeticion(const char *buffer)
 {
 	std::cout << CYAN "[ Mensaje del cliente: ]\n"
 			  << buffer << RESET << std::endl;
@@ -212,10 +212,10 @@ void AdminServer::run(int sockfd, int kq)
 	struct sockaddr_storage addr;
 	socklen_t socklen = sizeof(addr);
 
-	HTTPRequest request;
+	// HTTPRequest request;
 	while (42)
 	{
-		bool checkEVFlag = false;
+		// bool checkEVFlag = false;
 		int num_events = kevent(kq, NULL, 0, evList, MAX_EVENTS, NULL);
 		for (int i = 0; i < num_events; i++)
 		{
@@ -254,7 +254,7 @@ void AdminServer::run(int sockfd, int kq)
 					std::cout << "CON EV_FLAG0" << std::endl;
 					EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & EV_FLAG0, 0, 0, NULL);
 					kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
-					checkEVFlag = true;
+														  // checkEVFlag = true;
 				}
 				else if (evSet.flags | EV_FLAG0)
 				{
@@ -278,13 +278,12 @@ void AdminServer::run(int sockfd, int kq)
 				//===================PETICION==============================================
 				// TODO
 				printPeticion(buffer);
-
 				//===================PARSING==============================================
-				if (checkEVFlag)
-				{
-					request.getRequest(buffer);
-					checkEVFlag = false;
-				}
+				// if (checkEVFlags)
+				// {
+				// 	request.getRequest(buffer);
+				// }
+				HTTPRequest request(buffer);
 				// TODO
 				request.print();
 				//=========================================================================
@@ -314,6 +313,9 @@ void AdminServer::run(int sockfd, int kq)
 			}
 		}
 	}
+
+	// Cerrar el socket del servidor (esto no se alcanzará)
+	close(_config.getServerSocket());
 }
 
 // 1. **Receive New Connection**:

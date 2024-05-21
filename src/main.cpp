@@ -3,43 +3,61 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/17 23:41:11 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/21 12:30:42 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 // #include "../inc/ClientParsing.hpp"
-// #include "Colors.hpp"
-#include "WebServer.hpp"
-#include "ServerConfig.hpp"
 #include "AdminServer.hpp"
+#include "FileContent.hpp"
 #include <netdb.h>
+
+void setSignals(int sig)
+{
+	std::cout << RESET << std::endl;
+	exit(sig);
+}
 
 void checkArg(int argc, char **argv)
 {
+	std::ifstream in;
+	std::string name, line;
 	if (argc != 2)
 		throw std::runtime_error(CYAN "Usage: ./webserv [config file]" RESET);
 	else
 	{
-		std::string name(argv[1]);
-		if (name.compare(name.length() - 4, 4, ".cnf") || name.find(".cnf", name.find(".cnf") + 4) != std::string::npos)
-			throw std::runtime_error(RED "File is not a configuration file!" RESET);
-		std::ifstream in(argv[1]);
+		name = argv[1];
+		if (name.find(".conf") == std::string::npos ||
+			name.compare(name.length() - 5, 5, ".conf") ||
+			name.find(".conf", name.find(".conf") + 5) != std::string::npos)
+			throw std::runtime_error(RED "file is not a configuration file!" RESET);
+		in.open(argv[1]);
 		if (!in.good())
-			throw std::runtime_error(RED "File error!" RESET);
+			throw std::runtime_error(RED "file error!" RESET);
 	}
+	// 	for (std::vector<std::string>::iterator it = content.begin(); it != content.end(); it++)
+	// 	{
+	// 		std::cout << "Array line: " << *it << std::endl;
+	// 	}
+}
+
+static void printServers(std::vector<ServerConfig *> &servers)
+{
+	for (std::vector<ServerConfig *>::iterator it = servers.begin(); it != servers.end(); it++)
+		(*it)->print();
 }
 
 int createSocket()
 {
 	struct addrinfo *addr; // informacion sobre direcciones
 	struct addrinfo hints;
-	memset(&hints, 0, sizeof hints); // bzero to hints
-	hints.ai_flags = AI_PASSIVE;	 // se especifica que debe devolver direcciones par vincular al socket de escucha
-	hints.ai_family = PF_UNSPEC;	 // IPv4 o IPv6
-	hints.ai_socktype = SOCK_STREAM; // tipo del socket
+	memset(&hints, 0, sizeof(hints)); // bzero to hints
+	hints.ai_flags = AI_PASSIVE;	  // se especifica que debe devolver direcciones par vincular al socket de escucha
+	hints.ai_family = PF_UNSPEC;	  // IPv4 o IPv6
+	hints.ai_socktype = SOCK_STREAM;  // tipo del socket
 	getaddrinfo("127.0.0.1", "8080", &hints, &addr);
 	int sockfd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
 
@@ -74,28 +92,36 @@ int main(int argc, char **argv)
 {
 	try
 	{
-		(void)argc;
-		(void)argv;
-		//		checkArg(argc, argv);
+		signal(SIGINT, &setSignals);
+		std::vector<ServerConfig *> servers;
+		checkArg(argc, argv);
+		FileContent fc(argv[1]);
+		fc.createServers(servers);
+		printServers(servers);
+		// createServers(content, servers);
+		std::cout << "Parsing ok" << std::endl;
 
 		// TODO
-		ServerConfig config("./conf_web/mime.type"); // comprobar que exita el fichero mime.type
-		config.loadConf("argv[1]");
-		AdminServer server(config);
-		int sockfd = createSocket();
-		int kq = createKqueue();
+		// AdminServer server(config);
+		// int sockfd = createSocket();
+		// int kq = createKqueue();
 
-		// Configurar evento para el socket de escucha
-		struct kevent eventSet;
-		EV_SET(&eventSet, sockfd, EVFILT_READ, EV_ADD, 0, 0, NULL);
-		kevent(kq, &eventSet, 1, NULL, 0, NULL);
+		// // Configurar evento para el socket de escucha
+		// struct kevent eventSet;
+		// EV_SET(&eventSet, sockfd, EVFILT_READ, EV_ADD, 0, 0, NULL);
+		// kevent(kq, &eventSet, 1, NULL, 0, NULL);
 
-		server.run(sockfd, kq);
+		// server.run(sockfd, kq);
 		// config.print();
+	}
+	catch (const FileContent::ConfErrorException &e)
+	{
+		std::cerr << e.what() << std::endl;
+		return EXIT_FAILURE;
 	}
 	catch (const std::exception &e)
 	{
-		std::cerr << e.what() << std::endl;
+		std::cerr << "Error: " << e.what() << std::endl;
 		return EXIT_FAILURE;
 	}
 	return EXIT_SUCCESS;

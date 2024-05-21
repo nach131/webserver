@@ -1,38 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   MIMETypeReader.hpp                                 :+:      :+:    :+:   */
+/*   KeyValue.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/22 20:00:54 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/19 16:10:42 by vduchi           ###   ########.fr       */
+/*   Created: 2024/04/29 14:42:46 by vduchi            #+#    #+#             */
+/*   Updated: 2024/05/20 20:13:31 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MIMETYPEREADER_HPP
-#define MIMETYPEREADER_HPP
+#ifndef KEYVALUE_HPP
+#define KEYVALUE_HPP
 
+#include "WebServer.hpp"
 #include <map>
 #include <vector>
-#include <sstream>
-#include <fstream>
-#include <iostream>
-#include <algorithm>
 
-class MIMETypeReader
+class KeyValue
 {
 private:
-	std::map<std::string, std::string> _mimeTypes;
+	std::vector<std::string> _keys;
+	std::map<std::string, std::string> _pairs;
 
 public:
-	MIMETypeReader(const std::string &filePath);
-	~MIMETypeReader();
-	std::string getContentType(const std::string &extension) const;
-	void print();
+	KeyValue();
+	~KeyValue();
 
-private:
-	void loadMIMETypes(const std::string &filePath);
+	std::vector<std::string> getKeys();
+
+	bool checkKey(std::string &);
+	bool checkValue(std::string &, std::string &);
+	bool checkComplex(std::string &, std::string &, int);
+
+	std::string checkType(std::string &);
 };
 
 #endif

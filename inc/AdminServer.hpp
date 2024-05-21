@@ -3,14 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:26:56 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/14 14:28:15 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/21 12:31:50 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#
 #ifndef ADMINSERVER_HPP
 #define ADMINSERVER_HPP
 
@@ -20,11 +19,9 @@
 #include <sys/event.h>
 
 #include "ServerConfig.hpp"
-#include "Colors.hpp"
 #include "HTTPRes.hpp"
 #include "HTTPRequest.hpp"
 #include "HTTPHeader.hpp"
-#include "WebServer.hpp"
 
 class ServerConfig;
 
@@ -40,8 +37,6 @@ public:
 	~AdminServer();
 
 	void run(int sockfd, int kq);
-
-
 };
 
 #endif

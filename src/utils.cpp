@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/20 20:36:32 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/21 12:30:49 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,4 +180,23 @@ std::string removeFileName(const std::string &path)
 	if (pos != std::string::npos)
 		return path.substr(0, pos);
 	return path; // Si no hay barra, devolver el path completo (significa que no hay directorios, solo un fichero)
+}
+
+void takeOutSemiColumn(std::string &val)
+{
+	size_t i = 0;
+	size_t j = val.length() - 1;
+	for (; i < val.length(); i++)
+		if (val[i] == ';')
+			break;
+	for (; j >= i; j--)
+		val.pop_back();
+}
+
+bool parseError(std::string str, int n)
+{
+	std::stringstream ss;
+	ss << str << n;
+	throw std::runtime_error(ss.str());
+	return false;
 }
