@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/21 12:34:53 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/21 12:48:42 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void ServerConfig::print() const
 	std::cout << "API Port: " << _apiPort << std::endl;
 
 	std::cout << "Locations:" << std::endl;
-	for (std::map<std::string, std::map<std::string, std::string>>::const_iterator it = _locations.begin(); it != _locations.end(); ++it)
+	for (std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.begin(); it != _locations.end(); ++it)
 	{
 		std::cout << "  " << it->first << ":" << std::endl;
 		for (std::map<std::string, std::string>::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
@@ -75,7 +75,7 @@ void ServerConfig::print() const
 void ServerConfig::printLocations()
 {
 	std::cout << "Locations:" << std::endl;
-	for (std::map<std::string, std::map<std::string, std::string>>::const_iterator it = _locations.begin(); it != _locations.end(); ++it)
+	for (std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.begin(); it != _locations.end(); ++it)
 	{
 		std::cout << "  " << it->first << ":" << std::endl;
 		for (std::map<std::string, std::string>::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
@@ -110,7 +110,7 @@ std::string ServerConfig::getContentType(const std::string &extension) const
 	return _mime.getContentType(extension);
 }
 
-// std::map<std::string, std::map<std::string, std::string>> ServerConfig::getLocation() const
+// std::map<std::string, std::map<std::string, std::string> > ServerConfig::getLocation() const
 // {
 // 	return _locations;
 // }
@@ -123,7 +123,7 @@ void ServerConfig::setBuffer(char *buf) { _buffer = buf; }
 LocationResult ServerConfig::getLocationConfig(const std::string &path)
 {
 	std::string best_match = "/";
-	std::map<std::string, std::map<std::string, std::string>>::iterator it;
+	std::map<std::string, std::map<std::string, std::string> >::iterator it;
 	for (it = _locations.begin(); it != _locations.end(); ++it)
 	{
 		if (path.find(it->first) == 0 && it->first.length() > best_match.length())
@@ -140,7 +140,7 @@ LocationResult ServerConfig::getLocationConfig(const std::string &path)
 
 // std::string ServerConfig::getRoot(const std::string &location) const
 // {
-// 	std::map<std::string, std::map<std::string, std::string>>::const_iterator locIt = _locations.find(location);
+// 	std::map<std::string, std::map<std::string, std::string> >::const_iterator locIt = _locations.find(location);
 // 	if (locIt != _locations.end())
 // 	{
 // 		std::map<std::string, std::string>::const_iterator rootIt = locIt->second.find("root");
@@ -154,7 +154,7 @@ LocationResult ServerConfig::getLocationConfig(const std::string &path)
 
 // std::string ServerConfig::getIndex(const std::string &location) const
 // {
-// 	std::map<std::string, std::map<std::string, std::string>>::const_iterator locIt = _locations.find(location);
+// 	std::map<std::string, std::map<std::string, std::string> >::const_iterator locIt = _locations.find(location);
 // 	if (locIt != _locations.end())
 // 	{
 // 		std::map<std::string, std::string>::const_iterator rootIt = locIt->second.find("index");
@@ -168,7 +168,7 @@ LocationResult ServerConfig::getLocationConfig(const std::string &path)
 
 // bool ServerConfig::isLocationAllowed(const std::string &path)
 // {
-// 	std::map<std::string, std::map<std::string, std::string>>::const_iterator it = _locations.find(path);
+// 	std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.find(path);
 // 	if (it != _locations.end())
 // 		return true;
 // 	return false;
