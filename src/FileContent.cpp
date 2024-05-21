@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/20 20:08:43 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/21 14:25:05 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,18 @@ int FileContent::checkLine(std::string &line)
 	return 0;
 }
 
+int FileContent::checkServerKey(std::string &line)
+{
+	size_t i = line.find("server");
+	if (i == std::string::npos ||
+		(i != std::string::npos && line.find("name") != std::string::npos))
+		return 0;
+	for (; i >= 0; i--)
+		if (line[i] != ' ' && line[i] != '\t')
+			return 0;
+	return 1;
+}
+
 void FileContent::createOneServer(std::vector<ServerConfig *> &servers, std::vector<std::string> &content)
 {
 	ServerConfig *sc = new ServerConfig(content, "./conf_web/mime.type");
@@ -39,40 +51,57 @@ void FileContent::createOneServer(std::vector<ServerConfig *> &servers, std::vec
 void FileContent::checkKeysAndValues(std::vector<std::string> &content, int &start)
 {
 	KeyValue kv;
-	std::string key, value;
 	for (size_t i = 0; i < content.size(); i++)
 	{
-		if (content[i].find("server") != std::string::npos &&
-			content[i].find("name") == std::string::npos)
+		if (checkServerKey(content[i]))
 			continue;
 		if (content[i].find("location") != std::string::npos)
 		{
 			std::string newLine(content[i], content[i].find("location") + 8);
 			if (newLine[0] != ' ' || newLine.find(";") != std::string::npos) // || newLine.find(" {") == std::string::npos) para controlar espacio antes de {
-				parseError("location not declared correctly at line ", start + i + 1);
+				error("location not declared correctly at line ", start + i + 1);
 		}
 		else if (checkLine(content[i]) &&
 				 content[i].find("{") == std::string::npos &&
 				 content[i].find("}") == std::string::npos)
 		{
+			std::string key, value;
 			std::string el;
 			std::stringstream ss(content[i]);
 			ss >> key;
 			ss >> value;
-			while (ss >> el)
+			// std::cout << "Key: " << key << " Value " << value << std::endl;
+			if (value.length() > 0 && value.find(";") == std::string::npos) // porque key = allow_methods;
 			{
-				value.append(" " + el);
-				if (value.find(";") != std::string::npos)
-					break;
+				while (ss >> el)
+				{
+					value.append(" " + el);
+					if (value.find(";") != std::string::npos)
+						break;
+				}
 			}
-			value.erase(value.find(";"), value.find("0"));
-			// std::cout << "Key: -" << key << "- Value: -" << value << "-" << std::endl;
+			if (value.length() > 0)
+				value.erase(value.find(";"), value.find("0"));
 			if (key == "error_page" || key == "allow_methods")
+			{
+				// try
+				// {
 				kv.checkComplex(key, value, start + i + 1);
+				// }
+				// catch (const KeyValue::KeyValueException &e)
+				// {
+				// std::cout << "Here error: " << e.what() << std::endl;
+				// throw e_cee(e.what());
+				// }
+				// catch (...)
+				// {
+				// 	std::cout << "hola" << std::endl;
+				// }
+			}
 			else if (kv.checkKey(key))
-				parseError("key is not allowed at line ", start + i + 1);
+				error("key is not allowed at line ", start + i + 1);
 			else if (kv.checkValue(key, value))
-				parseError("value is not acceptable for key at line ", start + i + 1);
+				error("value is not acceptable for key at line ", start + i + 1);
 		}
 	}
 }
@@ -92,12 +121,14 @@ std::vector<std::string> FileContent::checkOneServer(int &start, int &len)
 			brack++;
 		if (sCont[i].find("}") != std::string::npos)
 			brack--;
+		// std::cout << "Brack " << brack << std::endl;
 	}
+	// std::cout << "Brack " << brack << std::endl;
 	int lNum = sCont[sCont.size() - 1].find("}") != std::string::npos ? start + len + 1 : start + len;
 	if (brack > 0)
-		parseError("server block not closed at line ", lNum + 1);
+		error("server block not closed at line ", lNum + 1);
 	else if (brack < 0)
-		parseError("expected block before } at line ", lNum);
+		error("expected block before } at line ", lNum);
 
 	// Test for semicolumn
 	for (size_t i = 0; i < sCont.size(); i++)
@@ -110,7 +141,7 @@ std::vector<std::string> FileContent::checkOneServer(int &start, int &len)
 			sCont[i].find("{") == std::string::npos &&
 			sCont[i].find("}") == std::string::npos &&
 			sCont[i].find(";") == std::string::npos)
-			parseError("expected semicolumn at the end of the line ", start + i + 1);
+			error("expected semicolumn at the end of the line ", start + i + 1);
 	}
 	checkKeysAndValues(sCont, start);
 	return sCont;
@@ -124,8 +155,8 @@ void FileContent::createServers(std::vector<ServerConfig *> &servers)
 	(void)servers;
 	for (size_t i = 0; i < _content.size(); i++)
 	{
-		if (_content[i].find("server") != std::string::npos &&
-			_content[i].find("name") == std::string::npos)
+		std::cout << "Content line: " << i << " " << _content[i] << std::endl;
+		if (checkServerKey(_content[i]))
 		{
 			if (count == 1)
 				start = i;
@@ -140,6 +171,13 @@ void FileContent::createServers(std::vector<ServerConfig *> &servers)
 			count++;
 		}
 	}
+}
+
+void FileContent::error(const std::string msg, int lineNum)
+{
+	std::stringstream ss;
+	ss << msg << lineNum;
+	throw e_cee(ss.str());
 }
 
 FileContent::ConfErrorException::ConfErrorException(const std::string &msg)

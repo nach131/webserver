@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/21 12:47:35 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/21 14:00:03 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ public:
 	LocationResult getLocationConfig(const std::string &path);
 
 	void print() const;
-	void printLocations();
 
 	// int getApiPort() const;
 	// std::string getApiForward() const;

@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/21 12:48:42 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/21 14:26:26 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,32 +16,33 @@ ServerConfig::ServerConfig(const std::vector<std::string> &content, const std::s
 {
 	fillVariables(content);
 
-	memset(&_serverAddress, 0, sizeof(_serverAddress));
-	_serverAddress.sin_family = AF_INET;
-	_serverAddress.sin_port = htons(_port);				// Puerto del servidor
-	_serverAddress.sin_addr.s_addr = htonl(INADDR_ANY); // Escuchar en todas las interfaces de red
+	(void)_serverAddress;
+	// memset(&_serverAddress, 0, sizeof(_serverAddress));
+	// _serverAddress.sin_family = AF_INET;
+	// _serverAddress.sin_port = htons(_port);				// Puerto del servidor
+	// _serverAddress.sin_addr.s_addr = htonl(INADDR_ANY); // Escuchar en todas las interfaces de red
 
-	// Crear socket
-	_serverSocketFd = socket(AF_INET, SOCK_STREAM, 0);
-	if (_serverSocketFd < 0)
-	{
-		std::string errorMsg = RED "Error creating socket:\n";
-		errorMsg += CYAN;
-		errorMsg += strerror(errno);
-		throw std::runtime_error(errorMsg);
-	}
+	// // Crear socket
+	// _serverSocketFd = socket(AF_INET, SOCK_STREAM, 0);
+	// if (_serverSocketFd < 0)
+	// {
+	// 	std::string errorMsg = RED "Error creating socket:\n";
+	// 	errorMsg += CYAN;
+	// 	errorMsg += strerror(errno);
+	// 	throw std::runtime_error(errorMsg);
+	// }
 
-	// Enlazar el socket a la dirección del servidor
-	if (bind(_serverSocketFd, (struct sockaddr *)&_serverAddress, sizeof(_serverAddress)) < 0)
-	{
-		std::string errorMsg = RED "Socket binding error:\n";
-		errorMsg += CYAN + std::to_string(ntohs(_serverAddress.sin_port)) + " ";
-		errorMsg += strerror(errno);
-		throw std::runtime_error(errorMsg);
-	}
+	// // Enlazar el socket a la dirección del servidor
+	// if (bind(_serverSocketFd, (struct sockaddr *)&_serverAddress, sizeof(_serverAddress)) < 0)
+	// {
+	// 	std::string errorMsg = RED "Socket binding error:\n";
+	// 	errorMsg += CYAN + std::to_string(ntohs(_serverAddress.sin_port)) + " ";
+	// 	errorMsg += strerror(errno);
+	// 	throw std::runtime_error(errorMsg);
+	// }
 
-	// Escuchar por conexiones entrantes
-	listen(_serverSocketFd, 5);
+	// // Escuchar por conexiones entrantes
+	// listen(_serverSocketFd, 5);
 
 	_buffer = new char[1024];
 	memset(_buffer, 0, 1024);
@@ -70,17 +71,6 @@ void ServerConfig::print() const
 			std::cout << "    " << it2->first << ": " << it2->second << std::endl;
 	}
 	std::cout << RESET;
-}
-
-void ServerConfig::printLocations()
-{
-	std::cout << "Locations:" << std::endl;
-	for (std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.begin(); it != _locations.end(); ++it)
-	{
-		std::cout << "  " << it->first << ":" << std::endl;
-		for (std::map<std::string, std::string>::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2)
-			std::cout << "    " << it2->first << ": " << it2->second << std::endl;
-	}
 }
 
 // int ServerConfig::getApiPort() const { return _apiPort; }
@@ -258,13 +248,14 @@ void ServerConfig::fillVariables(const std::vector<std::string> &arr)
 				ss >> key;
 				while (ss >> el)
 				{
+					if (el[0] == ';') // porque key = allow_methods;
+						break;
 					if (value[0] == '\0')
 						value.append(el);
 					else
 						value.append(" " + el);
 				}
 				takeOutSemiColumn(value);
-				_locations[path] = std::map<std::string, std::string>();
 				_locations[path][key] = value;
 			}
 		}

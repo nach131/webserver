@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/21 12:30:49 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/21 14:21:08 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,6 +186,8 @@ void takeOutSemiColumn(std::string &val)
 {
 	size_t i = 0;
 	size_t j = val.length() - 1;
+	if (!val.length()) // porque allow_methods ;
+		return;
 	for (; i < val.length(); i++)
 		if (val[i] == ';')
 			break;

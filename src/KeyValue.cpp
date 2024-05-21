@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/20 20:13:54 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/21 14:23:44 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,12 +75,12 @@ bool KeyValue::checkComplex(std::string &key, std::string &val, int lineNum)
 		std::stringstream s(val), ss(val);
 		s >> el;
 		if (checkType(el) == "string")
-			parseError("error number is not a number at line ", lineNum);
+			error("error number is not a number at line ", lineNum);
 		err = std::atoi(el.c_str());
 		while (s >> el)
 			count++;
 		if (count > 1)
-			parseError("too many arguments for error_page at line ", lineNum);
+			error("too many arguments for error_page at line ", lineNum);
 		s.str("");
 		s.clear();
 	}
@@ -88,8 +88,10 @@ bool KeyValue::checkComplex(std::string &key, std::string &val, int lineNum)
 	{
 		std::stringstream ss(val);
 		while (ss >> el)
+		{
 			if (el != "GET" && el != "POST" && el != "DELETE")
-				parseError("method not allowed at line ", lineNum);
+				error("method not allowed at line ", lineNum);
+		}
 	}
 	return false;
 }
@@ -102,3 +104,13 @@ std::string KeyValue::checkType(std::string &val)
 			isInt = false;
 	return isInt ? "int" : "string";
 }
+
+void KeyValue::error(const std::string msg, int lineNum)
+{
+	std::stringstream ss;
+	ss << msg << lineNum;
+	throw e_kve(ss.str());
+}
+
+KeyValue::KeyValueException::KeyValueException(const std::string &msg)
+	: std::runtime_error("\033[0;31mError: " + msg) {}

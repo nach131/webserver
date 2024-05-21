@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/20 19:32:41 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/21 13:30:54 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,9 @@ public:
 	~FileContent();
 
 	int checkLine(std::string &line);
+	int checkServerKey(std::string &line);
 
+	void error(const std::string, int);
 	void createServers(std::vector<ServerConfig *> &);
 	void checkKeysAndValues(std::vector<std::string> &, int &);
 	void createOneServer(std::vector<ServerConfig *> &, std::vector<std::string> &);

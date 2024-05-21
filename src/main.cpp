@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/21 12:30:42 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/21 14:25:38 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,8 +93,8 @@ int main(int argc, char **argv)
 	try
 	{
 		signal(SIGINT, &setSignals);
-		std::vector<ServerConfig *> servers;
 		checkArg(argc, argv);
+		std::vector<ServerConfig *> servers;
 		FileContent fc(argv[1]);
 		fc.createServers(servers);
 		printServers(servers);
@@ -102,19 +102,24 @@ int main(int argc, char **argv)
 		std::cout << "Parsing ok" << std::endl;
 
 		// TODO
-		// AdminServer server(config);
-		// int sockfd = createSocket();
-		// int kq = createKqueue();
+		AdminServer server(*servers[0]);
+		int sockfd = createSocket();
+		int kq = createKqueue();
 
 		// // Configurar evento para el socket de escucha
-		// struct kevent eventSet;
-		// EV_SET(&eventSet, sockfd, EVFILT_READ, EV_ADD, 0, 0, NULL);
-		// kevent(kq, &eventSet, 1, NULL, 0, NULL);
+		struct kevent eventSet;
+		EV_SET(&eventSet, sockfd, EVFILT_READ, EV_ADD, 0, 0, NULL);
+		kevent(kq, &eventSet, 1, NULL, 0, NULL);
 
-		// server.run(sockfd, kq);
+		server.run(sockfd, kq);
 		// config.print();
 	}
 	catch (const FileContent::ConfErrorException &e)
+	{
+		std::cerr << e.what() << std::endl;
+		return EXIT_FAILURE;
+	}
+	catch (const KeyValue::KeyValueException &e)
 	{
 		std::cerr << e.what() << std::endl;
 		return EXIT_FAILURE;

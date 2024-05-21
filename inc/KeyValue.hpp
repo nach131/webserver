@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/20 20:13:31 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/21 13:30:50 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,15 @@ public:
 	bool checkValue(std::string &, std::string &);
 	bool checkComplex(std::string &, std::string &, int);
 
+	void error(const std::string, int);
 	std::string checkType(std::string &);
+
+	class KeyValueException : public std::runtime_error
+	{
+	public:
+		KeyValueException(const std::string &);
+	};
+	typedef KeyValue::KeyValueException e_kve;
 };
 
 #endif
