@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/18 18:49:20 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/20 20:57:19 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HTTPRequest.hpp"
 #include "WebServer.hpp"
 
-HTTPRequest::HTTPRequest(const char *buf)
+void HTTPRequest::getRequest(const char *buf)
 {
 	int i = 0;
 	std::string first, el, line, input(buf);
@@ -63,6 +63,8 @@ HTTPRequest::HTTPRequest(const char *buf)
 	}
 	_map["Content"] = Content;
 }
+
+HTTPRequest::HTTPRequest() {}
 
 HTTPRequest::~HTTPRequest() {}
 

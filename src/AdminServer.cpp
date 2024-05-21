@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/19 17:52:08 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/20 21:00:31 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,8 +212,10 @@ void AdminServer::run(int sockfd, int kq)
 	struct sockaddr_storage addr;
 	socklen_t socklen = sizeof(addr);
 
+	HTTPRequest request;
 	while (42)
 	{
+		bool checkEVFlag = false;
 		int num_events = kevent(kq, NULL, 0, evList, MAX_EVENTS, NULL);
 		for (int i = 0; i < num_events; i++)
 		{
@@ -252,6 +254,7 @@ void AdminServer::run(int sockfd, int kq)
 					std::cout << "CON EV_FLAG0" << std::endl;
 					EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & EV_FLAG0, 0, 0, NULL);
 					kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
+					checkEVFlag = true;
 				}
 				else if (evSet.flags | EV_FLAG0)
 				{
@@ -275,8 +278,13 @@ void AdminServer::run(int sockfd, int kq)
 				//===================PETICION==============================================
 				// TODO
 				printPeticion(buffer);
+
 				//===================PARSING==============================================
-				HTTPRequest request(buffer);
+				if (checkEVFlag)
+				{
+					request.getRequest(buffer);
+					checkEVFlag = false;
+				}
 				// TODO
 				request.print();
 				//=========================================================================
