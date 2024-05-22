@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/21 14:25:38 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/22 11:28:48 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,9 +93,12 @@ int main(int argc, char **argv)
 	try
 	{
 		signal(SIGINT, &setSignals);
-		checkArg(argc, argv);
+		// checkArg(argc, argv);
+		(void)argv;
+		(void)argc;
 		std::vector<ServerConfig *> servers;
-		FileContent fc(argv[1]);
+		// FileContent fc(argv[1]);
+		FileContent fc("./conf_web/default.conf");
 		fc.createServers(servers);
 		printServers(servers);
 		// createServers(content, servers);

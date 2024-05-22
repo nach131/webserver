@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRes.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/21 12:31:18 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/22 11:49:46 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,22 @@ void HTTPRes::last()
 	_header.addField("42-Barcelona", "nmota-bu, vduchi");
 }
 
+// Función para quitar la cadena location del inicio de la cadena path
+// std::string removeLocationFromPath(const std::string &location, const std::string &path)
+// {
+// 	if (path.find(location) == 0)
+// 	{										   // Verifica si path comienza con location
+// 		return path.substr(location.length()); // Retorna path sin la parte de location
+// 	}
+// 	return path; // Si path no comienza con location, retorna path sin cambios
+// }
+
+void removeLocationFromPath(const std::string &location, std::string &path)
+{
+	if (path.find(location) == 0)
+		path = path.substr(location.length()); // Modifica path eliminando la parte de location
+}
+
 HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config) : _request(request), _config(config)
 {
 
@@ -33,18 +49,42 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config) : _request(re
 	std::string referer = _request.getHeader("Referer");
 	std::string referer_locat = removeBeforeNumber(referer, "8080");
 
+	// std::string remove_FileName = removeFileName(referer_locat);
+
+	std::cout << CYAN;
+	std::cout << "path: " << path << std::endl;
 	std::cout << "referer: " << referer << std::endl;
 	std::cout << "referer_locat: " << referer_locat << std::endl;
+	// std::cout << "remove_FileName: " << remove_FileName << std::endl;
+	std::cout << RESET;
 
-	std::string toma = removeFileName(referer_locat);
+	// referer.empty() ? std::cout << "referer: NO " << std::endl : std::cout << "referer: SI " << std::endl;
+
+	LocationResult location;
+	// std::string after = path;
+	if (referer.empty()) // SIN refer
+	{
+		std::cout << "referer: NO " << std::endl;
+		location = _config->getLocationConfig(path);
+	}
+	else
+	{
+		std::cout << "referer: SI " << std::endl;
+		location = _config->getLocationConfig(removeFileName(referer_locat));
+		removeLocationFromPath(location.name, path);
+	}
+
+	std::cout << "location.name: " << location.name << std::endl;
+	std::cout << "path after: " << path << std::endl;
 
 	//=========================================================================
-	LocationResult tokemo = _config->getLocationConfig(removeFileName(referer_locat));
 
 	//=========================================================================
 
 	// si tiene referer cabiar path por referer con un if y no enviar refer
-	_locationConf.init(_config->getLocationConfig(path), path, referer_locat);
+	// pasar tokemo y el path sin location/
+	// _locationConf.init(_config->getLocationConfig(path), path, referer_locat);
+	_locationConf.init(location, path);
 
 	std::cout << ORANGE;
 	_locationConf.print();

@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 17:46:33 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/20 20:15:58 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/22 11:53:24 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,20 @@
 Location::Location() {}
 
 Location::~Location() {}
+
+void Location::init(const LocationResult &location, const std::string &path)
+{
+	(void)path;
+
+	_location = location;
+	std::string alias = getAlias();
+	std::string root = getRoot();
+	std::string index = getIndex();
+	bool autoindex = autoIndexOn();
+
+
+
+}
 
 void Location::init(const LocationResult &location, const std::string &path, const std::string &referer)
 {
@@ -88,6 +102,7 @@ void Location::init(const LocationResult &location, const std::string &path, con
 	else if (!root.empty() && !referer.empty())
 	{
 		// _location.realPath = root + path;
+		std::cout << "seis\n";
 		if (_location.name == "/")
 		{
 
@@ -96,6 +111,7 @@ void Location::init(const LocationResult &location, const std::string &path, con
 		}
 		else if (isFile(pathMod))
 		{
+			std::cout << "seis else  if\n";
 			_location.realPath = root + path;
 		}
 		else

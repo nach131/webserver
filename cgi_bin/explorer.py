@@ -75,6 +75,7 @@ def generate_directory_listing(directory_path, root_location):
 
     html += """</pre>
     <hr>
+    <center>vduchi & nmota-bu</center>
 </body>
 </html>"""
     return html

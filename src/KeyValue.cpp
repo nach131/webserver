@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   KeyValue.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/21 14:23:44 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/21 14:31:34 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ bool KeyValue::checkValue(std::string &key, std::string &val)
 bool KeyValue::checkComplex(std::string &key, std::string &val, int lineNum)
 {
 	int err = 0, count = 0;
+	(void)err;
 	std::string el;
 	if (key == "error_page")
 	{
