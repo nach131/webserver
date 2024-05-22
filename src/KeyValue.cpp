@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/21 14:23:44 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/22 12:47:16 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 KeyValue::KeyValue()
 {
 	_keys.push_back("root");
+	_keys.push_back("alias");
 	_keys.push_back("index");
 	_keys.push_back("listen");
 	_keys.push_back("api_port");
