@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/22 13:41:30 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/24 20:18:13 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,7 +278,7 @@ void AdminServer::run(int sockfd, int kq)
 				//===================PETICION==============================================
 				// TODO
 				// cliente peticion
-				// printPeticion(buffer);
+				printPeticion(buffer);
 				//===================PARSING==============================================
 				// if (checkEVFlags)
 				// {

@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/23 17:03:29 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/24 20:08:54 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,16 +24,6 @@ void HTTPRes::last()
 	_header.addField("Server", "ACME co.");
 	_header.addField("42-Barcelona", "nmota-bu, vduchi");
 }
-
-// Función para quitar la cadena location del inicio de la cadena path
-// std::string removeLocationFromPath(const std::string &location, const std::string &path)
-// {
-// 	if (path.find(location) == 0)
-// 	{										   // Verifica si path comienza con location
-// 		return path.substr(location.length()); // Retorna path sin la parte de location
-// 	}
-// 	return path; // Si path no comienza con location, retorna path sin cambios
-// }
 
 void removeLocationFromPath(const std::string &location, std::string &path)
 {
@@ -54,18 +44,6 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config) : _request(re
 	std::cout << "referer: " << referer << std::endl;
 	std::cout << "referer_location: " << referer_location << std::endl;
 	std::cout << RESET;
-
-	// LocationResult location;
-	// if (referer.empty()) // SIN refer
-	// {
-	// 	std::cout << "referer: NO " << std::endl;
-	// 	location = _config->getLocationConfig(path);
-	// }
-	// else
-	// {
-	// 	std::cout << "referer: SI " << std::endl;
-	// 	location = _config->getLocationConfig(referer_location);
-	// }
 
 	LocationResult location = compareLocationResults(_config->getLocationConfig(path), _config->getLocationConfig(referer_location));
 
