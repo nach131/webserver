@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/21 14:31:34 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/22 12:57:18 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 KeyValue::KeyValue()
 {
 	_keys.push_back("root");
+	_keys.push_back("alias");
 	_keys.push_back("index");
 	_keys.push_back("listen");
 	_keys.push_back("api_port");

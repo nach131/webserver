@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 17:46:28 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/22 11:45:55 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/23 16:52:01 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,22 +29,26 @@ class Location
 {
 private:
 	LocationResult _location;
-	std::string const &getAlias() const;
 	std::string const &getIndex() const;
 
 public:
 	Location();
 	~Location();
+	void init_no(const LocationResult &location, const std::string &path, const std::string &referer);
 	void init(const LocationResult &location, const std::string &path, const std::string &referer);
-	void init(const LocationResult &location, const std::string &path);
 
 	bool autoIndexOn();
 	bool methodAllowed(const std::string &method);
+	bool isFileLocation();
+
+	std::string const &getAlias() const;
 	std::string const &getRoot() const;
 	std::string const &realPath() const;
 	std::string const &getName() const;
 
 	void print();
 };
+
+LocationResult compareLocationResults(const LocationResult &loc1, const LocationResult &loc2);
 
 #endif

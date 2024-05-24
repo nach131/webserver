@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   FileContent.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/21 14:25:05 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/22 16:05:08 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,7 +155,7 @@ void FileContent::createServers(std::vector<ServerConfig *> &servers)
 	(void)servers;
 	for (size_t i = 0; i < _content.size(); i++)
 	{
-		std::cout << "Content line: " << i << " " << _content[i] << std::endl;
+		std::cout << "Content line: " << i + 1 << " " << _content[i] << std::endl;
 		if (checkServerKey(_content[i]))
 		{
 			if (count == 1)

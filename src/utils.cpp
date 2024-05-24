@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/21 14:21:08 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/23 15:23:37 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,14 @@ bool isFile(const std::string &path)
 //     return S_ISREG(statbuf.st_mode); // Verifica si es un archivo regular
 // }
 
+std::string getFileName(const std::string &path)
+{
+	std::size_t pos = path.find_last_of('/');
+	if (pos != std::string::npos)
+		return path.substr(pos + 1); // Retorna la subcadena después del último '/'
+	return path;					 // Si no hay '/', retorna la cadena completa
+}
+
 // Función para separar un string por un delimitador
 std::vector<std::string> split(const std::string &str, char delimiter)
 {
@@ -145,7 +153,7 @@ void removeLastSlash(std::string &str)
 std::string removeBeforeNumber(const std::string &url, const std::string &host)
 {
 
-	std::cout << "HOST: " << host << std::endl;
+	// std::cout << "HOST: " << host << std::endl;
 
 	std::string result = url;
 	// std::size_t pos = result.find("8080"); // Buscar el número "8080"
@@ -201,4 +209,37 @@ bool parseError(std::string str, int n)
 	ss << str << n;
 	throw std::runtime_error(ss.str());
 	return false;
+}
+
+std::string removeSubstring(const std::string &str, const std::string &toRemove)
+{
+	std::string result = str;
+	size_t pos = 0;
+
+	// Buscar y eliminar todas las apariciones de `toRemove` en `result`
+	while ((pos = result.find(toRemove, pos)) != std::string::npos)
+		result.erase(pos, toRemove.length());
+
+	return result;
+}
+
+std::string rmLocationToAPath(const std::string &path, const std::string &location)
+{
+	std::string result = path;
+	std::string loc = location;
+	size_t pos = 0;
+
+	if (isFile(location))
+	{
+		// Si es un archivo, eliminar la parte del archivo, dejando el directorio
+		size_t lastSlash = location.find_last_of('/');
+		if (lastSlash != std::string::npos)
+			loc = location.substr(0, lastSlash + 1);
+	}
+
+	// Buscar y eliminar todas las apariciones de `toRemove` en `result`
+	while ((pos = result.find(loc, pos)) != std::string::npos)
+		result.erase(pos, loc.length());
+
+	return result;
 }

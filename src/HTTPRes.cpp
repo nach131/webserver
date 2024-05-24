@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/22 11:49:46 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/23 17:03:29 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,44 +47,35 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config) : _request(re
 	std::string method = _request.getHeader("Method");
 	std::string path = _request.getHeader("Path");
 	std::string referer = _request.getHeader("Referer");
-	std::string referer_locat = removeBeforeNumber(referer, "8080");
-
-	// std::string remove_FileName = removeFileName(referer_locat);
+	std::string referer_location = removeBeforeNumber(referer, "8080");
 
 	std::cout << CYAN;
 	std::cout << "path: " << path << std::endl;
 	std::cout << "referer: " << referer << std::endl;
-	std::cout << "referer_locat: " << referer_locat << std::endl;
-	// std::cout << "remove_FileName: " << remove_FileName << std::endl;
+	std::cout << "referer_location: " << referer_location << std::endl;
 	std::cout << RESET;
 
-	// referer.empty() ? std::cout << "referer: NO " << std::endl : std::cout << "referer: SI " << std::endl;
+	// LocationResult location;
+	// if (referer.empty()) // SIN refer
+	// {
+	// 	std::cout << "referer: NO " << std::endl;
+	// 	location = _config->getLocationConfig(path);
+	// }
+	// else
+	// {
+	// 	std::cout << "referer: SI " << std::endl;
+	// 	location = _config->getLocationConfig(referer_location);
+	// }
 
-	LocationResult location;
-	// std::string after = path;
-	if (referer.empty()) // SIN refer
-	{
-		std::cout << "referer: NO " << std::endl;
-		location = _config->getLocationConfig(path);
-	}
-	else
-	{
-		std::cout << "referer: SI " << std::endl;
-		location = _config->getLocationConfig(removeFileName(referer_locat));
-		removeLocationFromPath(location.name, path);
-	}
+	LocationResult location = compareLocationResults(_config->getLocationConfig(path), _config->getLocationConfig(referer_location));
 
 	std::cout << "location.name: " << location.name << std::endl;
-	std::cout << "path after: " << path << std::endl;
 
 	//=========================================================================
 
 	//=========================================================================
 
-	// si tiene referer cabiar path por referer con un if y no enviar refer
-	// pasar tokemo y el path sin location/
-	// _locationConf.init(_config->getLocationConfig(path), path, referer_locat);
-	_locationConf.init(location, path);
+	_locationConf.init(location, path, referer_location);
 
 	std::cout << ORANGE;
 	_locationConf.print();
@@ -227,7 +218,10 @@ void HTTPRes::exploreFiles()
 		_header.addOne(_request.getHeader("Version"), "200 OK");
 		_header.addField("Content-Type", "text/html");
 
-		_content = pyExplorer(py, realpath, _locationConf.getRoot());
+		std::string root = _locationConf.getRoot().empty() ? _locationConf.getAlias() : _locationConf.getRoot();
+
+		// _content = pyExplorer(py, realpath, _locationConf.getRoot());
+		_content = pyExplorer(py, realpath, root);
 	}
 	else
 	{
