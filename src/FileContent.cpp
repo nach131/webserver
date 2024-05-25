@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   FileContent.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/22 16:05:08 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/25 11:06:56 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,12 @@ void FileContent::checkKeysAndValues(std::vector<std::string> &content, int &sta
 			continue;
 		if (content[i].find("location") != std::string::npos)
 		{
-			std::string newLine(content[i], content[i].find("location") + 8);
-			if (newLine[0] != ' ' || newLine.find(";") != std::string::npos) // || newLine.find(" {") == std::string::npos) para controlar espacio antes de {
+			std::string el;
+			std::stringstream ss(content[i]);
+			ss >> el >> el;
+			if (el.length() == 0 || el.find(";") != std::string::npos ||
+				el.find("{") != std::string::npos || el.find("/") == std::string::npos ||
+				el.find("/") != 0 || el.find_first_of('/') != el.find_last_of('/'))
 				error("location not declared correctly at line ", start + i + 1);
 		}
 		else if (checkLine(content[i]) &&
