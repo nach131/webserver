@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/25 13:21:20 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/25 14:08:11 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,6 +206,7 @@ int delConnect(int fd)
 void AdminServer::run(int sockfd, int kq)
 {
 	// HTTPRequest request;
+	_multi = false;
 	char buffer[MAX_MSG_SIZE];
 	struct kevent evSet;
 	struct kevent evList[MAX_EVENTS];
@@ -281,8 +282,8 @@ void AdminServer::run(int sockfd, int kq)
 				printPeticion(buffer);
 				//===================PARSING==============================================
 				HTTPRequest request(buffer);
-				// TODO request.getBuffer(buffer, &_multi);
 				request.print();
+				request.getBuffer(buffer, _multi);
 				//=========================================================================
 
 				// HTTPBody body(request);

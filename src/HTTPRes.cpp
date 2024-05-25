@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRes.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/25 13:15:44 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/25 13:52:41 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ void removeLocationFromPath(const std::string &location, std::string &path)
 
 HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config) : _request(request), _config(config)
 {
-
 	std::string method = _request.getHeader("Method");
 	std::string path = _request.getHeader("Path");
 	std::string referer = _request.getHeader("Referer");

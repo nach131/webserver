@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 00:08:38 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/25 12:36:44 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/25 13:42:09 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,15 @@ int start(void);
 class HTTPRequest
 {
 private:
+    std::string _boundary;
     std::map<std::string, std::string> _map;
-    HTTPRequest &operator=(const HTTPRequest &);
+    // HTTPRequest &operator=(const HTTPRequest &);
 
 public:
     HTTPRequest();
     HTTPRequest(const char *);
     ~HTTPRequest();
-    void getRequest(const char *);
+    void getBuffer(const char *, bool &);
     const std::string &getHeader(const std::string name) const;
      std::string getLocation() ;
 
