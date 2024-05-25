@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/25 13:12:15 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/25 13:21:20 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -281,7 +281,7 @@ void AdminServer::run(int sockfd, int kq)
 				printPeticion(buffer);
 				//===================PARSING==============================================
 				HTTPRequest request(buffer);
-				// TODO request.getBuffer(flag bool, &_multipart);
+				// TODO request.getBuffer(buffer, &_multi);
 				request.print();
 				//=========================================================================
 
