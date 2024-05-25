@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/24 20:08:54 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/25 13:15:44 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,25 +161,34 @@ void HTTPRes::createContent(std::string filePath, bool file)
 
 std::string pyExplorer(const std::string &py, const std::string &dirPath, const std::string &root_location)
 {
+	std::string el;
 	std::string result;
 
 	std::cout << "PY EXPLORER\n";
 	std::cout << "dirPath: " << dirPath << std::endl;
 
-	FILE *pipe = popen(("python3 " + py + " " + dirPath + " " + root_location).c_str(), "r");
-	if (!pipe)
-	{
-		std::cerr << "Error: Failed to open pipe for Python script execution." << std::endl;
-		return result;
-	}
+	// FILE *pipe = popen(("python3 " + py + " " + dirPath + " " + root_location).c_str(), "r");
+	// if (!pipe)
+	// {
+	// 	std::cerr << "Error: Failed to open pipe for Python script execution." << std::endl;
+	// 	return result;
+	// }
+	std::system(("python3 " + py + " " + dirPath + " " + root_location + " > /Users/nmota-bu/Desktop/test.txt").c_str());
+	std::stringstream ss;
+	ss << std::ifstream("/Users/nmota-bu/Desktop/test.txt").rdbuf();
+	result = ss.str();
+	std::cout << RED << "TOMATE\n"
+						<< result << RESET << std::endl;
+	// while (in >> el)
+	// 	result.append(el);
 
-	char buffer[MAX_MSG_SIZE];
-	while (fgets(buffer, sizeof(buffer), pipe) != NULL)
-		result += buffer;
+	// char buffer[MAX_MSG_SIZE];
+	// while (fgets(buffer, sizeof(buffer), pipe) != NULL)
+	// 	result += buffer;
 
-	int returnCode = pclose(pipe);
-	if (returnCode != 0)
-		std::cerr << "Error: Python script execution failed with return code " << returnCode << "." << std::endl;
+	// int returnCode = pclose(pipe);
+	// if (returnCode != 0)
+	// 	std::cerr << "Error: Python script execution failed with return code " << returnCode << "." << std::endl;
 
 	return result;
 }

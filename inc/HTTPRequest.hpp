@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 00:08:38 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/21 12:33:35 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/25 12:36:44 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ private:
     HTTPRequest &operator=(const HTTPRequest &);
 
 public:
-    // HTTPRequest();
+    HTTPRequest();
     HTTPRequest(const char *);
     ~HTTPRequest();
     void getRequest(const char *);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRes.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:32 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/21 12:31:41 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/25 13:02:06 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include "WebServer.hpp"
 #include "Location.hpp"
 #include "ServerConfig.hpp"
+#include <cstdlib>
 
 class HTTPHeader;
 class HTTPRequest;

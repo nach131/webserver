@@ -3,15 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/21 12:34:26 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/25 12:36:59 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HTTPRequest.hpp"
 #include "WebServer.hpp"
+
+HTTPRequest::HTTPRequest() {}
 
 HTTPRequest::HTTPRequest(const char *buf)
 {

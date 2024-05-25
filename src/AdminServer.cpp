@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/24 20:18:13 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/25 13:12:15 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,14 +205,13 @@ int delConnect(int fd)
 
 void AdminServer::run(int sockfd, int kq)
 {
-
+	// HTTPRequest request;
 	char buffer[MAX_MSG_SIZE];
 	struct kevent evSet;
 	struct kevent evList[MAX_EVENTS];
 	struct sockaddr_storage addr;
 	socklen_t socklen = sizeof(addr);
 
-	// HTTPRequest request;
 	while (42)
 	{
 		// bool checkEVFlag = false;
@@ -262,6 +261,7 @@ void AdminServer::run(int sockfd, int kq)
 				}
 
 				// Colocar el evento en EVFILT_WRITE para enviar la respuesta
+				// TODO controlar si es multipart y si ha acabado de enviar
 				EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
 				kevent(kq, &evSet, 1, NULL, 0, NULL);
 
@@ -280,12 +280,8 @@ void AdminServer::run(int sockfd, int kq)
 				// cliente peticion
 				printPeticion(buffer);
 				//===================PARSING==============================================
-				// if (checkEVFlags)
-				// {
-				// 	request.getRequest(buffer);
-				// }
 				HTTPRequest request(buffer);
-				// TODO
+				// TODO request.getBuffer(flag bool, &_multipart);
 				request.print();
 				//=========================================================================
 
