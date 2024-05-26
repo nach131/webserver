@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/26 16:08:06 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/26 16:59:23 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,7 +208,7 @@ int delConnect(int fd)
 
 void AdminServer::run(int sockfd, int kq)
 {
-	// HTTPRequest request;
+	HTTPRequest request;
 	char buffer[MAX_MSG_SIZE];
 	struct kevent evSet;
 	struct kevent evList[MAX_EVENTS];
@@ -268,9 +268,9 @@ void AdminServer::run(int sockfd, int kq)
 				// cliente peticion
 				printPeticion(buffer);
 				//===================PARSING==============================================
-				HTTPRequest request(buffer);
-				request.print();
+				// HTTPRequest request(buffer);
 				request.getBuffer(buffer, _multi);
+				request.print();
 				//=========================================================================
 
 				// HTTPBody body(request);
