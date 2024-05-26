@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/26 18:09:34 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/26 19:09:56 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,13 +87,17 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &r
 		}
 		else if (method == "POST")
 		{
-			std::cout << "path: " << _locationConf.realPath() << std::endl;
-			// std::cout << "buffer: " << _request.getBuffer() << std::endl;
+			std::cout << "POST\n";
+
+			// std::cout << "realPath: " << _locationConf.realPath() << std::endl;
+			// realPath: .//cgi_bin/register.py SOLUCIONAR
+			// std::cout << "BUFFER: \n"
+			// 		  << _request.getBuffer() << std::endl;
 
 			_header.addOne(_request.getHeader("Version"), "200 OK");
 			_header.addField("Content-Type", "text/html");
 
-			_content = pyExplorer(_locationConf.realPath(), _request.getBuffer(), "");
+			_content = pyExplorer("./cgi_bin/register.py", _request.getHeader("Content"), "");
 		}
 		else if (method == "DELETE")
 		{
@@ -111,6 +115,31 @@ HTTPRes::~HTTPRes() {}
 
 //=========================================================================
 
+std::string HTTPRes::execPython(const std::string &filePath, const std::string &realBuffer)
+{
+	std::string result;
+	std::cout << "execPython\n";
+
+	FILE *pipe = popen(("python3 " + filePath + " " + realBuffer).c_str(), "r");
+
+	if (!pipe)
+	{
+		std::cerr << "Error: Failed to open pipe for Python script execution." << std::endl;
+		return result;
+	}
+
+	char buffer[MAX_MSG_SIZE];
+	while (fgets(buffer, sizeof(buffer), pipe) != NULL)
+		result += buffer;
+
+	int returnCode = pclose(pipe);
+	if (returnCode != 0)
+		std::cerr << "Error: Python script execution failed with return code " << returnCode << "." << std::endl;
+
+	// std::cout << result << std::endl;
+
+	return result;
+}
 std::string HTTPRes::execPython(const std::string &filePath)
 {
 	std::string result;
@@ -135,6 +164,8 @@ std::string HTTPRes::execPython(const std::string &filePath)
 	return result;
 }
 
+//=========================================================================
+
 void HTTPRes::createContent(std::string filePath, bool file)
 {
 	std::string extension = getExtension(filePath);
@@ -142,7 +173,10 @@ void HTTPRes::createContent(std::string filePath, bool file)
 	// TODO comprobar que el py es de la lista que se pueden ejecutat
 	// hacer lista en config file
 	if (extension == "py")
+	{
+		std::cout << "execPython:" << std::endl;
 		_content = execPython(filePath);
+	}
 	else
 		_content = readFile(filePath);
 	// comprueba si el fichero a pasar tiene datos
@@ -162,7 +196,7 @@ std::string HTTPRes::pyExplorer(const std::string &py, const std::string &dirPat
 {
 	std::string result;
 
-	std::cout << "PY EXPLORER\n";
+	std::cout << "pyExplorer\n";
 	std::cout << " dirPath: " << dirPath << std::endl;
 	// Verificar la existencia del script de Python
 	// if (!std::ifstream(py).good())
@@ -190,8 +224,8 @@ std::string HTTPRes::pyExplorer(const std::string &py, const std::string &dirPat
 	result = ss.str();
 
 	// Limpiar el archivo temporal
-	if (std::remove("./conf_web/.tmp") != 0)
-		std::cerr << "Advertencia: No se pudo eliminar el archivo temporal" << std::endl;
+	// if (std::remove("./conf_web/.tmp") != 0)
+	// 	std::cerr << "Advertencia: No se pudo eliminar el archivo temporal" << std::endl;
 
 	return result;
 }
