@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/26 12:34:57 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/26 15:04:22 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void removeLocationFromPath(const std::string &location, std::string &path)
 		path = path.substr(location.length()); // Modifica path eliminando la parte de location
 }
 
-HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config) : _request(request), _config(config)
+HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &ref) : _request(request), _config(config), _ref(ref)
 {
 	std::string method = _request.getHeader("Method");
 	std::string path = _request.getHeader("Path");
@@ -39,6 +39,7 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config) : _request(re
 	std::string referer_location = removeBeforeNumber(referer, "8080");
 
 	std::cout << CYAN;
+	std::cout << "_ref bool: " << _ref << std::endl;
 	std::cout << "path: " << path << std::endl;
 	std::cout << "referer: " << referer << std::endl;
 	std::cout << "referer_location: " << referer_location << std::endl;
@@ -52,7 +53,7 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config) : _request(re
 
 	//=========================================================================
 
-	_locationConf.init(location, path, referer_location);
+	_locationConf.init(location, path, referer_location, _ref);
 
 	std::cout << ORANGE;
 	_locationConf.print();

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:26:56 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/25 13:40:32 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/26 14:50:54 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ class ServerConfig;
 class AdminServer
 {
 private:
-	bool _multi;
+	bool _ref;	 // EV_FLAG0
+	bool _multi; // EV_FLAG1
 	ServerConfig _config;
 	std::string _header;
 	std::string _content;

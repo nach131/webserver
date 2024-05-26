@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 17:46:28 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/23 16:52:01 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/26 15:04:47 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ public:
 	Location();
 	~Location();
 	void init_no(const LocationResult &location, const std::string &path, const std::string &referer);
-	void init(const LocationResult &location, const std::string &path, const std::string &referer);
+	void init(const LocationResult &location, const std::string &path, const std::string &referer, const bool &ref);
 
 	bool autoIndexOn();
 	bool methodAllowed(const std::string &method);

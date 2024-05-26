@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 17:46:33 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/26 14:28:35 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/26 15:06:51 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ Location::Location() {}
 
 Location::~Location() {}
 
-void Location::init(const LocationResult &location, const std::string &path, const std::string &referer)
+void Location::init(const LocationResult &location, const std::string &path, const std::string &referer, const bool &ref)
 {
 
 	_location = location;
@@ -117,13 +117,16 @@ void Location::init(const LocationResult &location, const std::string &path, con
 				}
 				else
 				{
-					// cuando es location es fichero y hay refere
-					// ANTES
-					// std::cout << "  root con ref: " << root + referer_location + path << std::endl;
-					// _location.realPath = root + referer_location + path;
-					// AHORA POR QUE PONE DOS VECES LOCATION
-					std::cout << "  root con ref: " << root + path << std::endl;
-					_location.realPath = root + path;
+					if (!ref)
+					{
+						std::cout << "  root SIN ref: " << root + path << std::endl;
+						_location.realPath = root + path;
+					}
+					else
+					{
+						std::cout << "  root CON ref: " << root + referer_location + path << std::endl;
+						_location.realPath = root + referer_location + path;
+					}
 				}
 			}
 		}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/25 14:08:11 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/26 15:01:48 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 // #define NUM_CLIENTS 10
 // #define MAX_EVENTS 32
 // #define MAX_MSG_SIZE 8192
+
+// EV_FLAG0 - to ref
+// EV_FLAG1 - to multipas
 
 AdminServer::AdminServer(const ServerConfig &config) : _config(config) {}
 
@@ -206,7 +209,6 @@ int delConnect(int fd)
 void AdminServer::run(int sockfd, int kq)
 {
 	// HTTPRequest request;
-	_multi = false;
 	char buffer[MAX_MSG_SIZE];
 	struct kevent evSet;
 	struct kevent evList[MAX_EVENTS];
@@ -226,7 +228,7 @@ void AdminServer::run(int sockfd, int kq)
 				if (addConnect(fd) == 0)
 				{
 					// EV_FLAG0 PAR LA PRIMERA PETICION
-					EV_SET(&evSet, fd, EVFILT_READ, EV_ADD | EV_FLAG0, 0, 0, NULL);
+					EV_SET(&evSet, fd, EVFILT_READ, EV_ADD | EV_FLAG0 | EV_FLAG1, 0, 0, NULL);
 					kevent(kq, &evSet, 1, NULL, 0, NULL);
 					// send_welcome_msg(fd);
 				}
@@ -247,26 +249,7 @@ void AdminServer::run(int sockfd, int kq)
 			else if (evList[i].filter == EVFILT_READ)
 			{
 
-				//=========================================================================
-				// Manejo de flags para la primera peticion
-				if (evSet.flags & EV_FLAG0)
-				{
-					std::cout << "CON EV_FLAG0" << std::endl;
-					EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & EV_FLAG0, 0, 0, NULL);
-					kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
-														  // checkEVFlag = true;
-				}
-				else if (evSet.flags | EV_FLAG0)
-				{
-					std::cout << "SIN EV_FLAG0" << std::endl;
-				}
-
-				// Colocar el evento en EVFILT_WRITE para enviar la respuesta
-				// TODO controlar si es multipart y si ha acabado de enviar
-				EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
-				kevent(kq, &evSet, 1, NULL, 0, NULL);
-
-				//=================DESDE AQUI==============================================
+								//=================DESDE AQUI==============================================
 				// Recibir datos del cliente
 				memset(buffer, 0, sizeof(buffer));
 				int n = recv(evList[i].ident, buffer, sizeof(buffer), 0);
@@ -287,11 +270,31 @@ void AdminServer::run(int sockfd, int kq)
 				//=========================================================================
 
 				// HTTPBody body(request);
-				HTTPRes response(request, &_config);
+				HTTPRes response(request, &_config, _ref);
 				// TODO
 				printResponse(response.getHeader(), response.getContent());
 
 				// _config.print();
+
+				//=========================================================================
+				// Manejo de flags para la primera peticion
+				if (evSet.flags & EV_FLAG0)
+				{
+					std::cout << "CON EV_FLAG0" << std::endl;
+					EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & EV_FLAG0, 0, 0, NULL);
+					kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
+														  // checkEVFlag = true;
+					_ref = true;
+				}
+				else if (evSet.flags | EV_FLAG0)
+				{
+					std::cout << "SIN EV_FLAG0" << std::endl;
+				}
+
+				// Colocar el evento en EVFILT_WRITE para enviar la respuesta
+				// TODO controlar si es multipart y si ha acabado de enviar
+				EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
+				kevent(kq, &evSet, 1, NULL, 0, NULL);
 
 				//=========================================================================
 				_header = response.getHeader();
