@@ -1,0 +1,57 @@
+directory_path:  ./dist/files
+root_location:  ./dist
+path  -  /files
+<html>
+        <head>
+    <title>Index of /files</title></head>
+        <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        pre {
+            font-family: monospace;
+        }
+        .directory-listing {
+            display: table;
+            width: 100%;
+        }
+        .directory-item {
+            display: table-row;
+        }
+        .directory-item a {
+            display: table-cell;
+            text-decoration: none;
+            # color: #0000FF;
+            padding-right: 20px;
+        }
+        .directory-item span {
+            display: table-cell;
+            padding-right: 20px;
+        }
+        .directory-item .size {
+            text-align: right;
+        }
+        hr {
+            margin: 20px 0;
+        }
+    </style>
+    <body>
+    <h1>Index of /files</h1>
+    <hr>
+    <pre><a href="">../</a><div class="directory-item"><a href="/files/example.avi">example.avi</a>       <span>   13-May-2024 20:20</span> <span class="size">    742478</span></div>
+<div class="directory-item"><a href="/files/example.gif">example.gif</a>       <span>   13-May-2024 20:20</span> <span class="size">    229010</span></div>
+<div class="directory-item"><a href="/files/example.jpg">example.jpg</a>       <span>   13-May-2024 20:20</span> <span class="size">    102117</span></div>
+<div class="directory-item"><a href="/files/example.mov">example.mov</a>       <span>   13-May-2024 20:20</span> <span class="size">    709764</span></div>
+<div class="directory-item"><a href="/files/example.mp3">example.mp3</a>       <span>   13-May-2024 20:20</span> <span class="size">    733645</span></div>
+<div class="directory-item"><a href="/files/example.mp4">example.mp4</a>       <span>   13-May-2024 20:20</span> <span class="size">   1570024</span></div>
+<div class="directory-item"><a href="/files/example.pdf">example.pdf</a>       <span>   13-May-2024 20:20</span> <span class="size">    142786</span></div>
+<div class="directory-item"><a href="/files/example.png">example.png</a>       <span>   13-May-2024 20:20</span> <span class="size">    512596</span></div>
+<div class="directory-item"><a href="/files/example.wav">example.wav</a>       <span>   13-May-2024 20:20</span> <span class="size">   1274190</span></div>
+<div class="directory-item"><a href="/files/index.html">index.html</a>         <span>   13-May-2024 20:20</span> <span class="size">      3501</span></div>
+<div class="directory-item"><a href="/files/mas">mas</a>                       <span>   16-May-2024 12:36</span> <span class="size">         -</span></div>
+<div class="directory-item"><a href="/files/style.css">style.css</a>           <span>   13-May-2024 20:20</span> <span class="size">       185</span></div>
+</pre>
+    <hr>
+    <center>vduchi & nmota-bu</center>
+</body>
+</html>

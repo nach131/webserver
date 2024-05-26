@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRes.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/25 13:52:41 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/26 12:34:57 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,9 +85,14 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config) : _request(re
 				error403();
 		}
 		else if (method == "POST")
+		{
 			std::cout << "WEB POST\n";
+		}
 		else if (method == "DELETE")
+		{
 			std::cout << "WEB DELETE\n";
+			methodDelete();
+		}
 	}
 
 	//=========================================================================
@@ -127,6 +132,8 @@ void HTTPRes::createContent(std::string filePath, bool file)
 {
 	std::string extension = getExtension(filePath);
 
+	// TODO comprobar que el py es de la lista que se pueden ejecutat
+	// hacer lista en config file
 	if (extension == "py")
 		_content = execPython(filePath);
 	else
@@ -144,59 +151,49 @@ void HTTPRes::createContent(std::string filePath, bool file)
 		file ? error404() : error403();
 }
 
-// 403 Forbidden cuando es web y va a carpta
-
-// void HTTPRes::methodGet()
-// {
-// 	std::string path = _request.getHeader("Path");
-
-// 	// TODO
-// 	std::cout << MAGENTA;
-
-// 	isFile(path) ? file() : folder();
-
-// 	std::cout << RESET;
-// }
-
 std::string pyExplorer(const std::string &py, const std::string &dirPath, const std::string &root_location)
 {
-	std::string el;
 	std::string result;
 
 	std::cout << "PY EXPLORER\n";
-	std::cout << "dirPath: " << dirPath << std::endl;
+	std::cout << " dirPath: " << dirPath << std::endl;
+	// Verificar la existencia del script de Python
+	// if (!std::ifstream(py).good())
+	// 	throw std::runtime_error("Error: No se encontró el archivo del script de Python: " + py);
 
-	// FILE *pipe = popen(("python3 " + py + " " + dirPath + " " + root_location).c_str(), "r");
-	// if (!pipe)
-	// {
-	// 	std::cerr << "Error: Failed to open pipe for Python script execution." << std::endl;
-	// 	return result;
-	// }
-	std::system(("python3 " + py + " " + dirPath + " " + root_location + " > /Users/nmota-bu/Desktop/test.txt").c_str());
+	// // Verificar la existencia del directorio de destino
+	// if (!std::ifstream(dirPath).good())
+	// 	throw std::runtime_error("Error: No se encontró el directorio especificado: " + dirPath);
+
+	// Construir el comando del sistema
+	std::string command = "python3 " + py + " " + dirPath + " " + root_location + " > ./conf_web/.tmp";
+	int returnCode = std::system(command.c_str());
+
+	// Verificar el éxito del comando del sistema
+	if (returnCode != 0)
+		throw std::system_error(returnCode, std::generic_category(), "Error al ejecutar el comando del sistema");
+
+	// Leer el archivo temporal
+	std::ifstream tempFile("./conf_web/.tmp");
+	if (!tempFile.good())
+		throw std::runtime_error("Error: No se pudo abrir el archivo temporal para leer");
+
 	std::stringstream ss;
-	ss << std::ifstream("/Users/nmota-bu/Desktop/test.txt").rdbuf();
+	ss << tempFile.rdbuf();
 	result = ss.str();
-	std::cout << RED << "TOMATE\n"
-						<< result << RESET << std::endl;
-	// while (in >> el)
-	// 	result.append(el);
 
-	// char buffer[MAX_MSG_SIZE];
-	// while (fgets(buffer, sizeof(buffer), pipe) != NULL)
-	// 	result += buffer;
-
-	// int returnCode = pclose(pipe);
-	// if (returnCode != 0)
-	// 	std::cerr << "Error: Python script execution failed with return code " << returnCode << "." << std::endl;
+	// Limpiar el archivo temporal
+	if (std::remove("./conf_web/.tmp") != 0)
+		std::cerr << "Advertencia: No se pudo eliminar el archivo temporal" << std::endl;
 
 	return result;
 }
 
 void HTTPRes::exploreFiles()
 {
-	std::string realpath = _locationConf.realPath();
+	std::string realPath = _locationConf.realPath();
 
-	if (!isFile(realpath))
+	if (!isFile(realPath))
 	{
 		std::cout << "CARPETA\n";
 
@@ -206,13 +203,12 @@ void HTTPRes::exploreFiles()
 
 		std::string root = _locationConf.getRoot().empty() ? _locationConf.getAlias() : _locationConf.getRoot();
 
-		// _content = pyExplorer(py, realpath, _locationConf.getRoot());
-		_content = pyExplorer(py, realpath, root);
+		_content = pyExplorer(py, realPath, root);
 	}
 	else
 	{
 		std::cout << "FILE\n";
-		createContent(realpath, false);
+		createContent(realPath, false);
 	}
 }
 
@@ -245,6 +241,24 @@ void HTTPRes::methodPost()
 void HTTPRes::methodDelete()
 {
 	std::cout << "==========DELETE==========\n";
+
+	std::string realPath = _locationConf.realPath();
+	std::string remove = _locationConf.getRoot().empty() ? _locationConf.getAlias() : _locationConf.getRoot();
+
+	std::string FileName = removeSubstring(realPath, remove);
+	std::string realFileName = getFileName(FileName);
+
+	realPath = "./upload" + FileName;
+
+	std::cout << "FileName: " << FileName << std::endl;
+	std::cout << "realPath: " << realPath << std::endl;
+	std::cout << "Real File name: " << getFileName(FileName) << std::endl;
+
+	std::string py = "./cgi_bin/delete.py";
+	_header.addOne(_request.getHeader("Version"), "200 OK");
+	_header.addField("Content-Type", "text/html");
+
+	_content = pyExplorer(py, realPath, realFileName);
 }
 
 void HTTPRes::methodErr()

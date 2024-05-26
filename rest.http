@@ -1,11 +1,11 @@
 ### method ERROR
-
 PUT http://localhost:8080
 
 ### earth
 POST http://localhost:8080/earth
 
-DELETE http://localhost:8080/earth
+### Delete
+DELETE http://localhost:8080/web/toma.txt
 
 ### get files
 GET http://localhost:8080/files
@@ -18,4 +18,5 @@ GET   http://localhost:8080/astronaut/toma.html
 
 ### alias
 GET   http://localhost:8080/tomate/mas/otra/cosa.html
+
 
