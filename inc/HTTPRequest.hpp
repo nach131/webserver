@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 00:08:38 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/25 13:42:09 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/26 17:33:41 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ int start(void);
 class HTTPRequest
 {
 private:
+    std::string _fileName;
     std::string _boundary;
     std::map<std::string, std::string> _map;
     // HTTPRequest &operator=(const HTTPRequest &);

@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/26 16:56:42 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/26 18:02:42 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,27 @@ void HTTPRequest::getBuffer(const char *buf, bool &multi)
 				_boundary.append("--");
 				multi = true;
 				break;
+			}
+		}
+		std::string Content;
+		while (std::getline(ss, line))
+		{
+			// body += line + '\n'; // Concatenate lines to form the body
+			Content += line; // Concatenate lines to form the body
+		}
+		_map["Content"] = Content;
+		if (multi)
+		{
+			int count = 0;
+			std::stringstream ssContent(_map["Content"]);
+			while (getline(ss, line, '\n'))
+			{
+				if (line.find("filename") != std::string::npos)
+					_fileName = line.substr(line.find("filename") + 10, line.find_last_of("\"") - (line.find("filename") + 10) - 1);
+				_map["Content"].erase(0, line.length());
+				count++;
+				if (count == 4)
+					break;
 			}
 		}
 	}
