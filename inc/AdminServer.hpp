@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:26:56 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/26 14:50:54 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/26 15:40:25 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ private:
 	ServerConfig _config;
 	std::string _header;
 	std::string _content;
+	int _flags;
 
 public:
 	AdminServer(const ServerConfig &config);

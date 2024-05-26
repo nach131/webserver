@@ -23,7 +23,7 @@
     {
       "type": "lldb",
       "request": "launch",
-      "name": "CPP",
+      "name": "WebServer",
       "program": "${workspaceFolder}/webserv",
       "args": [],
       "stopOnEntry": false,
