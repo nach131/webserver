@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 17:46:33 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/25 20:29:22 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/26 14:28:35 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,8 +118,12 @@ void Location::init(const LocationResult &location, const std::string &path, con
 				else
 				{
 					// cuando es location es fichero y hay refere
-					std::cout << "  root con ref: " << root + referer_location + path << std::endl;
-					_location.realPath = root + referer_location + path;
+					// ANTES
+					// std::cout << "  root con ref: " << root + referer_location + path << std::endl;
+					// _location.realPath = root + referer_location + path;
+					// AHORA POR QUE PONE DOS VECES LOCATION
+					std::cout << "  root con ref: " << root + path << std::endl;
+					_location.realPath = root + path;
 				}
 			}
 		}

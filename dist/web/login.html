@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="/style.css">
+
+</head>
+
+<body>
+    <main class="container content-container mx-auto px-10 md:px-0">
+
+        <nav class="bg-zinc-700 my-3 flex justify-between py-5 px-10 rounded-lg">
+            <h1 class="text-2xl font-bold">
+                <a href="/web">WebServer</a>
+            </h1>
+            <ul class="flex gap-x-2">
+                <!-- This block should be for authenticated users -->
+                <li>Welcome Username</li>
+                <li>
+                    <a href="/add-task" class="btn-link">Add Task</a>
+                </li>
+                <li>
+                    <a href="/" class="btn-link">Logout</a>
+                </li>
+                <!-- This block should be for unauthenticated users -->
+                <li>
+                    <a href="/login.html" class="btn-link">Login</a>
+                </li>
+                <li>
+                    <a href="/register.html" class="btn-link">Register</a>
+                </li>
+            </ul>
+        </nav>
+
+
+
+        <div class="h-[calc(100vh-100px)] flex items-center justify-center">
+            <div class="bg-zinc-800 max-w-md w-full p-10 rounded-md">
+                <h1 class="text-2xl font-bold">Login</h1>
+                <form><label for="email" class="text-xs block my-1 text-slate-300">Email:</label><input
+                        label="Write your email" type="email" name="email" placeholder="youremail@domain.tld"
+                        class="w-full bg-zinc-700 text-white px-4 py-2 rounded-md">
+                    <p></p><label for="password" class="text-xs block my-1 text-slate-300">Password:</label><input
+                        type="password" name="password" placeholder="Write your password"
+                        class="w-full bg-zinc-700 text-white px-4 py-2 rounded-md">
+                    <p></p><button class="bg-indigo-500 px-4 py-1 rounded-md my-2 disabled:bg-indigo-300">Login</button>
+                </form>
+                <p class="flex gap-x-2 justify-between">Don't have an account? <a class="text-sky-500"
+                        href="/register">Sign up</a></p>
+            </div>
+        </div>
+
+    </main>
+
+
+</body>
