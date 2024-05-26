@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:34:48 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/23 15:24:13 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/26 16:37:52 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,5 +42,5 @@ void takeOutSemiColumn(std::string &val);
 bool parseError(std::string str, int n);
 std::string removeSubstring(const std::string &str, const std::string &toRemove);
 std::string rmLocationToAPath(const std::string &path, const std::string &location);
-
+bool pathStartsWithLocation(const std::string &path, const std::string &location);
 #endif

@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/23 15:23:37 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/26 16:37:11 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,4 +242,10 @@ std::string rmLocationToAPath(const std::string &path, const std::string &locati
 		result.erase(pos, loc.length());
 
 	return result;
+}
+
+bool pathStartsWithLocation(const std::string &path, const std::string &location)
+{
+	// Verificar si el path empieza con el location
+	return path.compare(0, location.length(), location) == 0;
 }

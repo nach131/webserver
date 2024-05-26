@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 17:46:33 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/26 15:06:51 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/26 16:38:57 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,9 @@ void Location::init(const LocationResult &location, const std::string &path, con
 	std::string root = getRoot();
 	// std::string pathRoot = root.empty() ? alias : root;
 
-
 	std::string index = getIndex().empty() ? "/index.html" : getIndex();
 	std::string fileName = isFile(path) && !isFileLocation() ? getFileName(path) : index;
 	std::string pathFile = removeSubstring(path, location.name);
-
-
 
 	// std::string referer_location = removeBeforeNumber(referer, "8080");
 	std::string referer_location = _location.name;
@@ -48,7 +45,7 @@ void Location::init(const LocationResult &location, const std::string &path, con
 	std::cout << " isFileLocation : " << isFileLocation() << std::endl;
 	std::cout << " index: " << index << std::endl;
 	std::cout << " fileName: " << fileName << std::endl;
-	
+
 	// std::cout << "pathRoot: " << pathRoot<< std::endl;
 	std::cout << " alias: " << alias << std::endl;
 	std::cout << " root: " << root << std::endl;
@@ -122,6 +119,11 @@ void Location::init(const LocationResult &location, const std::string &path, con
 						std::cout << "  root SIN ref: " << root + path << std::endl;
 						_location.realPath = root + path;
 					}
+					else if (pathStartsWithLocation(path, referer_location))
+					{
+						std::cout << "  root CON ref pathStartsWithLocation: " << root + path << std::endl;
+						_location.realPath = root + path;
+					}
 					else
 					{
 						std::cout << "  root CON ref: " << root + referer_location + path << std::endl;
@@ -148,7 +150,7 @@ void Location::init(const LocationResult &location, const std::string &path, con
 				}
 				else if (path == _location.name && !root.empty())
 				{
-				std::cout << "  path == _location.name && !root.empty() " << std::endl;
+					std::cout << "  path == _location.name && !root.empty() " << std::endl;
 					if (isFile(_location.name))
 					{
 						std::cout << "   isFile(_location.name) if: " << root + index << std::endl;
@@ -157,7 +159,7 @@ void Location::init(const LocationResult &location, const std::string &path, con
 					else
 					// esto nombre location igual peticion
 					{
-						std::cout << "   isFile(_location.name) else " << root + index << std::endl;
+						std::cout << "   isFile(_location.name) else: " << root + index << std::endl;
 						_location.realPath = root + path + index;
 					}
 				}
