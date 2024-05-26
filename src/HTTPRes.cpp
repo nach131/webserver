@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/26 19:09:56 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/26 22:48:29 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,8 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &r
 			_header.addOne(_request.getHeader("Version"), "200 OK");
 			_header.addField("Content-Type", "text/html");
 
-			_content = pyExplorer("./cgi_bin/register.py", _request.getHeader("Content"), "");
+			_content = pyExplorer("." + path, _request.getHeader("Content"));
+			std::cout << RED << _content << RESET << std::endl;
 		}
 		else if (method == "DELETE")
 		{
@@ -230,6 +231,56 @@ std::string HTTPRes::pyExplorer(const std::string &py, const std::string &dirPat
 	return result;
 }
 
+void sleep_ms(int milliseconds)
+{
+	struct timespec ts;
+	ts.tv_sec = milliseconds / 1000;
+	ts.tv_nsec = (milliseconds % 1000) * 1000000;
+	nanosleep(&ts, NULL);
+}
+
+std::string HTTPRes::pyExplorer(const std::string &py, const std::string &data)
+{
+	std::string result;
+
+	std::cout << "pyExplorer\n";
+	std::cout << " data: " << data << std::endl;
+
+	// Construir el comando del sistema
+	std::string command = "python3 " + py + " " + data;
+	int returnCode = std::system(command.c_str());
+
+	// Verificar el éxito del comando del sistema
+	if (returnCode != 0)
+		throw std::system_error(returnCode, std::generic_category(), "Error al ejecutar el comando del sistema");
+
+	// Esperar a que el archivo temporal sea creado y escrito
+	std::ifstream tempFile;
+	int attempts = 10; // Número máximo de intentos para comprobar el archivo
+	while (attempts-- > 0)
+	{
+		tempFile.open("./conf_web/.output.html");
+		if (tempFile.good())
+			break;
+		tempFile.close();
+		sleep_ms(100); // Esperar 100 ms antes de reintentar
+	}
+
+	if (!tempFile.good())
+		throw std::runtime_error("Error: No se pudo abrir el archivo temporal para leer");
+
+	// Leer el archivo temporal
+	std::stringstream ss;
+	ss << tempFile.rdbuf();
+	result = ss.str();
+	tempFile.close();
+
+	// Limpiar el archivo temporal
+	if (std::remove("./conf_web/.output.html") != 0)
+		std::cerr << "Advertencia: No se pudo eliminar el archivo temporal" << std::endl;
+
+	return result;
+}
 void HTTPRes::exploreFiles()
 {
 	std::string realPath = _locationConf.realPath();

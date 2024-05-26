@@ -18,12 +18,14 @@ def guardar_datos_en_mongo(datos):
 # Procesamiento del formulario
 form = cgi.FieldStorage()
 
-nombre = form.getvalue('nombre')
+username = form.getvalue('username')
 email = form.getvalue('email')
+password = form.getvalue('password')
 
 datos = {
-    'nombre': nombre,
-    'email': email
+    'username': username,
+    'email': email,
+    'password': password,
 }
 
 # Guardar los datos en MongoDB
@@ -34,6 +36,7 @@ print("Content-Type: text/html")
 print()
 print("<html><body>")
 print("<h2>Datos recibidos y almacenados en MongoDB</h2>")
-print("<p>Nombre: {}</p>".format(nombre))
+print("<p>Nombre: {}</p>".format(username))
 print("<p>Email: {}</p>".format(email))
+print("<p>password: {}</p>".format(password))
 print("</body></html>")
