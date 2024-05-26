@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/26 18:03:25 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/26 18:13:16 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,9 +84,9 @@ const std::string &HTTPRequest::getHeader(const std::string name) const { return
 std::string HTTPRequest::getLocation()
 {
 	std::string path = getHeader("Path");
-	if (path == "/" || path == "/index.html") 
+	if (path == "/" || path == "/index.html")
 		return "/";
-	 std::vector<std::string> parts = split(path, '/');
+	std::vector<std::string> parts = split(path, '/');
 	return "/" + parts[0];
 }
 
@@ -146,6 +146,27 @@ void HTTPRequest::getBuffer(const char *buf, bool &multi)
 				_boundary.append("--");
 				multi = true;
 				break;
+			}
+		}
+		std::string Content;
+		while (std::getline(ss, line))
+		{
+			// body += line + '\n'; // Concatenate lines to form the body
+			Content += line; // Concatenate lines to form the body
+		}
+		_map["Content"] = Content;
+		if (multi)
+		{
+			int count = 0;
+			std::stringstream ssContent(_map["Content"]);
+			while (getline(ss, line, '\n'))
+			{
+				if (line.find("filename") != std::string::npos)
+					_fileName = line.substr(line.find("filename") + 10, line.find_last_of("\"") - (line.find("filename") + 10) - 1);
+				_map["Content"].erase(0, line.length());
+				count++;
+				if (count == 4)
+					break;
 			}
 		}
 	}
