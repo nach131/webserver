@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/26 16:56:42 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/26 18:03:25 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,16 @@
 
 HTTPRequest::HTTPRequest() {}
 
+const std::string &HTTPRequest::getBuffer() const { return _buffer; }
+
 HTTPRequest::HTTPRequest(const char *buf)
 {
+	// TODO prueba buffer
+
+	std::cout << RED;
+	std::cout << buf;
+	std::cout << RESET;
+
 	int i = 0;
 	std::string first, el, line, input(buf);
 	std::stringstream ss(input);
@@ -84,6 +92,9 @@ std::string HTTPRequest::getLocation()
 
 void HTTPRequest::getBuffer(const char *buf, bool &multi)
 {
+	// TODO prueba
+	_buffer = buf;
+
 	if (!multi)
 	{
 		int i = 0;

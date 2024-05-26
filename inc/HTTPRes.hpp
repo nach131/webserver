@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:32 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/26 14:54:01 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/26 17:42:50 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ private:
 	bool _ref;
 
 	std::string getRootLocate(const std::string &path) const;
+	std::string pyExplorer(const std::string &py, const std::string &dirPath, const std::string &root_location);
 
 	void rootPath();
 	void rootOtherFiles();

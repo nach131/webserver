@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/26 15:04:22 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/26 18:09:34 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,13 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &r
 		}
 		else if (method == "POST")
 		{
-			std::cout << "WEB POST\n";
+			std::cout << "path: " << _locationConf.realPath() << std::endl;
+			// std::cout << "buffer: " << _request.getBuffer() << std::endl;
+
+			_header.addOne(_request.getHeader("Version"), "200 OK");
+			_header.addField("Content-Type", "text/html");
+
+			_content = pyExplorer(_locationConf.realPath(), _request.getBuffer(), "");
 		}
 		else if (method == "DELETE")
 		{
@@ -152,7 +158,7 @@ void HTTPRes::createContent(std::string filePath, bool file)
 		file ? error404() : error403();
 }
 
-std::string pyExplorer(const std::string &py, const std::string &dirPath, const std::string &root_location)
+std::string HTTPRes::pyExplorer(const std::string &py, const std::string &dirPath, const std::string &root_location)
 {
 	std::string result;
 
@@ -219,6 +225,7 @@ void HTTPRes::methodPost()
 	std::string header;
 	_content = _request.getHeader("Content");
 
+	// PARA API
 	// std::string header = _request.getHeader("Method") + " /api/users";
 	// std::string header = _request.getHeader("Method") + " /api/auth/register";
 	// if (_request.getHeader("Referer") != "")
