@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/27 16:27:47 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/27 16:29:25 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,8 +241,6 @@ void AdminServer::run(int sockfd, int kq)
 					EV_SET(&evSet, fd, EVFILT_READ, _flags, 0, 0, NULL);
 					kevent(kq, &evSet, 1, NULL, 0, NULL);
 					// _ref = false;
-
-					// send_welcome_msg(fd);
 				}
 				else
 				{

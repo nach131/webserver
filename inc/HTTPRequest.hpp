@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 00:08:38 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/27 15:40:41 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/27 16:43:31 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ public:
     void setMulti(bool &);
     std::string getFileName();
     void takeHeader(std::stringstream &);
-    void checkBoundary(std::string &);
+    void checkBoundary(std::vector<std::string> &);
     void getBuffer(const char *, bool &);
 
     std::string getLocation();

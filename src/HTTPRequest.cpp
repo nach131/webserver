@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/27 16:18:04 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/27 17:19:15 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,57 +72,52 @@ void HTTPRequest::takeHeader(std::stringstream &ss)
 			it->second.find("multipart") != std::string::npos)
 		{
 			_boundary = it->second.substr(it->second.find("boundary") + 9, it->second.length() - (it->second.find("boundary") + 9) - 1);
-			std::cout << std::endl
-					  << RED << "Boundary -> -" << _boundary << RESET << std::endl;
+			std::cout << RED << "Boundary -> -" << _boundary << RESET << std::endl;
 			_last = true;
 			break;
 		}
 	}
 }
 
-void HTTPRequest::checkBoundary(std::string &content)
+void HTTPRequest::checkBoundary(std::vector<std::string> &content)
 {
-	std::string line;
-	std::stringstream ss(content);
-	while (getline(ss, line, '\r'))
+	for (std::vector<std::string>::iterator it = content.begin(); it != content.end();)
 	{
-		if (line.find(_boundary) != std::string::npos)
+		if ((*it).find(_boundary) != std::string::npos)
 		{
 			_last = false;
-			content.erase(0, line.length());
+			std::vector<std::string>::iterator it2 = it + 1;
+			content.erase(it);
+			it = it2;
+			continue;
 		}
+		it++;
 	}
-	_map["Content"] = content;
+	std::string mapContent;
+	for (std::vector<std::string>::iterator it = content.begin(); it != content.end(); it++)
+		mapContent += *it;
+	_map["Content"] = mapContent;
 }
 
 void HTTPRequest::getBuffer(const char *buf, bool &multi)
 {
+	std::string line;
+	std::stringstream ss(buf);
+	std::vector<std::string> content;
 	if (!multi)
 	{
-		std::string input(buf);
-		std::stringstream ss(input);
 		takeHeader(ss);
-		std::string line, content;
 		while (std::getline(ss, line))
-		{
-			std::cout << RED << "Line:" << std::endl
-					  << line << RESET << std::endl;
-			content += line; // Concatenate lines to form the body
-		}
-		if (multi)
+			content.push_back(line);
+		if (_last)
 		{
 			int count = 0;
-			std::stringstream ssContent(content);
-			while (std::getline(ssContent, line, '\r'))
+			for (std::vector<std::string>::iterator it = content.begin(); it != content.end() && count < 3;)
 			{
-				if (line.find(_boundary) == std::string::npos)
-					break;
-				if (line.find("filename") != std::string::npos)
-					_fileName = line.substr(line.find("filename") + 10, line.find_last_of("\"") - (line.find("filename") + 10) - 1);
-				content.erase(0, line.length());
+				if ((*it).find("filename") != std::string::npos)
+					_fileName = (*it).substr((*it).find("filename") + 10, (*it).find_last_of("\"") - ((*it).find("filename") + 10) - 1);
+				content.erase(it);
 				count++;
-				if (count == 4)
-					break;
 			}
 		}
 		_boundary.append("--");
@@ -130,12 +125,11 @@ void HTTPRequest::getBuffer(const char *buf, bool &multi)
 	}
 	else
 	{
-		std::string line, content;
-		std::stringstream ss(buf);
 		while (std::getline(ss, line))
-			content += line; // Concatenate lines to form the body
+			content.push_back(line);
 		checkBoundary(content);
 	}
+	content.clear();
 	std::cout << RED << "Content: " << std::endl;
 	std::cout << _map["Content"] << std::endl;
 }
