@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerConfig.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/21 17:08:21 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/27 17:35:06 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,42 +128,6 @@ LocationResult ServerConfig::getLocationConfig(const std::string &path)
 	return result;
 }
 
-// std::string ServerConfig::getRoot(const std::string &location) const
-// {
-// 	std::map<std::string, std::map<std::string, std::string> >::const_iterator locIt = _locations.find(location);
-// 	if (locIt != _locations.end())
-// 	{
-// 		std::map<std::string, std::string>::const_iterator rootIt = locIt->second.find("root");
-// 		if (rootIt != locIt->second.end())
-// 		{
-// 			return rootIt->second;
-// 		}
-// 	}
-// 	return "";
-// }
-
-// std::string ServerConfig::getIndex(const std::string &location) const
-// {
-// 	std::map<std::string, std::map<std::string, std::string> >::const_iterator locIt = _locations.find(location);
-// 	if (locIt != _locations.end())
-// 	{
-// 		std::map<std::string, std::string>::const_iterator rootIt = locIt->second.find("index");
-// 		if (rootIt != locIt->second.end())
-// 		{
-// 			return rootIt->second;
-// 		}
-// 	}
-// 	return "";
-// }
-
-// bool ServerConfig::isLocationAllowed(const std::string &path)
-// {
-// 	std::map<std::string, std::map<std::string, std::string> >::const_iterator it = _locations.find(path);
-// 	if (it != _locations.end())
-// 		return true;
-// 	return false;
-// }
-
 // struct sockaddr_in ServerConfig::getServerAddress() const { return _serverAddress; }
 
 int ServerConfig::checkLine(const std::string &line)
@@ -241,8 +205,10 @@ void ServerConfig::fillVariables(const std::vector<std::string> &arr)
 			std::string path;
 			std::stringstream ss(arr[i]);
 			ss >> path >> path;
-			for (i++; arr[i].find("}") == std::string::npos && checkLine(arr[i]) && i < arr.size(); i++)
+			for (i++; arr[i].find("}") == std::string::npos && i < arr.size(); i++)
 			{
+				if (!checkLine(arr[i]))
+					continue;
 				std::string el, key, value;
 				std::stringstream ss(arr[i]);
 				ss >> key;
