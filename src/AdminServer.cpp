@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/26 18:08:13 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/27 11:51:49 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -286,7 +286,7 @@ void AdminServer::run(int sockfd, int kq)
 				{
 					std::cout << " CON EV_FLAG1" << std::endl;
 				}
-				else if (evSet.flags & EV_FLAG1)
+				else if (evSet.flags | EV_FLAG1)
 				{
 					std::cout << " SIN EV_FLAG1" << std::endl;
 				}
