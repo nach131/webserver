@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/27 17:19:15 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/27 18:18:24 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void HTTPRequest::takeHeader(std::stringstream &ss)
 	std::string first, el, line;
 	std::getline(ss, first);
 	std::stringstream ssFirst(first);
-	while (std::getline(ssFirst, el, ' '))
+	while (getline(ssFirst, el, ' '))
 	{
 		if (!el.empty() && el.back() == '\r')
 			el.pop_back();
@@ -54,7 +54,7 @@ void HTTPRequest::takeHeader(std::stringstream &ss)
 		}
 		i++;
 	}
-	while (std::getline(ss, line))
+	while (getline(ss, line))
 	{
 		if (line.length() == 1)
 			break;
@@ -86,9 +86,9 @@ void HTTPRequest::checkBoundary(std::vector<std::string> &content)
 		if ((*it).find(_boundary) != std::string::npos)
 		{
 			_last = false;
-			std::vector<std::string>::iterator it2 = it + 1;
 			content.erase(it);
-			it = it2;
+			if (it == content.end())
+				break;
 			continue;
 		}
 		it++;
@@ -101,18 +101,22 @@ void HTTPRequest::checkBoundary(std::vector<std::string> &content)
 
 void HTTPRequest::getBuffer(const char *buf, bool &multi)
 {
-	std::string line;
-	std::stringstream ss(buf);
+	std::string line, input(buf);
+	std::stringstream ss(input);
 	std::vector<std::string> content;
 	if (!multi)
 	{
 		takeHeader(ss);
-		while (std::getline(ss, line))
-			content.push_back(line);
+		while (getline(ss, line))
+		{
+			std::cout << "Line:\n"
+					  << line << std::endl;
+			content.push_back(line + "\n");
+		}
 		if (_last)
 		{
 			int count = 0;
-			for (std::vector<std::string>::iterator it = content.begin(); it != content.end() && count < 3;)
+			for (std::vector<std::string>::iterator it = content.begin(); it != content.end() && count < 4;)
 			{
 				if ((*it).find("filename") != std::string::npos)
 					_fileName = (*it).substr((*it).find("filename") + 10, (*it).find_last_of("\"") - ((*it).find("filename") + 10) - 1);
@@ -125,7 +129,7 @@ void HTTPRequest::getBuffer(const char *buf, bool &multi)
 	}
 	else
 	{
-		while (std::getline(ss, line))
+		while (getline(ss, line))
 			content.push_back(line);
 		checkBoundary(content);
 	}

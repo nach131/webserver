@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/25 11:06:56 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/27 17:33:48 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,6 @@ void FileContent::checkKeysAndValues(std::vector<std::string> &content, int &sta
 			std::stringstream ss(content[i]);
 			ss >> key;
 			ss >> value;
-			// std::cout << "Key: " << key << " Value " << value << std::endl;
 			if (value.length() > 0 && value.find(";") == std::string::npos) // porque key = allow_methods;
 			{
 				while (ss >> el)
@@ -87,21 +86,7 @@ void FileContent::checkKeysAndValues(std::vector<std::string> &content, int &sta
 			if (value.length() > 0)
 				value.erase(value.find(";"), value.find("0"));
 			if (key == "error_page" || key == "allow_methods")
-			{
-				// try
-				// {
 				kv.checkComplex(key, value, start + i + 1);
-				// }
-				// catch (const KeyValue::KeyValueException &e)
-				// {
-				// std::cout << "Here error: " << e.what() << std::endl;
-				// throw e_cee(e.what());
-				// }
-				// catch (...)
-				// {
-				// 	std::cout << "hola" << std::endl;
-				// }
-			}
 			else if (kv.checkKey(key))
 				error("key is not allowed at line ", start + i + 1);
 			else if (kv.checkValue(key, value))

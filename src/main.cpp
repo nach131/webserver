@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/27 15:54:22 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/27 18:04:40 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,14 @@
 #include "FileContent.hpp"
 #include <netdb.h>
 
+int kq;
+int sockfd;
+
 void setSignals(int sig)
 {
 	std::cout << RESET << std::endl;
+	close(kq);
+	close(sockfd);
 	exit(sig);
 }
 
@@ -50,7 +55,7 @@ static void printServers(std::vector<ServerConfig *> &servers)
 		(*it)->print();
 }
 
-int createSocket()
+void createSocket()
 {
 	struct addrinfo *addr; // informacion sobre direcciones
 	struct addrinfo hints;
@@ -59,7 +64,7 @@ int createSocket()
 	hints.ai_family = PF_UNSPEC;	  // IPv4 o IPv6
 	hints.ai_socktype = SOCK_STREAM;  // tipo del socket
 	getaddrinfo("127.0.0.1", "8080", &hints, &addr);
-	int sockfd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+	sockfd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
 
 	if (bind(sockfd, addr->ai_addr, addr->ai_addrlen) < 0)
 	{
@@ -73,19 +78,16 @@ int createSocket()
 
 	std::cout << "Server online.\nlistein port: " << ntohs((reinterpret_cast<sockaddr_in *>(addr->ai_addr))->sin_port) << std::endl;
 	std::cout << "Servidor esperando conexiones..." << std::endl;
-
-	return sockfd;
 }
 
-int createKqueue()
+void createKqueue()
 {
-	int kq = kqueue();
+	kq = kqueue();
 	if (kq == -1)
 	{
 		std::cerr << "Error creating kqueue: " << strerror(errno) << std::endl;
 		throw std::runtime_error("Error creating kqueue");
 	}
-	return kq;
 }
 
 int main(int argc, char **argv)
@@ -106,8 +108,8 @@ int main(int argc, char **argv)
 
 		// TODO
 		AdminServer server(*servers[0]);
-		int sockfd = createSocket();
-		int kq = createKqueue();
+		createKqueue();
+		createSocket();
 
 		// // Configurar evento para el socket de escucha
 		struct kevent eventSet;
