@@ -1,9 +1,9 @@
-directory_path:  ./dist/other_files/letterfall
+directory_path:  ./dist/files/tomate
 root_location:  ./dist
-path  -  /other_files/letterfall
+path  -  /files/tomate
 <html>
         <head>
-    <title>Index of /other_files/letterfall</title></head>
+    <title>Index of /files/tomate</title></head>
         <style>
         body {
             font-family: Arial, sans-serif;
@@ -36,12 +36,9 @@ path  -  /other_files/letterfall
         }
     </style>
     <body>
-    <h1>Index of /other_files/letterfall</h1>
+    <h1>Index of /files/tomate</h1>
     <hr>
-    <pre><a href="/other_files">../</a><div class="directory-item"><a href="/other_files/letterfall/index.html">index.html</a> <span>   27-May-2024 09:57</span> <span class="size">       497</span></div>
-<div class="directory-item"><a href="/other_files/letterfall/script.js">script.js</a> <span>   27-May-2024 09:57</span> <span class="size">      7261</span></div>
-<div class="directory-item"><a href="/other_files/letterfall/style.css">style.css</a> <span>   27-May-2024 09:57</span> <span class="size">        40</span></div>
-</pre>
+    <pre><a href="/files">../</a></pre>
     <hr>
     <center>vduchi & nmota-bu</center>
 </body>

@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/26 16:37:11 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/27 18:14:49 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,22 @@ bool isFile(const std::string &path)
 //     }
 //     return S_ISREG(statbuf.st_mode); // Verifica si es un archivo regular
 // }
+
+bool directoryExists(const std::string &path)
+{
+	struct stat info;
+
+	// Utilizar stat para obtener información sobre el path
+	if (stat(path.c_str(), &info) != 0)
+		// No se pudo acceder al path
+		return false;
+	else if (info.st_mode & S_IFDIR)
+		// El path existe y es un directorio
+		return true;
+	else
+		// El path existe pero no es un directorio
+		return false;
+}
 
 std::string getFileName(const std::string &path)
 {
@@ -249,3 +265,25 @@ bool pathStartsWithLocation(const std::string &path, const std::string &location
 	// Verificar si el path empieza con el location
 	return path.compare(0, location.length(), location) == 0;
 }
+
+bool createDirectory(const std::string &path)
+{
+	// Crear el directorio con permisos de lectura y escritura
+	int status = mkdir(path.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
+
+	// Verificar si la operación fue exitosa
+	if (status == 0)
+		return true;
+	else
+	{
+		if (errno == EEXIST)
+			// El directorio ya existe
+			return true;
+	}
+}
+
+// S_IRUSR (lectura para el propietario).
+// S_IWUSR (escritura para el propietario).
+// S_IRGRP (lectura para el grupo).
+// S_IWGRP (escritura para el grupo).
+// S_IROTH (lectura para otros).

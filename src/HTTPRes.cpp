@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/27 14:28:33 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/27 18:16:43 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,9 +69,12 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &r
 		if (method == "GET")
 			exploreFiles();
 		else if (method == "POST")
+		{
 			std::cout << "EXPLORE POST\n";
+			methodPost(true);
+		}
 		else if (method == "DELETE")
-			std::cout << "EXPLORE DELETE\n";
+			methodDelete();
 	}
 	else
 	{
@@ -87,27 +90,11 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &r
 		}
 		else if (method == "POST")
 		{
-			std::cout << "POST\n";
-
-			// std::cout << "realPath: " << _locationConf.realPath() << std::endl;
-			// realPath: .//cgi_bin/register.py SOLUCIONAR
-			// std::cout << "BUFFER: \n"
-			// 		  << _request.getBuffer() << std::endl;
-
-			_header.addOne(_request.getHeader("Version"), "200 OK");
-			_header.addField("Content-Type", "text/html");
-
-			// _content = pyExplorer("." + path, "{\"username\":\"nombre\",\"password\":\"121\",\"email\":\"swsw@sw.ws\"}");
-			// _content = pyExplorer("." + path, _request.getHeader("Content"));
-			_content = pyExplorer("/Users/nmota-bu/Desktop/webserver/cgi_bin/register.py", _request.getHeader("Content"));
-
-			std::cout << RED << _content << RESET << std::endl;
+			std::cout << "==========POST==========\n";
+			methodPost(false);
 		}
 		else if (method == "DELETE")
-		{
-			std::cout << "WEB DELETE\n";
 			methodDelete();
-		}
 	}
 
 	//=========================================================================
@@ -308,32 +295,61 @@ void HTTPRes::exploreFiles()
 	}
 }
 
-void HTTPRes::methodPost()
+void HTTPRes::methodPost(const bool &autoindex)
 {
-	std::cout << "==========POST==========\n";
-	std::string header;
-	_content = _request.getHeader("Content");
+	std::string realPath = _locationConf.realPath();
 
-	// PARA API
-	// std::string header = _request.getHeader("Method") + " /api/users";
-	// std::string header = _request.getHeader("Method") + " /api/auth/register";
-	// if (_request.getHeader("Referer") != "")
-	// {
-	// 	std::string newPath = +" /api/" + extractEndpoint(_request.getHeader("Referer"));
-	// 	header = _request.getHeader("Method") + newPath;
-	// }
-	// else
-	header = _request.getHeader("Method") + " " + _request.getHeader("Path");
+	if (!directoryExists(realPath))
+	{
+		std::cout << " crea: " << realPath << std::endl;
 
-	_header.addOne(header, _request.getHeader("Version"));
+		createDirectory(realPath);
+	}
 
-	_header.addField("Host", "localhost:8080");
-	_header.addField("Content-Type", "application/json; charset=utf-8");
-	_header.addField("Content-Length", std::to_string(_content.length()));
-	_header.addField("Cookie", _request.getHeader("Cookie"));
-	_header.addField("Date", DateField());
-	_header.addField("42-Barcelona", "nmota-bu, vduchi");
+	if (!autoindex)
+	{
+		_header.addOne(_request.getHeader("Version"), "200 OK");
+		_header.addField("Content-Type", "text/html");
+
+		// _content = pyExplorer("." + path, "{\"username\":\"nombre\",\"password\":\"121\",\"email\":\"swsw@sw.ws\"}");
+		// _content = pyExplorer("." + path, _request.getHeader("Content"));
+		_content = pyExplorer("/Users/nmota-bu/Desktop/webserver/cgi_bin/register.py", _request.getHeader("Content"));
+
+		std::cout << RED << _content << RESET << std::endl;
+	}
+	else
+	{
+		std::cout << " EXPLORE POST\n";
+		std::cout << "content: " << _request.getHeader("Content") << std::endl;
+	}
 }
+
+// void HTTPRes::methodPost()
+// {
+// 	std::cout << "==========POST==========\n";
+// 	std::string header;
+// 	_content = _request.getHeader("Content");
+
+// 	// PARA API OLD POST
+// 	// std::string header = _request.getHeader("Method") + " /api/users";
+// 	// std::string header = _request.getHeader("Method") + " /api/auth/register";
+// 	// if (_request.getHeader("Referer") != "")
+// 	// {
+// 	// 	std::string newPath = +" /api/" + extractEndpoint(_request.getHeader("Referer"));
+// 	// 	header = _request.getHeader("Method") + newPath;
+// 	// }
+// 	// else
+// 	header = _request.getHeader("Method") + " " + _request.getHeader("Path");
+
+// 	_header.addOne(header, _request.getHeader("Version"));
+
+// 	_header.addField("Host", "localhost:8080");
+// 	_header.addField("Content-Type", "application/json; charset=utf-8");
+// 	_header.addField("Content-Length", std::to_string(_content.length()));
+// 	_header.addField("Cookie", _request.getHeader("Cookie"));
+// 	_header.addField("Date", DateField());
+// 	_header.addField("42-Barcelona", "nmota-bu, vduchi");
+// }
 
 void HTTPRes::methodDelete()
 {

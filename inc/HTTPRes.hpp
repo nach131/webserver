@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRes.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:32 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/27 15:48:08 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/27 17:38:39 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,9 @@ private:
 	void folder();
 
 	void methodGet();
+	void methodPost(const bool &autoindex);
+	void methodDelete();
+	void methodErr();
 
 	// void file();
 	void exploreFiles();
@@ -70,10 +73,6 @@ public:
 
 	std::string const getHeader() const;
 	std::string const getContent() const;
-
-	void methodPost();
-	void methodDelete();
-	void methodErr();
 
 	// bool isUrlAllowed(const std::string& url, const std::string& method) const ;
 };

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/27 16:27:47 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/27 17:04:41 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,32 +113,6 @@ void sendResPost(int newsockfd, const std::string &header, const std::string &co
 	std::cout << "Respuesta enviada al cliente." << std::endl;
 
 	close(forward_sockfd);
-}
-
-void uploadFile(int newsockfd)
-{
-	int n;
-	std::string response = "HTTP/1.1 200 OK\r\n"
-												 "Content-Type: text/html\r\n"
-												 "\r\n"
-												 "<!DOCTYPE html>\n"
-												 "<html>\n"
-												 "<head>\n"
-												 "<title>Archivo Subido</title>\n"
-												 "</head>\n"
-												 "<body>\n"
-												 "<h1>Archivo Subido Exitosamente</h1>\n"
-												 "</body>\n"
-												 "</html>\n";
-
-	// std::string request_to_forward = header + response;
-
-	n = send(newsockfd, response.c_str(), response.size(), 0);
-	if (n < 0)
-	{
-		std::cerr << "Error al enviar datos al otro servidor: " << strerror(errno) << std::endl;
-		return;
-	}
 }
 
 //===============PRINT====================================================
