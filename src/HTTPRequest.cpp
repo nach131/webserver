@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/27 18:19:29 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/27 18:21:40 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,11 +108,7 @@ void HTTPRequest::getBuffer(const char *buf, bool &multi)
 	{
 		takeHeader(ss);
 		while (getline(ss, line))
-		{
-			// std::cout << "Line:\n"
-			// 		  << line << std::endl;
 			content.push_back(line + "\n");
-		}
 		if (_last)
 		{
 			int count = 0;
