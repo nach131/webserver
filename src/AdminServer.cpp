@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/27 16:15:00 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/27 16:24:59 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -320,7 +320,8 @@ void AdminServer::run(int sockfd, int kq)
 				if (_multi)
 				{
 					std::cout << "CON EV_FLAG1" << std::endl;
-					_flags |= ~EV_FLAG1; // Eliminar EV_FLAG0
+					int flags_tmp = evSet.flags;
+					flags_tmp |= ~EV_FLAG1; // Eliminar EV_FLAG1
 
 					// EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & EV_FLAG0, 0, 0, NULL);
 					EV_SET(&evSet, evList[i].ident, EVFILT_READ, _flags, 0, 0, NULL);
@@ -329,12 +330,13 @@ void AdminServer::run(int sockfd, int kq)
 				else
 				{
 					std::cout << "SIN EV_FLAG1" << std::endl;
-					_flags &= ~EV_FLAG1; // Eliminar EV_FLAG0
+					int flags_tmp = evSet.flags;
+					flags_tmp &= ~EV_FLAG1; // Eliminar EV_FLAG1
 
 					// EV_SET(&evSet, evList[i].ident, EVFILT_READ, _flags, 0, 0, NULL);
 					// kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
 					// Colocar el evento en EVFILT_WRITE para enviar la respuesta
-					EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, _flags, 0, 0, NULL);
+					EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, flags_tmp, 0, 0, NULL);
 					kevent(kq, &evSet, 1, NULL, 0, NULL);
 				}
 				//=========================================================================

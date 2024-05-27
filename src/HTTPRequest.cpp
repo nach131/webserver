@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/27 15:53:49 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/27 16:18:04 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,9 +97,6 @@ void HTTPRequest::checkBoundary(std::string &content)
 
 void HTTPRequest::getBuffer(const char *buf, bool &multi)
 {
-	std::cout << RED << "Buff: ";
-	std::cout << buf;
-	std::cout << RESET << std::endl;
 	if (!multi)
 	{
 		std::string input(buf);
