@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 00:08:38 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/26 18:13:07 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/27 15:40:41 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,25 +25,29 @@ int start(void);
 class HTTPRequest
 {
 private:
+    bool _last;
     std::string _fileName;
     std::string _boundary;
-    std::string _buffer;
     std::map<std::string, std::string> _map;
     // HTTPRequest &operator=(const HTTPRequest &);
 
 public:
     HTTPRequest();
-    HTTPRequest(const char *);
+    HTTPRequest(const HTTPRequest &);
     ~HTTPRequest();
+
+    void setMulti(bool &);
+    std::string getFileName();
+    void takeHeader(std::stringstream &);
+    void checkBoundary(std::string &);
     void getBuffer(const char *, bool &);
-    const std::string &getHeader(const std::string name) const;
+
     std::string getLocation();
-
     const std::map<std::string, std::string> &getMap() const;
-
-    const std::string &getBuffer() const;
+    const std::string &getHeader(const std::string name) const;
 
     void print();
+    void cleanObject();
 };
 
 #endif

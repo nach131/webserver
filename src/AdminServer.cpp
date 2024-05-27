@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/27 14:58:44 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/27 15:53:58 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,10 @@
 
 // EV_FLAG0 - to ref
 // EV_FLAG1 - to multipas
+
+// TODO Controlar que el proceso sea correcto, porque al
+// recargar la pagina, a veces me pone "client disconnected" y
+// "Error al enviar encabezado"
 
 AdminServer::AdminServer(const ServerConfig &config) : _config(config) {}
 
@@ -217,7 +221,7 @@ void AdminServer::run(int sockfd, int kq)
 	struct sockaddr_storage addr;
 	socklen_t socklen = sizeof(addr);
 
-	_flags = EV_ADD | EV_FLAG0 | EV_FLAG1;
+	_flags = EV_ADD | EV_FLAG0; // Poner EV_FLAG1 si hay multipart
 
 	while (42)
 	{
@@ -286,17 +290,18 @@ void AdminServer::run(int sockfd, int kq)
 
 				// _config.print();
 
+				// TODO Poner este codigo comentado en la primera peticion
+				if (!_multi)
+				{
+					_header = response.getHeader();
+					_content = response.getContent();
+				}
+				else
+					_content.append(response.getContent());
+				request.setMulti(_multi);
 				//=========================================================================
-				// Manejo de flags para la primera peticion
-				if (evSet.flags & EV_FLAG1)
-				{
-					std::cout << " CON EV_FLAG1" << std::endl;
-				}
-				else if (evSet.flags | EV_FLAG1)
-				{
-					std::cout << " SIN EV_FLAG1" << std::endl;
-				}
 
+				//=========================================================================
 				if (evSet.flags & EV_FLAG0)
 				{
 					std::cout << "CON EV_FLAG0" << std::endl;
@@ -305,24 +310,35 @@ void AdminServer::run(int sockfd, int kq)
 					// EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & EV_FLAG0, 0, 0, NULL);
 					EV_SET(&evSet, evList[i].ident, EVFILT_READ, _flags, 0, 0, NULL);
 					kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
-																								// checkEVFlag = true;
 					_ref = true;
 				}
-				else if (evSet.flags | EV_FLAG0)
+				else
 				{
 					std::cout << "SIN EV_FLAG0" << std::endl;
 				}
+				// Manejo de flags para la primera peticion
+				if (_multi)
+				{
+					std::cout << "CON EV_FLAG1" << std::endl;
+					_flags |= ~EV_FLAG1; // Eliminar EV_FLAG0
 
-				//=========================================================================
-				// Colocar el evento en EVFILT_WRITE para enviar la respuesta
-				// TODO controlar si es multipart y si ha acabado de enviar
-				EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, _flags, 0, 0, NULL);
-				kevent(kq, &evSet, 1, NULL, 0, NULL);
+					// EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & EV_FLAG0, 0, 0, NULL);
+					EV_SET(&evSet, evList[i].ident, EVFILT_READ, _flags, 0, 0, NULL);
+					kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
+				}
+				else
+				{
+					std::cout << "SIN EV_FLAG1" << std::endl;
+					_flags &= ~EV_FLAG1; // Eliminar EV_FLAG0
 
+					// EV_SET(&evSet, evList[i].ident, EVFILT_READ, _flags, 0, 0, NULL);
+					// kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
+					// Colocar el evento en EVFILT_WRITE para enviar la respuesta
+					EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, _flags, 0, 0, NULL);
+					kevent(kq, &evSet, 1, NULL, 0, NULL);
+				}
 				//=========================================================================
-				_header = response.getHeader();
-				_content = response.getContent();
-				//=========================================================================
+				request.cleanObject();
 			}
 			// Escribir en el socket cuando esté listo para escribir
 			else if (evList[i].filter == EVFILT_WRITE)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/22 11:28:48 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/27 15:54:22 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,8 @@ int createSocket()
 
 	if (bind(sockfd, addr->ai_addr, addr->ai_addrlen) < 0)
 	{
-		std::string errorMsg = RED "Socket binding error:\n";
-		errorMsg += "Puerto: " + std::to_string(ntohs((reinterpret_cast<sockaddr_in *>(addr->ai_addr))->sin_port)) + "\n";
+		std::string errorMsg = "Socket binding error:\n";
+		errorMsg += "Port: " + std::to_string(ntohs((reinterpret_cast<sockaddr_in *>(addr->ai_addr))->sin_port)) + "\n";
 		errorMsg += strerror(errno);
 		throw std::runtime_error(errorMsg);
 	}
@@ -125,6 +125,11 @@ int main(int argc, char **argv)
 	catch (const KeyValue::KeyValueException &e)
 	{
 		std::cerr << e.what() << std::endl;
+		return EXIT_FAILURE;
+	}
+	catch (const std::runtime_error &e)
+	{
+		std::cerr << RED << e.what() << std::endl;
 		return EXIT_FAILURE;
 	}
 	catch (const std::exception &e)
