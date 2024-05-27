@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/26 18:08:13 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/27 10:36:48 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,8 +162,8 @@ void printResponse(std::string header, std::string content)
 	std::cout << YELLOW << "======[ RESPONSE ] ======" << std::endl;
 	std::cout << "[ HEADER ]" << std::endl;
 	std::cout << header << std::endl;
-	// std::cout << "[ CONTENT ]" << std::endl;
-	// std::cout << content << std::endl;
+	std::cout << "[ CONTENT ]" << std::endl;
+	std::cout << content << std::endl;
 	std::cout << "========================" << RESET << std::endl;
 }
 
@@ -208,6 +208,7 @@ int delConnect(int fd)
 
 void AdminServer::run(int sockfd, int kq)
 {
+	_multi = false;
 	HTTPRequest request;
 	char buffer[MAX_MSG_SIZE];
 	struct kevent evSet;
