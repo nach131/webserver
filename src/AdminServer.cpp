@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/27 11:51:49 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/27 12:10:19 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,17 +115,17 @@ void uploadFile(int newsockfd)
 {
 	int n;
 	std::string response = "HTTP/1.1 200 OK\r\n"
-						   "Content-Type: text/html\r\n"
-						   "\r\n"
-						   "<!DOCTYPE html>\n"
-						   "<html>\n"
-						   "<head>\n"
-						   "<title>Archivo Subido</title>\n"
-						   "</head>\n"
-						   "<body>\n"
-						   "<h1>Archivo Subido Exitosamente</h1>\n"
-						   "</body>\n"
-						   "</html>\n";
+												 "Content-Type: text/html\r\n"
+												 "\r\n"
+												 "<!DOCTYPE html>\n"
+												 "<html>\n"
+												 "<head>\n"
+												 "<title>Archivo Subido</title>\n"
+												 "</head>\n"
+												 "<body>\n"
+												 "<h1>Archivo Subido Exitosamente</h1>\n"
+												 "</body>\n"
+												 "</html>\n";
 
 	// std::string request_to_forward = header + response;
 
@@ -153,7 +153,7 @@ void printEvent(const struct kevent &event)
 void printPeticion(const char *buffer)
 {
 	std::cout << CYAN "[ Mensaje del cliente: ]\n"
-			  << buffer << RESET << std::endl;
+						<< buffer << RESET << std::endl;
 }
 
 void printResponse(std::string header, std::string content)
@@ -162,8 +162,8 @@ void printResponse(std::string header, std::string content)
 	std::cout << YELLOW << "======[ RESPONSE ] ======" << std::endl;
 	std::cout << "[ HEADER ]" << std::endl;
 	std::cout << header << std::endl;
-	// std::cout << "[ CONTENT ]" << std::endl;
-	// std::cout << content << std::endl;
+	std::cout << "[ CONTENT ]" << std::endl;
+	std::cout << content << std::endl;
 	std::cout << "========================" << RESET << std::endl;
 }
 
@@ -208,6 +208,7 @@ int delConnect(int fd)
 
 void AdminServer::run(int sockfd, int kq)
 {
+	_multi = false;
 	HTTPRequest request;
 	char buffer[MAX_MSG_SIZE];
 	struct kevent evSet;
@@ -253,7 +254,7 @@ void AdminServer::run(int sockfd, int kq)
 			else if (evList[i].filter == EVFILT_READ)
 			{
 
-								//=================DESDE AQUI==============================================
+				//=================DESDE AQUI==============================================
 				// Recibir datos del cliente
 				memset(buffer, 0, sizeof(buffer));
 				int n = recv(evList[i].ident, buffer, sizeof(buffer), 0);
@@ -299,7 +300,7 @@ void AdminServer::run(int sockfd, int kq)
 					// EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & EV_FLAG0, 0, 0, NULL);
 					EV_SET(&evSet, evList[i].ident, EVFILT_READ, _flags, 0, 0, NULL);
 					kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
-														  // checkEVFlag = true;
+																								// checkEVFlag = true;
 					_ref = true;
 				}
 				else if (evSet.flags | EV_FLAG0)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRes.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/27 09:57:20 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/27 10:16:05 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,8 +244,9 @@ std::string HTTPRes::pyExplorer(const std::string &py, const std::string &data)
 {
 	std::string result;
 
-	std::cout << "pyExplorer\n";
-	std::cout << " data: " << data << std::endl;
+	std::cout << CYAN << "pyExplorer\n"
+			  << "py" << py << std::endl;
+	std::cout << "data: " << data << RESET << std::endl;
 
 	// Construir el comando del sistema
 	std::string command = "python3 " + py + " " + data;
