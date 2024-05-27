@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/27 12:10:19 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/27 14:58:44 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,6 +209,7 @@ int delConnect(int fd)
 void AdminServer::run(int sockfd, int kq)
 {
 	_multi = false;
+	_ref = false;
 	HTTPRequest request;
 	char buffer[MAX_MSG_SIZE];
 	struct kevent evSet;
@@ -235,6 +236,8 @@ void AdminServer::run(int sockfd, int kq)
 					// EV_SET(&evSet, fd, EVFILT_READ, EV_ADD | EV_FLAG0 , 0, 0, NULL);
 					EV_SET(&evSet, fd, EVFILT_READ, _flags, 0, 0, NULL);
 					kevent(kq, &evSet, 1, NULL, 0, NULL);
+					_ref = false;
+
 					// send_welcome_msg(fd);
 				}
 				else
@@ -245,6 +248,7 @@ void AdminServer::run(int sockfd, int kq)
 			} // client disconnected
 			else if (evList[i].flags & EV_EOF)
 			{
+
 				int fd = evList[i].ident;
 				std::cout << "client #" << getConnect(fd) << " disconnected." << std::endl;
 				EV_SET(&evSet, fd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
@@ -271,13 +275,14 @@ void AdminServer::run(int sockfd, int kq)
 				//===================PARSING==============================================
 				// HTTPRequest request(buffer);
 				request.getBuffer(buffer, _multi);
+				// [ Request client ]
 				request.print();
 				//=========================================================================
 
 				// HTTPBody body(request);
 				HTTPRes response(request, &_config, _ref);
 				// TODO
-				printResponse(response.getHeader(), response.getContent());
+				// printResponse(response.getHeader(), response.getContent());
 
 				// _config.print();
 
@@ -308,6 +313,7 @@ void AdminServer::run(int sockfd, int kq)
 					std::cout << "SIN EV_FLAG0" << std::endl;
 				}
 
+				//=========================================================================
 				// Colocar el evento en EVFILT_WRITE para enviar la respuesta
 				// TODO controlar si es multipart y si ha acabado de enviar
 				EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, _flags, 0, 0, NULL);

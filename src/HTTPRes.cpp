@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRes.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/27 10:16:05 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/27 14:28:33 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,8 +97,10 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &r
 			_header.addOne(_request.getHeader("Version"), "200 OK");
 			_header.addField("Content-Type", "text/html");
 
-			_content = pyExplorer("." + path, "{\"username\":\"nombre\",\"password\":\"121\",\"email\":\"swsw@sw.ws\"}");
+			// _content = pyExplorer("." + path, "{\"username\":\"nombre\",\"password\":\"121\",\"email\":\"swsw@sw.ws\"}");
 			// _content = pyExplorer("." + path, _request.getHeader("Content"));
+			_content = pyExplorer("/Users/nmota-bu/Desktop/webserver/cgi_bin/register.py", _request.getHeader("Content"));
+
 			std::cout << RED << _content << RESET << std::endl;
 		}
 		else if (method == "DELETE")

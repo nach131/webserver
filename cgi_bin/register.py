@@ -2,7 +2,9 @@ import sys
 from pymongo import MongoClient
 from urllib.parse import parse_qs
 
-url = 'mongodb://root:klingon@192.168.1.20:27017'
+
+url = 'mongodb://root:tomate@192.168.39.138:27017'
+# url = 'mongodb://root:klingon@192.168.1.20:27017'
 client = MongoClient(url)
 db_name = 'prueba'
 
