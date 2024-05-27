@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/27 15:53:58 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/27 16:15:00 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,7 +213,7 @@ int delConnect(int fd)
 void AdminServer::run(int sockfd, int kq)
 {
 	_multi = false;
-	_ref = false;
+	// _ref = false;
 	HTTPRequest request;
 	char buffer[MAX_MSG_SIZE];
 	struct kevent evSet;
@@ -240,7 +240,7 @@ void AdminServer::run(int sockfd, int kq)
 					// EV_SET(&evSet, fd, EVFILT_READ, EV_ADD | EV_FLAG0 , 0, 0, NULL);
 					EV_SET(&evSet, fd, EVFILT_READ, _flags, 0, 0, NULL);
 					kevent(kq, &evSet, 1, NULL, 0, NULL);
-					_ref = false;
+					// _ref = false;
 
 					// send_welcome_msg(fd);
 				}
