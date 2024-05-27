@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/27 18:16:43 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/27 19:05:34 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -295,6 +295,78 @@ void HTTPRes::exploreFiles()
 	}
 }
 
+// TEXTO
+// bool writeToFile(const std::string &filePath, const std::string &content)
+// {
+// 	std::ofstream outputFile(filePath.c_str());
+// 	if (!outputFile.is_open())
+// 	{
+// 		std::cerr << "Error: Unable to open file: " << filePath << std::endl;
+// 		return false;
+// 	}
+
+// 	outputFile << content;
+// 	outputFile.close();
+// 	return true;
+// }
+
+// bool writeToFile(const std::string &filePath, const std::string &content)
+// {
+// 	std::ofstream outputFile(filePath.c_str(), std::ios::binary);
+// 	if (!outputFile.is_open())
+// 	{
+// 		std::cerr << "Error: Unable to open file: " << filePath << std::endl;
+// 		return false;
+// 	}
+
+// 	// Escribir los bytes del contenido en el archivo
+// 	outputFile.write(content.c_str(), content.size());
+
+// 	outputFile.close();
+// 	return true;
+// }
+
+std::string charToBits(char ch)
+{
+	std::string result;
+	for (int i = 7; i >= 0; --i)
+	{
+		result += ((ch >> i) & 1) ? '1' : '0';
+	}
+	return result;
+}
+
+std::string stringToBits(const std::string &input)
+{
+	std::string result;
+	for (size_t i = 0; i < input.size(); ++i)
+	{
+		result += charToBits(input[i]);
+	}
+	return result;
+}
+
+bool writeToFile(const std::string &filePath, const std::string &content)
+{
+	std::ofstream outputFile(filePath.c_str(), std::ios::binary);
+	if (!outputFile.is_open())
+	{
+		std::cerr << "Error: Unable to open file: " << filePath << std::endl;
+		return false;
+	}
+
+	// // Convertir el contenido a bits
+	// std::string contentBits = stringToBits(content);
+
+	// // Escribir los bits en el archivo
+	// outputFile.write(contentBits.c_str(), contentBits.size());
+
+	outputFile.write(content.c_str(), content.size());
+
+	outputFile.close();
+	return true;
+}
+
 void HTTPRes::methodPost(const bool &autoindex)
 {
 	std::string realPath = _locationConf.realPath();
@@ -320,7 +392,8 @@ void HTTPRes::methodPost(const bool &autoindex)
 	else
 	{
 		std::cout << " EXPLORE POST\n";
-		std::cout << "content: " << _request.getHeader("Content") << std::endl;
+		writeToFile(realPath + "/toma.png", _request.getHeader("Content"));
+		// std::cout << "content: " << _request.getHeader("Content") << std::endl;
 	}
 }
 

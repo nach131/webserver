@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/27 18:14:49 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/27 18:40:41 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -269,7 +269,8 @@ bool pathStartsWithLocation(const std::string &path, const std::string &location
 bool createDirectory(const std::string &path)
 {
 	// Crear el directorio con permisos de lectura y escritura
-	int status = mkdir(path.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
+	// int status = mkdir(path.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
+	int status = mkdir(path.c_str(), 0755);
 
 	// Verificar si la operación fue exitosa
 	if (status == 0)
@@ -279,6 +280,9 @@ bool createDirectory(const std::string &path)
 		if (errno == EEXIST)
 			// El directorio ya existe
 			return true;
+		else
+			// Otro error ocurrió
+			return false;
 	}
 }
 
