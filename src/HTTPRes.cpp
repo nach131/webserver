@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/26 22:48:29 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/27 09:57:20 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,8 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &r
 			_header.addOne(_request.getHeader("Version"), "200 OK");
 			_header.addField("Content-Type", "text/html");
 
-			_content = pyExplorer("." + path, _request.getHeader("Content"));
+			_content = pyExplorer("." + path, "{\"username\":\"nombre\",\"password\":\"121\",\"email\":\"swsw@sw.ws\"}");
+			// _content = pyExplorer("." + path, _request.getHeader("Content"));
 			std::cout << RED << _content << RESET << std::endl;
 		}
 		else if (method == "DELETE")
