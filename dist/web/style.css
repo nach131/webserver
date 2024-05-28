@@ -423,6 +423,10 @@ video {
 	margin-top: 1rem;
   }
   
+  .mt-10 {
+	margin-top: 2.5rem;
+  }
+  
   .block {
 	display: block;
   }
@@ -491,7 +495,7 @@ video {
   
   .bg-red-500 {
 	--tw-bg-opacity: 1;
-	background-color: rgb(239 68 68 / var(--tw-bg-opacity));
+	/* background-color: rgb(239 68 68 / var(--tw-bg-opacity)); */
   }
   
   .bg-zinc-500 {

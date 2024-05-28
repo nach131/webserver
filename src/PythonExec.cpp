@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 10:02:31 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/28 10:37:49 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/28 11:51:05 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ std::string execPython(const std::string &py, const std::string &data)
 	std::cout << YELLOW;
 
 	std::cout << "execPython DOS\n ";
-	std::cout << " py" << py << std::endl;
+	std::cout << " py: " << py << std::endl;
 	std::cout << " data: " << data << RESET << std::endl;
 
 	// Construir el comando del sistema

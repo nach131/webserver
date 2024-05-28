@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/28 11:32:16 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/28 12:51:04 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,11 @@ void HTTPRes::createContent(std::string filePath, bool file)
 	if (extension == "py")
 	{
 		std::cout << "execPython: " << std::endl;
+		if (_locationConf.realPath().find("photo.py") != std::string::npos)
+		{
+			std::cout << RED << "PHOTO" << RESET << std::endl;
+			_content = execPython(_locationConf.realPath());
+		}
 		// TODO
 		// _content = execPython(filePath);
 	}
@@ -240,26 +245,33 @@ void HTTPRes::methodPost(const bool &autoindex)
 
 	std::cout << "getFileName: " << _request.getFileName() << std::endl;
 
+	// _header.addOne(_request.getHeader("Version"), "200 OK");
+	// _header.addField("Content-Type", "text/html");
+
 	if (!autoindex)
 	{
-		if (_locationConf.realPath().find("upload.py"))
+		if (realPath.find("upload.py") != std::string::npos)
 		{
 			std::cout << RED << "UPLOAD" << RESET << std::endl;
+
 			if (!directoryExists("./upload" + _locationConf.getRef()))
-			{
-				std::cout << " crea: " << "./upload" + _locationConf.getRef() << std::endl;
 				createDirectory("./upload" + _locationConf.getRef());
-			}
 			// TODO
 			// CGI UPLOAD
 			// writeToFile(_request.getHeader("Content"));
 		}
-		else if (_locationConf.realPath().find("register.py"))
+		else if (realPath.find("register.py") != std::string::npos)
 		{
-			;
-		}
+			std::cout << RED << "REGISTER" << RESET << std::endl;
 
-		std::cout << RED << _content << RESET << std::endl;
+			_header.addOne(_request.getHeader("Version"), "301 Moved Permanently");
+			// TODO HACER WEB DE REGISTRO CORRECTO
+			// que py devuelva codigo err
+			execPython(realPath, _request.getHeader("Content"));
+
+			_header.addField("Location", "/web/register_ok.html");
+			_header.addField("Content-Type", "text/html");
+		}
 	}
 	else
 	{

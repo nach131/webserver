@@ -1,78 +1,64 @@
-import os
-from datetime import datetime
+import asyncio
+import aiohttp
+from aiohttp import web
+from motor.motor_asyncio import AsyncIOMotorClient
+from urllib.parse import parse_qs
 
-def generate_directory_listing(directory_path, root_path):
-    # Obtener lista de archivos y directorios
-    items = os.listdir(directory_path)
-    items.sort()  # Ordenar alfabéticamente
+url = 'mongodb://root:klingon@192.168.1.20:27017'
+client = AsyncIOMotorClient(url)
+db_name = 'prueba'
 
-    # Generar HTML
-    html = """<html>
-<head>
-    <title>Index of {}</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        pre {
-            font-family: monospace;
-        }
-        .directory-listing {
-            display: table;
-            width: 100%;
-        }
-        .directory-item {
-            display: table-row;
-        }
-        .directory-item a {
-            display: table-cell;
-            text-decoration: none;
-            color: #0000FF;
-            padding-right: 20px;
-        }
-        .directory-item span {
-            display: table-cell;
-            padding-right: 20px;
-        }
-        .directory-item .size {
-            text-align: right;
-        }
-        hr {
-            margin: 20px 0;
-        }
-    </style>
-</head>
-<body>
-    <h1>Index of {}</h1>
-    <hr>
-    <pre><a href="../">../</a>
-""".format(directory_path, directory_path)
+async def parse_query_string(query_string):
+    parsed_dict = parse_qs(query_string)
+    return {k: v[0] for k, v in parsed_dict.items()}
 
-    if items:  # Si hay elementos en la carpeta
-        for item in items:
-            item_path = os.path.join(directory_path, item)
-            if os.path.isdir(item_path):
-                item += '/'
-                size = '-'
-            else:
-                size = os.path.getsize(item_path)
+async def create_user(user_data):
+    try:
+        db = client[db_name]
+        collection = db['users']
+        result = await collection.insert_one(user_data)
+        return result.inserted_id
+    except Exception as e:
+        print("An error occurred:", e)
+        return None
 
-            modification_time = datetime.fromtimestamp(os.path.getmtime(item_path)).strftime('%d-%b-%Y %H:%M')
-            html += '{:<50} {:>20} {:>10}\n'.format('<a href="{}/{}">{}</a>'.format(root_path, item, item), modification_time, size)
-    else:  # Si la carpeta está vacía, solo mostrar el enlace ../
-        html += '\n'
-
-    html += """</pre>
-    <hr>
-</body>
-</html>"""
+def doc(username):
+    html = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>Create User</title>
+        </head>
+        <body>
+            <center><h1>User {username} was created</h1></center>
+            <hr>
+            <center>vduchi & nmota-bu</center>
+        </body>
+    </html>
+    """
     return html
 
+async def handle(request):
+    query_string = request.query_string
+    user_data = await parse_query_string(query_string)
+
+    username = user_data.get('username')
+    user_data_complete = {
+        'username': user_data.get('username'),
+        'email': user_data.get('email'),
+        'password': user_data.get('password')
+    }
+
+    user_id = await create_user(user_data_complete)
+    while user_id is None:
+        user_id = await create_user(user_data_complete)
+    
+    html_content = doc(username)
+    return web.Response(text=html_content, content_type='text/html')
+
+app = web.Application()
+app.add_routes([web.get('/', handle)])
+
 if __name__ == "__main__":
-    import sys
-    if len(sys.argv) != 3:
-        print("Usage: python script.py <directory_path> <root_path>")
-    else:
-        directory_path = sys.argv[1]
-        root_path = sys.argv[2]
-        print(generate_directory_listing(directory_path, root_path))
+    web.run_app(app, port=8080)

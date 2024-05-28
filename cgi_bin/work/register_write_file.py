@@ -6,7 +6,7 @@ from urllib.parse import parse_qs
 # url = 'mongodb://root:tomate@192.168.39.138:27017'
 url = 'mongodb://root:klingon@192.168.1.20:27017'
 client = MongoClient(url)
-db_name = 'prueba'
+db_name = 'webserver'
 
 def parse_query_string(query_string):
     parsed_dict = parse_qs(query_string)
@@ -67,6 +67,8 @@ if __name__ == "__main__":
             # Si la inserción no se ha completado, esperar un momento antes de intentarlo de nuevo
             user_id = create_user(user_data_complete)
         
-        print(doc(username))
+        # Si la inserción se ha completado correctamente, escribir en el archivo HTML
+        with open("./conf_web/.output.html", "w") as f:
+            f.write(doc(username))
 
 # "username=nacho&email=nacho.mota%40gmail.com&password=12345&confirmPassword=12345"

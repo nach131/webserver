@@ -1,17 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-	<meta charset="UTF-8">
-	<title>501 Not Implemented</title>
-</head>
-
-<body>
-	<center>
-		<h1>501 Not Implemented</h1>
-	</center>
-	<hr>
-	<center>vduchi & nmota-bu</center>
-</body>
-
+<html>
+    <head>
+        <title>Random Image CGI</title>
+        <style>
+            body {
+                  margin: 0;
+            }
+            .index {
+                 text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.4) !important;
+            }
+            .index {
+                 width: 100vw;
+                 height: 100vh;
+            }
+            .masthead {
+                color: white;
+                min-height: 30rem;
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background: url("https://source.unsplash.com/random");
+                background-position: center center;
+                background-repeat: no-repeat;
+                background-size: cover;
+            }
+        </style>
+    </head>
+    <body>
+      <main class="index">
+        <div class="masthead">
+            <h1 class="portada">Random Image CGI</h1>
+        </div>
+      </main>
+    </body>
 </html>
