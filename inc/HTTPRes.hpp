@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:32 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/28 11:31:28 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/28 14:28:52 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,6 @@ public:
 
 	std::string const getHeader() const;
 	std::string const getContent() const;
-
-	// bool isUrlAllowed(const std::string& url, const std::string& method) const ;
 };
 
 #endif

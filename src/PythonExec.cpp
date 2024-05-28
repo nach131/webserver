@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 10:02:31 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/28 11:51:05 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/28 14:44:09 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ std::string execPython(const std::string &py, const std::string &data)
 	std::cout << " data: " << data << RESET << std::endl;
 
 	// Construir el comando del sistema
-	std::string command = "python3 " + py + " " + data;
+	std::string command = "python3 " + py + " \"" + data + "\" > ./conf_web/.tmp";
 	int returnCode = std::system(command.c_str());
 
 	// Verificar el éxito del comando del sistema

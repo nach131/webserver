@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/28 12:51:04 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/28 14:43:38 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,7 +267,9 @@ void HTTPRes::methodPost(const bool &autoindex)
 			_header.addOne(_request.getHeader("Version"), "301 Moved Permanently");
 			// TODO HACER WEB DE REGISTRO CORRECTO
 			// que py devuelva codigo err
-			execPython(realPath, _request.getHeader("Content"));
+			std::string content = _request.getHeader("Content");
+
+			execPython(realPath, content);
 
 			_header.addField("Location", "/web/register_ok.html");
 			_header.addField("Content-Type", "text/html");
