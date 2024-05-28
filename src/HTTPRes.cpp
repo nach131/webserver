@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/28 17:07:49 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/28 23:48:29 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -239,6 +239,21 @@ bool writeToFile(const std::string &filePath, const std::string &content)
 	return true;
 }
 
+// void writeToFile(const std::string &filename, const std::string &data)
+// {
+// 	std::ofstream file(filename.c_str(), std::ios::binary);
+// 	if (file.is_open())
+// 	{
+// 		file.write(data.c_str(), data.size());
+// 		file.close();
+// 		std::cout << "File saved: " << filename << std::endl;
+// 	}
+// 	else
+// 	{
+// 		std::cerr << "Error: Unable to open file for writing." << std::endl;
+// 	}
+// }
+
 void HTTPRes::methodPost(const bool &autoindex)
 {
 	std::string realPath = _locationConf.realPath();
@@ -277,6 +292,12 @@ void HTTPRes::methodPost(const bool &autoindex)
 
 			std::cout << "res: " << res << std::endl;
 			res == "0\n" ? _header.addField("Location", "/web") : _header.addField("Location", "/web/login_err.html");
+		}
+		else if (realPath.find("up.py") != std::string::npos)
+		{
+			std::string res = execPython(realPath, _request.getHeader("Content"));
+
+			std::cout << "res: " << res << std::endl;
 		}
 	}
 
