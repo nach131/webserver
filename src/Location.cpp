@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Location.cpp                                       :+:      :+:    :+:   */
+/*   location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 17:46:33 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/26 16:38:57 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/28 11:23:39 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ void Location::init(const LocationResult &location, const std::string &path, con
 {
 
 	_location = location;
+	_location.ref = referer;
 	bool autoindex = autoIndexOn();
 
 	std::string alias = getAlias();
@@ -186,6 +187,8 @@ void Location::init(const LocationResult &location, const std::string &path, con
 			}
 		}
 	}
+	if (!_location.realPath.empty())
+		removeDoubleSlashes(_location.realPath);
 }
 
 void Location::init_no(const LocationResult &location, const std::string &path, const std::string &referer)
@@ -286,6 +289,7 @@ void Location::print()
 {
 	std::cout << "LocationName: " << _location.name << std::endl;
 	std::cout << "realPath: " << _location.realPath << std::endl;
+	std::cout << "ref: " << _location.ref << std::endl;
 	std::cout << "=============\n";
 	for (std::map<std::string, std::string>::const_iterator it = _location.config.begin(); it != _location.config.end(); ++it)
 	{
@@ -354,6 +358,8 @@ std::string const &Location::getAlias() const
 std::string const &Location::realPath() const { return _location.realPath; }
 
 std::string const &Location::getName() const { return _location.name; }
+
+std::string const &Location::getRef() const { return _location.ref; }
 
 //=========================================================================
 

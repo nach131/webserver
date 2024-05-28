@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:34:48 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/27 19:42:57 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/28 10:45:12 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ std::string getFileName(const std::string &path);
 std::vector<std::string> split(const std::string &str, char delimiter);
 bool isMainRoot(const std::string &str);
 void removeLastSlash(std::string &str);
+void removeDoubleSlashes(std::string &path);
 std::string removeBeforeNumber(const std::string &url, const std::string &host);
 std::string removeFileName(const std::string &path);
 void takeOutSemiColumn(std::string &val);

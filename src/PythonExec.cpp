@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 10:02:31 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/28 10:22:43 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/28 10:37:49 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,30 +70,14 @@ std::string execPython(const std::string &py, const std::string &data)
 	if (returnCode != 0)
 		throw std::system_error(returnCode, std::generic_category(), "Error al ejecutar el comando del sistema");
 
-	// Esperar a que el archivo temporal sea creado y escrito
-	std::ifstream tempFile;
-	int attempts = 10; // Número máximo de intentos para comprobar el archivo
-	while (attempts-- > 0)
-	{
-		tempFile.open("./conf_web/.output.html");
-		if (tempFile.good())
-			break;
-		tempFile.close();
-		sleep_ms(100); // Esperar 100 ms antes de execPython
-	}
-
+	// Leer el archivo temporal
+	std::ifstream tempFile("./conf_web/.tmp");
 	if (!tempFile.good())
 		throw std::runtime_error("Error: No se pudo abrir el archivo temporal para leer");
 
-	// Leer el archivo temporal
 	std::stringstream ss;
 	ss << tempFile.rdbuf();
 	result = ss.str();
-	tempFile.close();
-
-	// Limpiar el archivo temporal
-	if (std::remove("./conf_web/.output.html") != 0)
-		std::cerr << "Advertencia: No se pudo eliminar el archivo temporal" << std::endl;
 
 	return result;
 }

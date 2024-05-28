@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 17:46:28 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/26 15:04:47 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/28 11:23:18 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ struct LocationResult
 {
 	std::string name;
 	std::string realPath;
+	std::string ref;
 	std::map<std::string, std::string> config;
 };
 
@@ -45,6 +46,7 @@ public:
 	std::string const &getRoot() const;
 	std::string const &realPath() const;
 	std::string const &getName() const;
+	std::string const &getRef() const;
 
 	void print();
 };

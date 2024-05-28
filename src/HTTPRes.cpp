@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/28 10:33:03 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/28 11:32:16 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,6 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &r
 	LocationResult location = compareLocationResults(_config->getLocationConfig(path), _config->getLocationConfig(referer_location));
 
 	std::cout << "location.name: " << location.name << std::endl;
-
-	//=========================================================================
 
 	//=========================================================================
 
@@ -117,7 +115,7 @@ void HTTPRes::createContent(std::string filePath, bool file)
 
 	if (extension == "py")
 	{
-		std::cout << "execPython:" << std::endl;
+		std::cout << "execPython: " << std::endl;
 		// TODO
 		// _content = execPython(filePath);
 	}
@@ -242,61 +240,44 @@ void HTTPRes::methodPost(const bool &autoindex)
 
 	std::cout << "getFileName: " << _request.getFileName() << std::endl;
 
-	if (!directoryExists(realPath))
-	{
-		std::cout << " crea: " << realPath << std::endl;
-
-		createDirectory(realPath);
-	}
-
 	if (!autoindex)
 	{
-		// _header.addOne(_request.getHeader("Version"), "200 OK");
-		// _header.addField("Content-Type", "text/html");
-
-		// _content = execPython("." + path, "{\"username\":\"nombre\",\"password\":\"121\",\"email\":\"swsw@sw.ws\"}");
-		// _content = execPython("." + path, _request.getHeader("Content"));
-		// _content = execPython("/Users/nmota-bu/Desktop/webserver/cgi_bin/register.py", _request.getHeader("Content"));
+		if (_locationConf.realPath().find("upload.py"))
+		{
+			std::cout << RED << "UPLOAD" << RESET << std::endl;
+			if (!directoryExists("./upload" + _locationConf.getRef()))
+			{
+				std::cout << " crea: " << "./upload" + _locationConf.getRef() << std::endl;
+				createDirectory("./upload" + _locationConf.getRef());
+			}
+			// TODO
+			// CGI UPLOAD
+			// writeToFile(_request.getHeader("Content"));
+		}
+		else if (_locationConf.realPath().find("register.py"))
+		{
+			;
+		}
 
 		std::cout << RED << _content << RESET << std::endl;
 	}
 	else
 	{
 		std::cout << " EXPLORE POST\n";
+		if (!directoryExists(realPath))
+		{
+			std::cout << " crea: " << realPath << std::endl;
+			createDirectory(realPath);
+		}
 
+		// TODO solo funcionaa TEXTO, incorporar nombre fichero
+		// CGI UPLOAD
 		if (isText(_request.getHeader("Content-Type")))
 			writeToFile(realPath + "/text.txt", _request.getHeader("Content"));
 
 		// std::cout << "content: " << _request.getHeader("Content") << std::endl;
 	}
 }
-
-// void HTTPRes::methodPost()
-// {
-// 	std::cout << "==========POST==========\n";
-// 	std::string header;
-// 	_content = _request.getHeader("Content");
-
-// 	// PARA API OLD POST
-// 	// std::string header = _request.getHeader("Method") + " /api/users";
-// 	// std::string header = _request.getHeader("Method") + " /api/auth/register";
-// 	// if (_request.getHeader("Referer") != "")
-// 	// {
-// 	// 	std::string newPath = +" /api/" + extractEndpoint(_request.getHeader("Referer"));
-// 	// 	header = _request.getHeader("Method") + newPath;
-// 	// }
-// 	// else
-// 	header = _request.getHeader("Method") + " " + _request.getHeader("Path");
-
-// 	_header.addOne(header, _request.getHeader("Version"));
-
-// 	_header.addField("Host", "localhost:8080");
-// 	_header.addField("Content-Type", "application/json; charset=utf-8");
-// 	_header.addField("Content-Length", std::to_string(_content.length()));
-// 	_header.addField("Cookie", _request.getHeader("Cookie"));
-// 	_header.addField("Date", DateField());
-// 	_header.addField("42-Barcelona", "nmota-bu, vduchi");
-// }
 
 void HTTPRes::methodDelete()
 {

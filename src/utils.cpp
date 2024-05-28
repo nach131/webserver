@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/27 19:42:59 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/28 10:44:19 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,6 +164,15 @@ void removeLastSlash(std::string &str)
 {
 	if (!str.empty() && str[str.length() - 1] == '/')
 		str.erase(str.length() - 1);
+}
+
+void removeDoubleSlashes(std::string &path)
+{
+	std::string::size_type pos = 0;
+	while ((pos = path.find("//", pos)) != std::string::npos)
+	{
+		path.erase(pos, 1);
+	}
 }
 
 std::string removeBeforeNumber(const std::string &url, const std::string &host)

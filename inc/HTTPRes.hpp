@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:32 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/28 10:07:10 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/28 11:31:28 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,18 +35,10 @@ private:
 
 	HTTPRequest _request;
 	ServerConfig *_config;
-	// std::string _location;
 	Location _locationConf;
 	bool _ref;
 
 	std::string getRootLocate(const std::string &path) const;
-
-	// std::string execPython(const std::string &py);
-	// std::string execPython(const std::string &py, const std::string &data);
-	// std::string execPython(const std::string &py, const std::string &dirPath, const std::string &root_location);
-
-	// std::string execPython(const std::string &filePath);
-	// std::string execPython(const std::string &filePath, const std::string &realBuffer);
 
 	void rootPath();
 	void rootOtherFiles();
@@ -66,7 +58,6 @@ private:
 	void methodDelete();
 	void methodErr();
 
-	// void file();
 	void exploreFiles();
 
 public:
