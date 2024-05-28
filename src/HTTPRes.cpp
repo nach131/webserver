@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/28 15:05:19 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/28 17:07:49 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -269,7 +269,17 @@ void HTTPRes::methodPost(const bool &autoindex)
 			std::string res = execPython(realPath, _request.getHeader("Content"));
 			res == "0\n" ? _header.addField("Location", "/web/register_ok.html") : _header.addField("Location", "/web/register_err.html");
 		}
+		else if (realPath.find("login.py") != std::string::npos)
+		{
+			_header.addOne(_request.getHeader("Version"), "301 Moved Permanently");
+			_header.addField("Content-Type", "text/html");
+			std::string res = execPython(realPath, _request.getHeader("Content"));
+
+			std::cout << "res: " << res << std::endl;
+			res == "0\n" ? _header.addField("Location", "/web") : _header.addField("Location", "/web/login_err.html");
+		}
 	}
+
 	else
 	{
 		std::cout << " EXPLORE POST\n";

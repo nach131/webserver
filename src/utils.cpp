@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/28 10:44:19 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/28 17:11:52 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,6 +166,12 @@ void removeLastSlash(std::string &str)
 		str.erase(str.length() - 1);
 }
 
+void removeLastNewline(std::string &str)
+{
+	if (!str.empty() && str[str.length() - 1] == '\n')
+		str.erase(str.length() - 1);
+}
+
 void removeDoubleSlashes(std::string &path)
 {
 	std::string::size_type pos = 0;
@@ -217,6 +223,7 @@ std::string removeFileName(const std::string &path)
 
 void takeOutSemiColumn(std::string &val)
 {
+
 	size_t i = 0;
 	size_t j = val.length() - 1;
 	if (!val.length()) // porque allow_methods ;

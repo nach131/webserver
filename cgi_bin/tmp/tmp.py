@@ -1,64 +1,54 @@
+#!/usr/bin/env python3
+
+import sys
 import asyncio
-import aiohttp
-from aiohttp import web
 from motor.motor_asyncio import AsyncIOMotorClient
 from urllib.parse import parse_qs
 
+# URL de conexión a MongoDB
 url = 'mongodb://root:klingon@192.168.1.20:27017'
-client = AsyncIOMotorClient(url)
+client = AsyncIOMotorClient(url, serverSelectionTimeoutMS=4000)  # Timeout de 4 segundos
 db_name = 'prueba'
 
-async def parse_query_string(query_string):
+def parse_query_string(query_string):
     parsed_dict = parse_qs(query_string)
     return {k: v[0] for k, v in parsed_dict.items()}
 
-async def create_user(user_data):
+async def verify_user(username, password):
     try:
         db = client[db_name]
-        collection = db['users']
-        result = await collection.insert_one(user_data)
-        return result.inserted_id
+        coleccion = db['users']
+        user = await coleccion.find_one({"username": username})
+        if user and user.get("password") == password:
+            return True
+        return False
     except Exception as e:
         print("An error occurred:", e)
         return None
 
-def doc(username):
-    html = f"""
-    <!DOCTYPE html>
-    <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <title>Create User</title>
-        </head>
-        <body>
-            <center><h1>User {username} was created</h1></center>
-            <hr>
-            <center>vduchi & nmota-bu</center>
-        </body>
-    </html>
-    """
-    return html
-
-async def handle(request):
-    query_string = request.query_string
-    user_data = await parse_query_string(query_string)
-
-    username = user_data.get('username')
-    user_data_complete = {
-        'username': user_data.get('username'),
-        'email': user_data.get('email'),
-        'password': user_data.get('password')
-    }
-
-    user_id = await create_user(user_data_complete)
-    while user_id is None:
-        user_id = await create_user(user_data_complete)
+async def main():
+    if len(sys.argv) != 2:
+        print("Content-Type: text/plain\n")
+        print("Usage: python script.py 'query_string'")
+        return 1
     
-    html_content = doc(username)
-    return web.Response(text=html_content, content_type='text/html')
+    query_string = sys.argv[1]
+    user_data = parse_query_string(query_string)
+    
+    username = user_data.get('username')
+    password = user_data.get('password')
 
-app = web.Application()
-app.add_routes([web.get('/', handle)])
+    try:
+        result = await asyncio.wait_for(verify_user(username, password), timeout=4)  # Espera máximo 4 segundos
+    except asyncio.TimeoutError:
+        result = None
+
+    if result is True:
+        print("Content-Type: text/plain\n")
+        print("0")  # Usuario verificado correctamente
+    else:
+        print("Content-Type: text/plain\n")
+        print("1")  # Error en la verificación del usuario o timeout
 
 if __name__ == "__main__":
-    web.run_app(app, port=8080)
+    asyncio.run(main())

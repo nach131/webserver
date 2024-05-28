@@ -30,11 +30,12 @@
         <div class="h-[calc(100vh-100px)] flex items-center justify-center">
             <div class="bg-zinc-800 max-w-md w-full p-10 rounded-md">
                 <h1 class="text-2xl font-bold">Login</h1>
-                <form><label for="email" class="text-xs block my-1 text-slate-300">Email:</label><input
-                        label="Write your email" type="email" name="email" placeholder="youremail@domain.tld"
+                <form action="../cgi_bin/login.py" method="post">
+                    <label for="email" class="text-xs block my-1 text-slate-300">Email:</label>
+                    <input label="Write your email" type="email" name="email" placeholder="youremail@42barcelona.fr"
                         class="w-full bg-zinc-700 text-white px-4 py-2 rounded-md">
-                    <p></p><label for="password" class="text-xs block my-1 text-slate-300">Password:</label><input
-                        type="password" name="password" placeholder="Write your password"
+                    <p></p><label for="password" class="text-xs block my-1 text-slate-300">Password:</label>
+                    <input type="password" name="password" placeholder="Write your password"
                         class="w-full bg-zinc-700 text-white px-4 py-2 rounded-md">
                     <p></p><button class="bg-indigo-500 px-4 py-1 rounded-md my-2 disabled:bg-indigo-300">Login</button>
                 </form>
