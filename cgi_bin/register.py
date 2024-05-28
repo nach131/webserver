@@ -1,12 +1,13 @@
 import sys
-# from pymongo import MongoClient
 import asyncio
 from motor.motor_asyncio import AsyncIOMotorClient
 from urllib.parse import parse_qs
+from asyncio.exceptions import TimeoutError
 
 # url = 'mongodb://root:tomate@192.168.39.138:27017'
 url = 'mongodb://root:klingon@192.168.1.20:27017'
-client = AsyncIOMotorClient(url)
+# client = AsyncIOMotorClient(url)
+client = AsyncIOMotorClient(url, serverSelectionTimeoutMS=4000)  # Timeout de 2 segundos
 db_name = 'prueba'
 
 def parse_query_string(query_string):
@@ -23,7 +24,6 @@ async def create_user(user_data):
         print("An error occurred:", e)
         return None
 
-
 async def main():
     if len(sys.argv) != 2:
      return print("Usage: python script.py datos")
@@ -36,19 +36,16 @@ async def main():
         'email': user_data.get('email'),
         'password': user_data.get('password')
     }
-
-    # print(user_data_complete)
-    
-    user_id = await create_user(user_data_complete)
-    # while user_id is None:
-    #     # Si la inserción no se ha completado, esperar un momento antes de intentarlo de nuevo
-    #     user_id = create_user(user_data_complete)
-    if user_id is None:
-        print("1")
-    else:
-        print("0")
-        # print(user_id)
  
+    try:
+        user_id = await asyncio.wait_for(create_user(user_data_complete), timeout=4)  # Espera máximo 4 segundos
+    except TimeoutError:
+        return 1
+    
+    if user_id is None:
+        return 1
+    else:
+        return 0
 
 if __name__ == "__main__":
     result = asyncio.run(main())
