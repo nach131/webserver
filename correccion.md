@@ -111,3 +111,16 @@ Utilizando telnet, curl y archivos preparados, demuestre que las siguientes func
 - Debería poder utilizar siege indefinidamente sin tener que reiniciar el servidor (consulte siege -b).
 
 - Al realizar pruebas de carga utilizando el comando siege (depende de su sistema operativo), es crucial limitar el número de conexiones por segundo especificando opciones como -c (número de clientes), -d (tiempo máximo de espera antes de que un cliente se reconecte) y -r (número de intentos). La elección de estos parámetros queda a discreción del evaluador, sin embargo, es imperativo llegar a un acuerdo con la persona que se evalúa para garantizar una evaluación justa y transparente del rendimiento del servidor web.
+
+
+siege -c 5 -r 5 http://localhost:8080/form
+
+siege -b 5 -r 5 http://localhost:8080/form
+
+siege -b -t 3600 -c 100 http://localhost:8080
+
+siege -b -c 10 http://localhost:8080
+
+- b indica el modo de benchmarking (sin salida de pantalla).
+- t <tiempo> especifica la duración de la prueba en segundos. Por ejemplo, -t 3600 para una hora.
+- c <clientes> especifica el número de clientes concurrentes. Por ejemplo, -c 100 para simular 100 usuarios concurrentes.

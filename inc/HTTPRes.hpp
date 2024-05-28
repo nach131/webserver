@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:32 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/27 17:38:39 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/28 10:07:10 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,13 @@
 #define HTTPRES_HPP
 
 #include <iostream>
-#include <map>
 #include "Colors.hpp"
+#include "PythonExec.hpp"
 #include "HTTPRequest.hpp"
 #include "HTTPHeader.hpp"
 #include "WebServer.hpp"
 #include "Location.hpp"
 #include "ServerConfig.hpp"
-#include <cstdlib>
 
 class HTTPHeader;
 class HTTPRequest;
@@ -41,17 +40,20 @@ private:
 	bool _ref;
 
 	std::string getRootLocate(const std::string &path) const;
-	std::string pyExplorer(const std::string &py, const std::string &dirPath, const std::string &root_location);
-	std::string pyExplorer(const std::string &py, const std::string &data);
 
-	std::string execPython(const std::string &filePath);
-	std::string execPython(const std::string &filePath, const std::string &realBuffer);
+	// std::string execPython(const std::string &py);
+	// std::string execPython(const std::string &py, const std::string &data);
+	// std::string execPython(const std::string &py, const std::string &dirPath, const std::string &root_location);
+
+	// std::string execPython(const std::string &filePath);
+	// std::string execPython(const std::string &filePath, const std::string &realBuffer);
 
 	void rootPath();
 	void rootOtherFiles();
 	void last();
 	void error404();
 	void error403();
+	// void error501();
 
 	std::string const OtherPath() const;
 

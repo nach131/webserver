@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/27 19:05:34 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/28 10:33:03 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,67 +106,25 @@ HTTPRes::~HTTPRes() {}
 
 //=========================================================================
 
-std::string HTTPRes::execPython(const std::string &filePath, const std::string &realBuffer)
-{
-	std::string result;
-	std::cout << "execPython\n";
-
-	FILE *pipe = popen(("python3 " + filePath + " " + realBuffer).c_str(), "r");
-
-	if (!pipe)
-	{
-		std::cerr << "Error: Failed to open pipe for Python script execution." << std::endl;
-		return result;
-	}
-
-	char buffer[MAX_MSG_SIZE];
-	while (fgets(buffer, sizeof(buffer), pipe) != NULL)
-		result += buffer;
-
-	int returnCode = pclose(pipe);
-	if (returnCode != 0)
-		std::cerr << "Error: Python script execution failed with return code " << returnCode << "." << std::endl;
-
-	// std::cout << result << std::endl;
-
-	return result;
-}
-std::string HTTPRes::execPython(const std::string &filePath)
-{
-	std::string result;
-	FILE *pipe = popen(("python3 " + filePath).c_str(), "r");
-
-	if (!pipe)
-	{
-		std::cerr << "Error: Failed to open pipe for Python script execution." << std::endl;
-		return result;
-	}
-
-	char buffer[MAX_MSG_SIZE];
-	while (fgets(buffer, sizeof(buffer), pipe) != NULL)
-		result += buffer;
-
-	int returnCode = pclose(pipe);
-	if (returnCode != 0)
-		std::cerr << "Error: Python script execution failed with return code " << returnCode << "." << std::endl;
-
-	// std::cout << result << std::endl;
-
-	return result;
-}
-
-//=========================================================================
-
 void HTTPRes::createContent(std::string filePath, bool file)
 {
 	std::string extension = getExtension(filePath);
 
 	// TODO comprobar que el py es de la lista que se pueden ejecutat
 	// hacer lista en config file
+
+	std::cout << RED << "extension: " << extension << RESET << std::endl;
+
 	if (extension == "py")
 	{
 		std::cout << "execPython:" << std::endl;
-		_content = execPython(filePath);
+		// TODO
+		// _content = execPython(filePath);
+	}
+	else if (extension == "php")
+	{
+		// error501();
+		_content = execPython("./cgi_bin/php.py");
 	}
 	else
 		_content = readFile(filePath);
@@ -174,7 +132,7 @@ void HTTPRes::createContent(std::string filePath, bool file)
 	if (!_content.empty())
 	{
 		_header.addOne(_request.getHeader("Version"), "200 OK");
-		if (extension == "py")
+		if (extension == "py" || extension == "php")
 			_header.addField("Content-Type", "text/html");
 		else
 			_header.addField("Content-Type", _config->getContentType(extension));
@@ -183,95 +141,6 @@ void HTTPRes::createContent(std::string filePath, bool file)
 		file ? error404() : error403();
 }
 
-std::string HTTPRes::pyExplorer(const std::string &py, const std::string &dirPath, const std::string &root_location)
-{
-	std::string result;
-
-	std::cout << "pyExplorer\n";
-	std::cout << " dirPath: " << dirPath << std::endl;
-	// Verificar la existencia del script de Python
-	// if (!std::ifstream(py).good())
-	// 	throw std::runtime_error("Error: No se encontró el archivo del script de Python: " + py);
-
-	// // Verificar la existencia del directorio de destino
-	// if (!std::ifstream(dirPath).good())
-	// 	throw std::runtime_error("Error: No se encontró el directorio especificado: " + dirPath);
-
-	// Construir el comando del sistema
-	std::string command = "python3 " + py + " " + dirPath + " " + root_location + " > ./conf_web/.tmp";
-	int returnCode = std::system(command.c_str());
-
-	// Verificar el éxito del comando del sistema
-	if (returnCode != 0)
-		throw std::system_error(returnCode, std::generic_category(), "Error al ejecutar el comando del sistema");
-
-	// Leer el archivo temporal
-	std::ifstream tempFile("./conf_web/.tmp");
-	if (!tempFile.good())
-		throw std::runtime_error("Error: No se pudo abrir el archivo temporal para leer");
-
-	std::stringstream ss;
-	ss << tempFile.rdbuf();
-	result = ss.str();
-
-	// Limpiar el archivo temporal
-	// if (std::remove("./conf_web/.tmp") != 0)
-	// 	std::cerr << "Advertencia: No se pudo eliminar el archivo temporal" << std::endl;
-
-	return result;
-}
-
-void sleep_ms(int milliseconds)
-{
-	struct timespec ts;
-	ts.tv_sec = milliseconds / 1000;
-	ts.tv_nsec = (milliseconds % 1000) * 1000000;
-	nanosleep(&ts, NULL);
-}
-
-std::string HTTPRes::pyExplorer(const std::string &py, const std::string &data)
-{
-	std::string result;
-
-	std::cout << CYAN << "pyExplorer\n"
-			  << "py" << py << std::endl;
-	std::cout << "data: " << data << RESET << std::endl;
-
-	// Construir el comando del sistema
-	std::string command = "python3 " + py + " " + data;
-	int returnCode = std::system(command.c_str());
-
-	// Verificar el éxito del comando del sistema
-	if (returnCode != 0)
-		throw std::system_error(returnCode, std::generic_category(), "Error al ejecutar el comando del sistema");
-
-	// Esperar a que el archivo temporal sea creado y escrito
-	std::ifstream tempFile;
-	int attempts = 10; // Número máximo de intentos para comprobar el archivo
-	while (attempts-- > 0)
-	{
-		tempFile.open("./conf_web/.output.html");
-		if (tempFile.good())
-			break;
-		tempFile.close();
-		sleep_ms(100); // Esperar 100 ms antes de reintentar
-	}
-
-	if (!tempFile.good())
-		throw std::runtime_error("Error: No se pudo abrir el archivo temporal para leer");
-
-	// Leer el archivo temporal
-	std::stringstream ss;
-	ss << tempFile.rdbuf();
-	result = ss.str();
-	tempFile.close();
-
-	// Limpiar el archivo temporal
-	if (std::remove("./conf_web/.output.html") != 0)
-		std::cerr << "Advertencia: No se pudo eliminar el archivo temporal" << std::endl;
-
-	return result;
-}
 void HTTPRes::exploreFiles()
 {
 	std::string realPath = _locationConf.realPath();
@@ -286,7 +155,7 @@ void HTTPRes::exploreFiles()
 
 		std::string root = _locationConf.getRoot().empty() ? _locationConf.getAlias() : _locationConf.getRoot();
 
-		_content = pyExplorer(py, realPath, root);
+		_content = execPython(py, realPath, root);
 	}
 	else
 	{
@@ -371,6 +240,8 @@ void HTTPRes::methodPost(const bool &autoindex)
 {
 	std::string realPath = _locationConf.realPath();
 
+	std::cout << "getFileName: " << _request.getFileName() << std::endl;
+
 	if (!directoryExists(realPath))
 	{
 		std::cout << " crea: " << realPath << std::endl;
@@ -380,19 +251,22 @@ void HTTPRes::methodPost(const bool &autoindex)
 
 	if (!autoindex)
 	{
-		_header.addOne(_request.getHeader("Version"), "200 OK");
-		_header.addField("Content-Type", "text/html");
+		// _header.addOne(_request.getHeader("Version"), "200 OK");
+		// _header.addField("Content-Type", "text/html");
 
-		// _content = pyExplorer("." + path, "{\"username\":\"nombre\",\"password\":\"121\",\"email\":\"swsw@sw.ws\"}");
-		// _content = pyExplorer("." + path, _request.getHeader("Content"));
-		_content = pyExplorer("/Users/nmota-bu/Desktop/webserver/cgi_bin/register.py", _request.getHeader("Content"));
+		// _content = execPython("." + path, "{\"username\":\"nombre\",\"password\":\"121\",\"email\":\"swsw@sw.ws\"}");
+		// _content = execPython("." + path, _request.getHeader("Content"));
+		// _content = execPython("/Users/nmota-bu/Desktop/webserver/cgi_bin/register.py", _request.getHeader("Content"));
 
 		std::cout << RED << _content << RESET << std::endl;
 	}
 	else
 	{
 		std::cout << " EXPLORE POST\n";
-		writeToFile(realPath + "/toma.png", _request.getHeader("Content"));
+
+		if (isText(_request.getHeader("Content-Type")))
+			writeToFile(realPath + "/text.txt", _request.getHeader("Content"));
+
 		// std::cout << "content: " << _request.getHeader("Content") << std::endl;
 	}
 }
@@ -444,7 +318,7 @@ void HTTPRes::methodDelete()
 	_header.addOne(_request.getHeader("Version"), "200 OK");
 	_header.addField("Content-Type", "text/html");
 
-	_content = pyExplorer(py, realPath, realFileName);
+	_content = execPython(py, realPath, realFileName);
 }
 
 void HTTPRes::methodErr()
@@ -465,6 +339,12 @@ void HTTPRes::error403()
 	_header.addOne(_request.getHeader("Version"), "403 Forbidden");
 	_content = readFile("./conf_web/error/basico/403.html");
 }
+
+// void HTTPRes::error501()
+// {
+// 	_header.addOne(_request.getHeader("Version"), "501 Forbidden");
+// 	_content = readFile("./conf_web/error/basico/501.html");
+// }
 
 std::string const HTTPRes::getHeader() const { return _header.getHeader(); }
 

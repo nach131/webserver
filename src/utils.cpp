@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/27 18:40:41 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/27 19:42:59 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -291,3 +291,8 @@ bool createDirectory(const std::string &path)
 // S_IRGRP (lectura para el grupo).
 // S_IWGRP (escritura para el grupo).
 // S_IROTH (lectura para otros).
+
+bool isText(const std::string &str)
+{
+	return str.find("text") != std::string::npos;
+}

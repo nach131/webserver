@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:34:48 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/27 17:54:12 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/27 19:42:57 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,4 +47,5 @@ std::string rmLocationToAPath(const std::string &path, const std::string &locati
 bool pathStartsWithLocation(const std::string &path, const std::string &location);
 
 bool createDirectory(const std::string &path);
+bool isText(const std::string &str);
 #endif

@@ -81,6 +81,11 @@ curl -X POST -F "file=@/path/to/example.txt" http://example.com/upload
 curl -X POST -F "file=@/path/to/example.txt" -F "description=This is an example file" http://example.com/upload
 
 ## Autenticación y otros encabezados
-curl -u username:password -X POST -F "file=@/path/to/file.txt" -H "Custom-Header: value" http://example.com/upload
+curl -u username:password -X POST -F "file=@/file.cpp" -H "Content-Disposition: form-data; name=\"file\"; filename=\"webserve_poll.md\"" http://localhost:8080
 
-curl -u username:password -X POST -F "file=@./file.txt" -H "Custom-Header: value" http://localhost:8080
+curl -X POST -F "file=@index.html" -H "Content-Disposition: form-data; name="file"; filename="nombre_archivo.cpp"" http://localhost:8080
+
+curl -X POST -F "file=@/ruta/al/archivo.cpp" -H "Content-Disposition: form-data; name=\"file\"; filename=\"nombre_archivo.cpp\"" http://localhost:8080
+
+
+curl -X POST -F "file=@index.html" -H "Content-Disposition: form-data; name="file"; filename="nombre_archivo.cpp"" http://localhost:8080
