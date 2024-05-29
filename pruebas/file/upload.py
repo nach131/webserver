@@ -14,7 +14,7 @@ if __name__ == "__main__":
     filname = sys.argv[1]
     data = sys.argv[2].encode()  # Convert data to bytes
     result = write_to_file(filname, data)
-    print(result)
+    print("tomate file write",result)
 
 
 # Datos binarios de ejemplo
