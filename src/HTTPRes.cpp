@@ -6,7 +6,11 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
+<<<<<<< HEAD
+/*   Updated: 2024/05/29 10:56:23 by nmota-bu         ###   ########.fr       */
+=======
 /*   Updated: 2024/05/29 11:08:17 by vduchi           ###   ########.fr       */
+>>>>>>> fd68d62360bfc1f56f01ae24e7078846b3d73df2
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,10 +282,10 @@ void HTTPRes::methodPost(const bool &autoindex)
 				createDirectory("./upload" + _locationConf.getRef());
 
 			// std::string  pathFileName = "./upload" + _locationConf.getRef() + _request.getFileName();
-			std::string pathFileName = "./upload" + _locationConf.getRef() + "/nombrefichero.txt";
+			std::string pathFileName = "./upload" + _locationConf.getRef() + "/nombrefichero.png";
 			std::string command = "touch "
-								  " \"" +
-								  pathFileName + "\"";
+														" \"" +
+														pathFileName + "\"";
 			int returnCode = std::system(command.c_str());
 			// Verificar el éxito del comando del sistema
 			if (returnCode != 0)

@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 10:02:31 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/29 09:50:31 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/29 10:59:44 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,16 +139,17 @@ std::string execPythonFile(const std::string &py, const std::string &filename, c
 	std::cout << RESET;
 
 	// Escape quotes and special characters in data
-	std::string escaped_data = "";
-	for (size_t i = 0; i < data.size(); ++i)
-	{
-		if (data[i] == '\"' || data[i] == '\\')
-			escaped_data += '\\';
-		escaped_data += data[i];
-	}
+	// std::string escaped_data = "";
+	// for (size_t i = 0; i < data.size(); ++i)
+	// {
+	// 	if (data[i] == '\"' || data[i] == '\\')
+	// 		escaped_data += '\\';
+	// 	escaped_data += data[i];
+	// }
 
 	// Form the command string
-	std::string command = "python3 " + py + " \"" + filename + "\" \"" + escaped_data + "\" > ./tmp.txt";
+	std::string command = "python3 " + py + " \"" + filename + "\" " + data + " > ./tmp.txt";
+	// std::string command = "python3 " + py + " \"" + filename + "\" \"" + escaped_data + "\" > ./tmp.txt";
 
 	int returnCode = std::system(command.c_str());
 

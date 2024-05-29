@@ -12,6 +12,7 @@ def write_to_file(filename, data):
 
 if __name__ == "__main__":
     filname = sys.argv[1]
+    print(sys.argv[2])
     data = sys.argv[2].encode()  # Convert data to bytes
     result = write_to_file(filname, data)
     print("tomate file write",result)
