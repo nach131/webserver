@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/27 18:28:38 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/29 10:27:24 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,6 +271,7 @@ void AdminServer::run(int sockfd, int kq)
 				else
 					_content.append(response.getContent());
 				request.setMulti(_multi);
+				std::cout << GREEN "Multi: " << _multi << RESET << std::endl;
 				//=========================================================================
 
 				//=========================================================================
@@ -312,7 +313,8 @@ void AdminServer::run(int sockfd, int kq)
 					kevent(kq, &evSet, 1, NULL, 0, NULL);
 				}
 				//=========================================================================
-				request.cleanObject();
+				if (!_multi)
+					request.cleanObject();
 			}
 			// Escribir en el socket cuando esté listo para escribir
 			else if (evList[i].filter == EVFILT_WRITE)

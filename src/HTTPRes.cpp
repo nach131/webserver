@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRes.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/28 23:48:29 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/29 10:38:12 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,15 @@ void removeLocationFromPath(const std::string &location, std::string &path)
 
 HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &ref) : _request(request), _config(config), _ref(ref)
 {
-	std::string method = _request.getHeader("Method");
 	std::string path = _request.getHeader("Path");
+	std::string method = _request.getHeader("Method");
 	std::string referer = _request.getHeader("Referer");
 	std::string referer_location = removeBeforeNumber(referer, "8080");
 
 	std::cout << CYAN;
 	std::cout << "_ref bool: " << _ref << std::endl;
 	std::cout << "path: " << path << std::endl;
+	std::cout << "methods: " << method << std::endl;
 	std::cout << "referer: " << referer << std::endl;
 	std::cout << "referer_location: " << referer_location << std::endl;
 	std::cout << RESET;

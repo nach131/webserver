@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/27 18:21:40 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/29 11:07:15 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,21 @@ HTTPRequest::~HTTPRequest() {}
 void HTTPRequest::setMulti(bool &multi) { multi = _last; }
 
 std::string HTTPRequest::getFileName() { return _fileName; }
+
+std::string HTTPRequest::getFileType() { return _fileType; }
+
+void HTTPRequest::findFileName(const char *buf)
+{
+	std::string input(buf);
+	if (input.find("filename=") != std::string::npos)
+	{
+		_fileName = input.substr(input.find("filename=") + 10,
+								 input.find_last_of("\"") - (input.find("filename=") + 10));
+		_fileType = _fileName.substr(_fileName.find_last_of(".") + 1,
+									 _fileName.length() - (_fileName.find(".") + 1) - 1);
+		std::cout << RED "Filename: -" << _fileName << "- FileType: -" << _fileType << "-" RESET << std::endl;
+	}
+}
 
 void HTTPRequest::takeHeader(std::stringstream &ss)
 {
@@ -79,7 +94,21 @@ void HTTPRequest::takeHeader(std::stringstream &ss)
 	}
 }
 
-void HTTPRequest::checkBoundary(std::vector<std::string> &content)
+void HTTPRequest::checkFirstBoundary(std::vector<std::string> &content)
+{
+	if (content[0].find(_boundary) == std::string::npos)
+		return;
+	int count = 0;
+	for (std::vector<std::string>::iterator it = content.begin(); it != content.end() && count < 4;)
+	{
+		// if ((*it).find("filename") != std::string::npos)
+		// 	_fileName = (*it).substr((*it).find("filename") + 10, (*it).find_last_of("\"") - ((*it).find("filename") + 10) - 1);
+		content.erase(it);
+		count++;
+	}
+}
+
+void HTTPRequest::checkLastBoundary(std::vector<std::string> &content)
 {
 	for (std::vector<std::string>::iterator it = content.begin(); it != content.end();)
 	{
@@ -106,28 +135,32 @@ void HTTPRequest::getBuffer(const char *buf, bool &multi)
 	std::vector<std::string> content;
 	if (!multi)
 	{
+		findFileName(buf);
 		takeHeader(ss);
+		// std::cout << RED << "Print header:\n";
+		// for (std::map<std::string, std::string>::iterator it = _map.begin(); it != _map.end(); it++)
+		// 	std::cout << "Key: " << it->first << " Value: " << it->second << std::endl;
+		// std::cout << RESET << std::endl;
 		while (getline(ss, line))
 			content.push_back(line + "\n");
-		if (_last)
+		if (content.size() > 0)
 		{
-			int count = 0;
-			for (std::vector<std::string>::iterator it = content.begin(); it != content.end() && count < 4;)
-			{
-				if ((*it).find("filename") != std::string::npos)
-					_fileName = (*it).substr((*it).find("filename") + 10, (*it).find_last_of("\"") - ((*it).find("filename") + 10) - 1);
-				content.erase(it);
-				count++;
-			}
+			if (_last)
+				checkFirstBoundary(content);
+			_boundary.append("--");
+			checkLastBoundary(content);
 		}
-		_boundary.append("--");
-		checkBoundary(content);
 	}
 	else
 	{
+		// std::cout << RED << "Print header:\n";
+		// for (std::map<std::string, std::string>::iterator it = _map.begin(); it != _map.end(); it++)
+		// 	std::cout << "Key: " << it->first << " Value: " << it->second << std::endl;
+		// std::cout << RESET << std::endl;
 		while (getline(ss, line))
-			content.push_back(line);
-		checkBoundary(content);
+			content.push_back(line + "\n");
+		checkFirstBoundary(content);
+		checkLastBoundary(content);
 	}
 	content.clear();
 	std::cout << RED << "Content: " << std::endl;

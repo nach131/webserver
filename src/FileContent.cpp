@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/27 17:33:48 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/29 09:23:43 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ void FileContent::createServers(std::vector<ServerConfig *> &servers)
 	(void)servers;
 	for (size_t i = 0; i < _content.size(); i++)
 	{
-		std::cout << "Content line: " << i + 1 << " " << _content[i] << std::endl;
+		// std::cout << "Content line: " << i + 1 << " " << _content[i] << std::endl;
 		if (checkServerKey(_content[i]))
 		{
 			if (count == 1)
