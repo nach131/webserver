@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/28 17:11:52 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/29 19:32:34 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -311,4 +311,11 @@ bool createDirectory(const std::string &path)
 bool isText(const std::string &str)
 {
 	return str.find("text") != std::string::npos;
+}
+
+std::string intToString(int number)
+{
+	std::stringstream ss;
+	ss << number;
+	return ss.str();
 }

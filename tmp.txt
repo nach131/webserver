@@ -1,2 +1,0 @@
-File saved: ./upload/form/nombrefichero.txt
-tomate file write 0

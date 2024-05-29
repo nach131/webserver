@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:34:48 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/28 17:11:08 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/29 19:33:24 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,4 +50,6 @@ bool pathStartsWithLocation(const std::string &path, const std::string &location
 
 bool createDirectory(const std::string &path);
 bool isText(const std::string &str);
+std::string intToString(int number);
+
 #endif
