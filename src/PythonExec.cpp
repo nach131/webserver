@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 10:02:31 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/29 10:59:44 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/29 12:06:44 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ std::string execPythonFile(const std::string &py, const std::string &filename, c
 	std::string result;
 
 	std::cout << YELLOW;
-	std::cout << "execPython TRES\n";
+	std::cout << "execPythonFile TRES\n";
 	std::cout << " py: " << py << std::endl;
 	std::cout << " filename: " << filename << std::endl;
 	std::cout << " data: " << data << std::endl;

@@ -3,14 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRes.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2024/05/29 10:56:23 by nmota-bu         ###   ########.fr       */
-=======
-/*   Updated: 2024/05/29 11:08:17 by vduchi           ###   ########.fr       */
->>>>>>> fd68d62360bfc1f56f01ae24e7078846b3d73df2
+/*   Updated: 2024/05/29 12:05:15 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -313,6 +309,18 @@ void HTTPRes::methodPost(const bool &autoindex)
 
 			std::cout << "res: " << res << std::endl;
 			res == "0\n" ? _header.addField("Location", "/web") : _header.addField("Location", "/web/login_err.html");
+		}
+		else
+		{
+			std::string pathFileName = "./upload" + _locationConf.getRef() + "/nombrefichero.png";
+
+			std::string command = "touch "
+														" \"" +
+														pathFileName + "\"";
+			std::string res = execPythonFile("./cgi_bin/upload.py", pathFileName, _request.getHeader("Content"));
+
+			std::cout << "pathFileName: " << pathFileName << std::endl;
+			std::cout << "res: " << res << std::endl;
 		}
 	}
 	else
