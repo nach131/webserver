@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/29 11:07:15 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/29 12:01:57 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void HTTPRequest::findFileName(const char *buf)
 								 input.find_last_of("\"") - (input.find("filename=") + 10));
 		_fileType = _fileName.substr(_fileName.find_last_of(".") + 1,
 									 _fileName.length() - (_fileName.find(".") + 1) - 1);
-		std::cout << RED "Filename: -" << _fileName << "- FileType: -" << _fileType << "-" RESET << std::endl;
+		// std::cout << RED "Filename: -" << _fileName << "- FileType: -" << _fileType << "-" RESET << std::endl;
 	}
 }
 

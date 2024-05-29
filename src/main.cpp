@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/29 10:30:54 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/29 13:31:56 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,17 +31,17 @@ void checkArg(int argc, char **argv)
 	std::ifstream in;
 	std::string name, line;
 	if (argc != 2)
-		throw std::runtime_error(CYAN "Usage: ./webserv [config file]" RESET);
+		throw std::logic_error(CYAN "Usage: ./webserv [config file]" RESET);
 	else
 	{
 		name = argv[1];
 		if (name.find(".conf") == std::string::npos ||
 			name.compare(name.length() - 5, 5, ".conf") ||
 			name.find(".conf", name.find(".conf") + 5) != std::string::npos)
-			throw std::runtime_error(RED "file is not a configuration file!" RESET);
+			throw std::logic_error(RED "Error: file is not a configuration file!" RESET);
 		in.open(argv[1]);
 		if (!in.good())
-			throw std::runtime_error(RED "file error!" RESET);
+			throw std::runtime_error(RED "config file error!" RESET);
 	}
 	// 	for (std::vector<std::string>::iterator it = content.begin(); it != content.end(); it++)
 	// 	{
@@ -86,7 +86,7 @@ void createKqueue()
 	if (kq == -1)
 	{
 		std::cerr << "Error creating kqueue: " << strerror(errno) << std::endl;
-		throw std::runtime_error("Error creating kqueue");
+		throw std::runtime_error("creating kqueue");
 	}
 }
 
@@ -129,9 +129,14 @@ int main(int argc, char **argv)
 		std::cerr << e.what() << std::endl;
 		return EXIT_FAILURE;
 	}
+	catch (const std::logic_error &e)
+	{
+		std::cerr << e.what() << std::endl;
+		return EXIT_FAILURE;
+	}
 	catch (const std::runtime_error &e)
 	{
-		std::cerr << RED << e.what() << std::endl;
+		std::cerr << RED << "Error: " << e.what() << std::endl;
 		return EXIT_FAILURE;
 	}
 	catch (const std::exception &e)
