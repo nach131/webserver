@@ -4,8 +4,8 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from urllib.parse import parse_qs
 from asyncio.exceptions import TimeoutError
 
-# url = 'mongodb://root:tomate@192.168.39.138:27017'
-url = 'mongodb://root:klingon@192.168.1.20:27017'
+url = 'mongodb://root:tomate@192.168.39.129:27017'
+# url = 'mongodb://root:klingon@192.168.1.20:27017'
 # client = AsyncIOMotorClient(url)
 client = AsyncIOMotorClient(url, serverSelectionTimeoutMS=4000)  # Timeout de 2 segundos
 db_name = 'prueba'
