@@ -1,40 +1,23 @@
-#!/usr/bin/env python
+import sys
 
-import os
-import cgi
-import cgitb
+def write_to_file(filename, data):
+    try:
+        with open(filename, 'wb') as file:
+            file.write(data)
+            print(f"File saved: {filename}")
+            return 0
+    except IOError:
+        print("Error: Unable to open file for writing.")
+        return 1
 
-cgitb.enable()
+if __name__ == "__main__":
+    filname = sys.argv[1]
+    data = sys.argv[2].encode()  # Convert data to bytes
+    result = write_to_file(filname, data)
+    print("tomate file write",result)
 
-# Configuración de la carpeta donde se guardarán los archivos subidos
-UPLOAD_DIR = "/path/to/upload/folder"
 
-print("Content-Type: text/html")
-print()
-
-# Asegurarse de que la carpeta de subida existe
-if not os.path.exists(UPLOAD_DIR):
-    os.makedirs(UPLOAD_DIR)
-
-form = cgi.FieldStorage()
-
-# Comprobar si se ha enviado el archivo
-if "file" not in form:
-    print("<html><body>No file was uploaded</body></html>")
-    exit()
-
-fileitem = form["file"]
-
-# Comprobar si el archivo fue subido
-if fileitem.filename:
-    # Sanitizar el nombre del archivo
-    filename = os.path.basename(fileitem.filename)
-    filepath = os.path.join(UPLOAD_DIR, filename)
-
-    # Guardar el archivo en la carpeta de subida
-    with open(filepath, 'wb') as f:
-        f.write(fileitem.file.read())
-
-    print(f"<html><body>File '{filename}' uploaded successfully</body></html>")
-else:
-    print("<html><body>No file was uploaded</body></html>")
+# Datos binarios de ejemplo
+# data = 'datos binarios.'
+# Nombre del archivo
+# filename = 'example.bin'

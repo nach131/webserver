@@ -1,0 +1,32 @@
+New M21s 60w 60t in stock 2693USD
+
+Used s17+ 70t 2758USD
+
+Used t17 42t 1268USD
+
+
+used t17e 50t 1100USD
+
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+
+https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
+
+
+coin fool game
+
+
+curl -X GET https://api.covalenthq.com/v1/56/address/0x748192673be967cf500915cacd7a5804e332c4e1/balances_v2/?quote-currency=ARS&format=JSON&nft=false&no-nft-fetch=false&key=ckey_ff9e70de0492454f9c74796b73d
+
+
+
+https://api.bscscan.com/api?module=account&action=balance&address=0x382326696506af9d09c3e82284161ed227ed5cd4&tag=latest&apikey=ckey_ff9e70de0492454f9c74796b73d
+
+
+
+TOKEN
+
+https://api.pancakeswap.info/api/v2/tokens/0xfbb4f2f342c6daab63ab85b0226716c4d1e26f36
+

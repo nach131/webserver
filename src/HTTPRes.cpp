@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/29 10:38:12 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/29 11:08:17 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,6 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &r
 		}
 		else if (method == "POST")
 		{
-			std::cout << "==========POST==========\n";
 			methodPost(false);
 		}
 		else if (method == "DELETE")
@@ -257,6 +256,8 @@ bool writeToFile(const std::string &filePath, const std::string &content)
 
 void HTTPRes::methodPost(const bool &autoindex)
 {
+	std::cout << "==========POST==========\n";
+
 	std::string realPath = _locationConf.realPath();
 
 	std::cout << "getFileName: " << _request.getFileName() << std::endl;
@@ -268,13 +269,28 @@ void HTTPRes::methodPost(const bool &autoindex)
 	{
 		if (realPath.find("upload.py") != std::string::npos)
 		{
-			std::cout << RED << "UPLOAD" << RESET << std::endl;
-
-			if (!directoryExists("./upload" + _locationConf.getRef()))
-				createDirectory("./upload" + _locationConf.getRef());
 			// TODO
 			// CGI UPLOAD
 			// writeToFile(_request.getHeader("Content"));
+			std::cout << RED << "UPLOAD" << std::endl;
+
+			if (!directoryExists("./upload" + _locationConf.getRef()))
+				createDirectory("./upload" + _locationConf.getRef());
+
+			// std::string  pathFileName = "./upload" + _locationConf.getRef() + _request.getFileName();
+			std::string pathFileName = "./upload" + _locationConf.getRef() + "/nombrefichero.txt";
+			std::string command = "touch "
+								  " \"" +
+								  pathFileName + "\"";
+			int returnCode = std::system(command.c_str());
+			// Verificar el éxito del comando del sistema
+			if (returnCode != 0)
+				throw std::system_error(returnCode, std::generic_category(), "Error al ejecutar el comando del sistema");
+
+			std::cout << pathFileName << std::endl;
+			std::cout << RESET << std::endl;
+
+			std::string res = execPythonFile("./cgi_bin/upload.py", pathFileName, _request.getHeader("Content"));
 		}
 		else if (realPath.find("register.py") != std::string::npos)
 		{
@@ -294,14 +310,7 @@ void HTTPRes::methodPost(const bool &autoindex)
 			std::cout << "res: " << res << std::endl;
 			res == "0\n" ? _header.addField("Location", "/web") : _header.addField("Location", "/web/login_err.html");
 		}
-		else if (realPath.find("up.py") != std::string::npos)
-		{
-			std::string res = execPython(realPath, _request.getHeader("Content"));
-
-			std::cout << "res: " << res << std::endl;
-		}
 	}
-
 	else
 	{
 		std::cout << " EXPLORE POST\n";
@@ -310,7 +319,6 @@ void HTTPRes::methodPost(const bool &autoindex)
 			std::cout << " crea: " << realPath << std::endl;
 			createDirectory(realPath);
 		}
-
 		// TODO solo funcionaa TEXTO, incorporar nombre fichero
 		// CGI UPLOAD
 		if (isText(_request.getHeader("Content-Type")))
