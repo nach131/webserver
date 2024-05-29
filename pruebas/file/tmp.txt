@@ -1,2 +1,0 @@
-File saved: output.txt
-tomate file write 0

@@ -90,5 +90,5 @@ curl -X POST -F "file=@/ruta/al/archivo.cpp" -H "Content-Disposition: form-data;
 
 curl -X POST -F "file=@42_logo_black.png" -H "Content-Disposition: form-data; name="file"; filename="42_logo_black.png"" http://localhost:8080
 
-
-% curl -X GET http://localhost:8080/files/example.jpg -F "file=@
+## descarga
+ curl -o toma.jpg http://localhost:8080/files/example.jpg
