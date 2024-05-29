@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   location.cpp                                       :+:      :+:    :+:   */
+/*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 17:46:33 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/28 11:23:39 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/29 10:35:58 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ void Location::init(const LocationResult &location, const std::string &path, con
 	std::cout << " path: " << path << std::endl;
 	std::cout << " referer: " << referer << std::endl;
 	std::cout << " referer_location: " << referer_location << std::endl;
+	// std::map<std::string, std::string>::iterator it = _location.config.find("allow_methods");
+	// std::cout << " metodos: " << it->second << std::endl;
 
 	std::cout << "==============\n";
 	// std::cout << "refer + path: " << referer_location + path << std::endl;
@@ -50,7 +52,7 @@ void Location::init(const LocationResult &location, const std::string &path, con
 	// std::cout << "pathRoot: " << pathRoot<< std::endl;
 	std::cout << " alias: " << alias << std::endl;
 	std::cout << " root: " << root << std::endl;
-	std::cout << "quita Location: " << removeSubstring(path, location.name) << std::endl;
+	std::cout << " quita Location: " << removeSubstring(path, location.name) << std::endl;
 	std::cout << RESET;
 
 	// if(!root.empty())

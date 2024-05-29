@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 00:08:38 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/27 16:43:31 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/29 10:17:20 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ class HTTPRequest
 {
 private:
     bool _last;
+    // char *_byteContent;
+    std::string _fileType;
     std::string _fileName;
     std::string _boundary;
     std::map<std::string, std::string> _map;
@@ -38,8 +40,11 @@ public:
 
     void setMulti(bool &);
     std::string getFileName();
+    std::string getFileType();
+    void findFileName(const char *);
     void takeHeader(std::stringstream &);
-    void checkBoundary(std::vector<std::string> &);
+    void checkFirstBoundary(std::vector<std::string> &);
+    void checkLastBoundary(std::vector<std::string> &);
     void getBuffer(const char *, bool &);
 
     std::string getLocation();

@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/27 17:35:06 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/29 09:30:36 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,16 +148,17 @@ void ServerConfig::addValue(std::stringstream &ss)
 	switch (it - _kv.getKeys().begin())
 	{
 	case 0:
-	case 2:
 	case 3:
-	case 6:
-	case 8:
+	case 4:
+	case 7:
 	case 9:
 	case 10:
+	case 11:
 		ss >> value;
+		// std::cout << RED << "Key: " << key << " Value: " << value << std::endl;
 		takeOutSemiColumn(value);
 		break;
-	case 5:
+	case 6:
 		ss >> err;
 		ss >> value;
 		takeOutSemiColumn(value);
@@ -169,24 +170,27 @@ void ServerConfig::addValue(std::stringstream &ss)
 		_rootDirectory = value;
 		break;
 	case 1:
-		// TODO index: Ver lo que hay que hacer aqui
+		// TODO alias: Ver lo que hay que hacer aqui
 		break;
 	case 2:
-		_port = std::atoi(value.c_str());
+		// TODO index: Ver lo que hay que hacer aqui
 		break;
 	case 3:
-		_apiPort = std::atoi(value.c_str());
+		_port = std::atoi(value.c_str());
 		break;
 	case 4:
-		// TODO autoindex: Ver lo que hay que hacer aqui
+		_apiPort = std::atoi(value.c_str());
 		break;
 	case 5:
-		_errorPages[std::atoi(err.c_str())] = value;
+		// TODO autoindex: Ver lo que hay que hacer aqui
 		break;
 	case 6:
-		_serverName = value;
+		_errorPages[std::atoi(err.c_str())] = value;
 		break;
 	case 7:
+		_serverName = value;
+		break;
+	case 8:
 		// TODO allow_methods: Ver lo que hay que hacer aqui
 		break;
 	default:
