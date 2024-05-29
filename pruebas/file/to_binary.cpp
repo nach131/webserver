@@ -33,3 +33,6 @@ int main(int argc, char **argv)
 	out.close();
 	return 0;
 }
+
+// std::string content;
+// out << content;

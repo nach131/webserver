@@ -17,8 +17,8 @@
       "type": "lldb",
       "request": "launch",
       "args": [],
-      "cwd": "/Users/nmota-bu/Desktop/webserver",
-      "program": "/Users/nmota-bu/Desktop/webserver/build/Debug/outDebug"
+      "cwd": "/Users/nacho/Dropbox/00_42Barcelona/42Barcelona/C5/webserver",
+      "program": "/Users/nacho/Dropbox/00_42Barcelona/42Barcelona/C5/webserver/build/Debug/outDebug"
     },
     {
       "type": "lldb",

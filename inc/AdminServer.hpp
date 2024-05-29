@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:26:56 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/29 11:51:08 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/30 00:07:37 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,19 @@
 
 class ServerConfig;
 
+// struct Multias
+// {
+// 	std::string pathFileName;
+// 	bool _multi;
+// 	char *cont
+// };
+
 class AdminServer
 {
 private:
 	bool _ref;	 // EV_FLAG0
 	bool _multi; // EV_FLAG1
+	// bool _writeFault;
 	LogFile _log;
 	ServerConfig _config;
 	std::string _header;

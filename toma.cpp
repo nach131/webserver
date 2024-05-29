@@ -1,8 +1,3 @@
-#include "AdminServer.hpp"
-
-AdminServer::AdminServer(const ServerConfig &config) : _config(config) {}
-
-AdminServer::~AdminServer() {}
 
 void AdminServer::run(int sockfd, int kq)
 {
@@ -14,7 +9,7 @@ void AdminServer::run(int sockfd, int kq)
 	struct sockaddr_storage addr;
 	socklen_t socklen = sizeof(addr);
 
-	_flags = EV_ADD | EV_FLAG0 | EV_FLAG1;
+	_flags = EV_ADD | EV_FLAG0; // Poner EV_FLAG1 si hay multipart
 
 	while (42)
 	{
@@ -29,11 +24,11 @@ void AdminServer::run(int sockfd, int kq)
 				int fd = accept(evList[i].ident, (struct sockaddr *)&addr, &socklen);
 				if (addConnect(fd) == 0)
 				{
-					// EV_FLAG0 PAR LA PRIMERA PETICION
-					// EV_SET(&evSet, fd, EVFILT_READ, EV_ADD | EV_FLAG0 , 0, 0, NULL);
+
 					EV_SET(&evSet, fd, EVFILT_READ, _flags, 0, 0, NULL);
 					kevent(kq, &evSet, 1, NULL, 0, NULL);
-					// send_welcome_msg(fd);
+					// _ref = false;
+					_ref = true;
 				}
 				else
 				{
@@ -43,6 +38,7 @@ void AdminServer::run(int sockfd, int kq)
 			} // client disconnected
 			else if (evList[i].flags & EV_EOF)
 			{
+
 				int fd = evList[i].ident;
 				std::cout << "client #" << getConnect(fd) << " disconnected." << std::endl;
 				EV_SET(&evSet, fd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
@@ -69,17 +65,18 @@ void AdminServer::run(int sockfd, int kq)
 				//===================PARSING==============================================
 				// HTTPRequest request(buffer);
 				request.getBuffer(buffer, _multi);
+				// [ Request client ]
 				request.print();
 				//=========================================================================
 
 				// HTTPBody body(request);
 				HTTPRes response(request, &_config, _ref);
 				// TODO
-				printResponse(response.getHeader(), response.getContent());
+				// printResponse(response.getHeader(), response.getContent());
 
 				// _config.print();
+				// //=========================================================================
 
-				//=========================================================================
 				// Manejo de flags para la primera peticion
 				if (evSet.flags & EV_FLAG1)
 				{
@@ -114,7 +111,64 @@ void AdminServer::run(int sockfd, int kq)
 				//=========================================================================
 				_header = response.getHeader();
 				_content = response.getContent();
-				//=========================================================================
+
+				// //========================VALERIO===========================================
+				// // TODO Poner este codigo comentado en la primera peticion
+				// if (!_multi)
+				// {
+				// 	_header = response.getHeader();
+				// 	_content = response.getContent();
+				// }
+				// else
+				// 	_content.append(response.getContent());
+				// request.setMulti(_multi);
+				// std::cout << GREEN "Multi: " << _multi << RESET << std::endl;
+
+				// //=========================================================================
+				// if (evSet.flags & EV_FLAG0)
+				// {
+				// 	std::cout << "CON EV_FLAG0" << std::endl;
+				// 	_flags &= ~EV_FLAG0; // Eliminar EV_FLAG0
+
+				// 	// EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & EV_FLAG0, 0, 0, NULL);
+				// 	EV_SET(&evSet, evList[i].ident, EVFILT_READ, _flags, 0, 0, NULL);
+				// 	kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
+				// 	_ref = false;
+				// }
+				// else
+				// {
+				// 	std::cout << "SIN EV_FLAG0" << std::endl;
+				// }
+				// //=======================VALERIO==================================================
+				// // Manejo de flags para la primera peticion
+				// if (_multi)
+				// {
+				// 	std::cout << "CON EV_FLAG1" << std::endl;
+				// 	int flags_tmp = evSet.flags;
+				// 	flags_tmp |= ~EV_FLAG1; // Eliminar EV_FLAG1
+
+				// 	// EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & EV_FLAG0, 0, 0, NULL);
+				// 	EV_SET(&evSet, evList[i].ident, EVFILT_READ, flags_tmp, 0, 0, NULL);
+				// 	kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
+				// }
+				// else
+				// {
+				// 	std::cout << "SIN EV_FLAG1" << std::endl;
+				// 	int flags_tmp = evSet.flags;
+				// 	flags_tmp &= ~EV_FLAG1; // Eliminar EV_FLAG1
+
+				// 	// EV_SET(&evSet, evList[i].ident, EVFILT_READ, _flags, 0, 0, NULL);
+				// 	// kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
+				// 	// Colocar el evento en EVFILT_WRITE para enviar la respuesta
+				// 	EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, flags_tmp, 0, 0, NULL);
+				// 	kevent(kq, &evSet, 1, NULL, 0, NULL);
+				// }
+				// //=========================================================================
+				// // EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, _flags, 0, 0, NULL);
+				// // kevent(kq, &evSet, 1, NULL, 0, NULL);
+				// //=========================================================================
+				// if (!_multi)
+				// 	request.cleanObject();
 			}
 			// Escribir en el socket cuando esté listo para escribir
 			else if (evList[i].filter == EVFILT_WRITE)

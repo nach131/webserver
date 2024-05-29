@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/29 10:27:24 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/30 00:07:32 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,10 +184,35 @@ int delConnect(int fd)
 	return close(fd);
 }
 
+// void multi()
+// {
+// }
+
+// void normal()
+// {
+
+// 	_header = response.getHeader();
+// 	_content = response.getContent();
+
+// 	if (evSet.flags & EV_FLAG0)
+// 	{
+// 		std::cout << "CON EV_FLAG0" << std::endl;
+// 		_flags &= ~EV_FLAG0; // Eliminar EV_FLAG0
+
+// 		// EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & EV_FLAG0, 0, 0, NULL);
+// 		EV_SET(&evSet, evList[i].ident, EVFILT_READ, _flags, 0, 0, NULL);
+// 		kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
+// 		_ref = false;
+// 	}
+// 	else
+// 	{
+// 		std::cout << "SIN EV_FLAG0" << std::endl;
+// 	}
+// }
+
 void AdminServer::run(int sockfd, int kq)
 {
 	_multi = false;
-	// _ref = false;
 	HTTPRequest request;
 	char buffer[MAX_MSG_SIZE];
 	struct kevent evSet;
@@ -210,11 +235,11 @@ void AdminServer::run(int sockfd, int kq)
 				int fd = accept(evList[i].ident, (struct sockaddr *)&addr, &socklen);
 				if (addConnect(fd) == 0)
 				{
-					// EV_FLAG0 PAR LA PRIMERA PETICION
-					// EV_SET(&evSet, fd, EVFILT_READ, EV_ADD | EV_FLAG0 , 0, 0, NULL);
+
 					EV_SET(&evSet, fd, EVFILT_READ, _flags, 0, 0, NULL);
 					kevent(kq, &evSet, 1, NULL, 0, NULL);
 					// _ref = false;
+					_ref = true;
 				}
 				else
 				{
@@ -261,20 +286,18 @@ void AdminServer::run(int sockfd, int kq)
 				// printResponse(response.getHeader(), response.getContent());
 
 				// _config.print();
+				// //=========================================================================
 
-				// TODO Poner este codigo comentado en la primera peticion
-				if (!_multi)
+				// Manejo de flags para la primera peticion
+				if (evSet.flags & EV_FLAG1)
 				{
-					_header = response.getHeader();
-					_content = response.getContent();
+					std::cout << " CON EV_FLAG1" << std::endl;
 				}
-				else
-					_content.append(response.getContent());
-				request.setMulti(_multi);
-				std::cout << GREEN "Multi: " << _multi << RESET << std::endl;
-				//=========================================================================
+				else if (evSet.flags | EV_FLAG1)
+				{
+					std::cout << " SIN EV_FLAG1" << std::endl;
+				}
 
-				//=========================================================================
 				if (evSet.flags & EV_FLAG0)
 				{
 					std::cout << "CON EV_FLAG0" << std::endl;
@@ -283,38 +306,80 @@ void AdminServer::run(int sockfd, int kq)
 					// EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & EV_FLAG0, 0, 0, NULL);
 					EV_SET(&evSet, evList[i].ident, EVFILT_READ, _flags, 0, 0, NULL);
 					kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
+														  // checkEVFlag = true;
 					_ref = true;
 				}
-				else
+				else if (evSet.flags | EV_FLAG0)
 				{
 					std::cout << "SIN EV_FLAG0" << std::endl;
 				}
-				// Manejo de flags para la primera peticion
-				if (_multi)
-				{
-					std::cout << "CON EV_FLAG1" << std::endl;
-					int flags_tmp = evSet.flags;
-					flags_tmp |= ~EV_FLAG1; // Eliminar EV_FLAG1
 
-					// EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & EV_FLAG0, 0, 0, NULL);
-					EV_SET(&evSet, evList[i].ident, EVFILT_READ, flags_tmp, 0, 0, NULL);
-					kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
-				}
-				else
-				{
-					std::cout << "SIN EV_FLAG1" << std::endl;
-					int flags_tmp = evSet.flags;
-					flags_tmp &= ~EV_FLAG1; // Eliminar EV_FLAG1
+				// Colocar el evento en EVFILT_WRITE para enviar la respuesta
+				// TODO controlar si es multipart y si ha acabado de enviar
+				EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, _flags, 0, 0, NULL);
+				kevent(kq, &evSet, 1, NULL, 0, NULL);
 
-					// EV_SET(&evSet, evList[i].ident, EVFILT_READ, _flags, 0, 0, NULL);
-					// kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
-					// Colocar el evento en EVFILT_WRITE para enviar la respuesta
-					EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, flags_tmp, 0, 0, NULL);
-					kevent(kq, &evSet, 1, NULL, 0, NULL);
-				}
 				//=========================================================================
-				if (!_multi)
-					request.cleanObject();
+				_header = response.getHeader();
+				_content = response.getContent();
+
+				// //========================VALERIO===========================================
+				// // TODO Poner este codigo comentado en la primera peticion
+				// if (!_multi)
+				// {
+				// 	_header = response.getHeader();
+				// 	_content = response.getContent();
+				// }
+				// else
+				// 	_content.append(response.getContent());
+				// request.setMulti(_multi);
+				// std::cout << GREEN "Multi: " << _multi << RESET << std::endl;
+
+				// //=========================================================================
+				// if (evSet.flags & EV_FLAG0)
+				// {
+				// 	std::cout << "CON EV_FLAG0" << std::endl;
+				// 	_flags &= ~EV_FLAG0; // Eliminar EV_FLAG0
+
+				// 	// EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & EV_FLAG0, 0, 0, NULL);
+				// 	EV_SET(&evSet, evList[i].ident, EVFILT_READ, _flags, 0, 0, NULL);
+				// 	kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
+				// 	_ref = false;
+				// }
+				// else
+				// {
+				// 	std::cout << "SIN EV_FLAG0" << std::endl;
+				// }
+				// //=======================VALERIO==================================================
+				// // Manejo de flags para la primera peticion
+				// if (_multi)
+				// {
+				// 	std::cout << "CON EV_FLAG1" << std::endl;
+				// 	int flags_tmp = evSet.flags;
+				// 	flags_tmp |= ~EV_FLAG1; // Eliminar EV_FLAG1
+
+				// 	// EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & EV_FLAG0, 0, 0, NULL);
+				// 	EV_SET(&evSet, evList[i].ident, EVFILT_READ, flags_tmp, 0, 0, NULL);
+				// 	kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
+				// }
+				// else
+				// {
+				// 	std::cout << "SIN EV_FLAG1" << std::endl;
+				// 	int flags_tmp = evSet.flags;
+				// 	flags_tmp &= ~EV_FLAG1; // Eliminar EV_FLAG1
+
+				// 	// EV_SET(&evSet, evList[i].ident, EVFILT_READ, _flags, 0, 0, NULL);
+				// 	// kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
+				// 	// Colocar el evento en EVFILT_WRITE para enviar la respuesta
+				// 	EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, flags_tmp, 0, 0, NULL);
+				// 	kevent(kq, &evSet, 1, NULL, 0, NULL);
+				// }
+				// //=========================================================================
+				// // EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, _flags, 0, 0, NULL);
+				// // kevent(kq, &evSet, 1, NULL, 0, NULL);
+				// //=========================================================================
+				// if (!_multi)
+				// 	request.cleanObject();
 			}
 			// Escribir en el socket cuando esté listo para escribir
 			else if (evList[i].filter == EVFILT_WRITE)
