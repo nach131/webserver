@@ -1,138 +1,120 @@
-#include "AdminServer.hpp"
+#ifndef HTTPREQUESTHANDLER_HPP
+#define HTTPREQUESTHANDLER_HPP
 
-AdminServer::AdminServer(const ServerConfig &config) : _config(config) {}
+#include <iostream>
+#include <map>
+#include <string>
+#include <sstream>
+#include <fstream>
+#include <cstring>
 
-AdminServer::~AdminServer() {}
+#define MAX_MSG_SIZE 1024
 
-void AdminServer::run(int sockfd, int kq)
+class HTTPRequestHandler
 {
-	_multi = false;
-	HTTPRequest request;
-	char buffer[MAX_MSG_SIZE];
-	struct kevent evSet;
-	struct kevent evList[MAX_EVENTS];
-	struct sockaddr_storage addr;
-	socklen_t socklen = sizeof(addr);
+public:
+	HTTPRequestHandler(char buffer[MAX_MSG_SIZE], bool &multi, bool &write, std::string &boundary);
+	~HTTPRequestHandler();
 
-	_flags = EV_ADD | EV_FLAG0 | EV_FLAG1;
+	std::string const getContent() const;
+	void print() const;
 
-	while (42)
+private:
+	void processRequest(char buffer[MAX_MSG_SIZE], bool &multi, bool &write, std::string &boundary);
+
+	bool _multi;
+	bool _write;
+	std::map<std::string, std::string> _map;
+	std::string _content;
+};
+
+#endif
+
+HTTPRequestHandler::HTTPRequestHandler(char buffer[MAX_MSG_SIZE], bool &multi, bool &write, std::string &boundary)
+{
+	processRequest(buffer, multi, write, boundary);
+}
+
+HTTPRequestHandler::~HTTPRequestHandler() {}
+
+std::string const HTTPRequestHandler::getContent() const { return _content; }
+
+void HTTPRequestHandler::print() const
+{
+	for (std::map<std::string, std::string>::const_iterator it = _map.begin(); it != _map.end(); ++it)
 	{
-		// bool checkEVFlag = false;
-		int num_events = kevent(kq, NULL, 0, evList, MAX_EVENTS, NULL);
+		std::cout << it->first << ": " << it->second << std::endl;
+	}
+	// if (_multi)
+	// std::cout << "Content: " << _content << std::endl;
+}
 
-		for (int i = 0; i < num_events; i++)
+void HTTPRequestHandler::processRequest(char buffer[MAX_MSG_SIZE], bool &multi, bool &write, std::string &boundary)
+{
+	std::istringstream stream(buffer);
+	std::string line;
+
+	// Parse HTTP headers
+	if (!multi)
+	{
+		while (std::getline(stream, line) && line != "\r")
 		{
-			// receive new connection
-			if (evList[i].ident == (unsigned long)sockfd)
+			std::string::size_type pos = line.find(": ");
+			if (pos != std::string::npos)
 			{
-				int fd = accept(evList[i].ident, (struct sockaddr *)&addr, &socklen);
-				if (addConnect(fd) == 0)
+				std::string key = line.substr(0, pos);
+				std::string value = line.substr(pos + 2);
+				value.erase(value.find_last_not_of("\r\n") + 1);
+				_map[key] = value;
+
+				// Check for multipart
+				if (key == "Content-Type" && value.find("multipart/form-data") != std::string::npos)
 				{
-					// EV_FLAG0 PAR LA PRIMERA PETICION
-					// EV_SET(&evSet, fd, EVFILT_READ, EV_ADD | EV_FLAG0 , 0, 0, NULL);
-					EV_SET(&evSet, fd, EVFILT_READ, _flags, 0, 0, NULL);
-					kevent(kq, &evSet, 1, NULL, 0, NULL);
-					// send_welcome_msg(fd);
+					multi = true;
 				}
-				else
-				{
-					std::cout << "connection refused." << std::endl;
-					close(fd);
-				}
-			} // client disconnected
-			else if (evList[i].flags & EV_EOF)
-			{
-				int fd = evList[i].ident;
-				std::cout << "client #" << getConnect(fd) << " disconnected." << std::endl;
-				EV_SET(&evSet, fd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
-				kevent(kq, &evSet, 1, NULL, 0, NULL);
-				delConnect(fd);
-			} // read message from client
-			else if (evList[i].filter == EVFILT_READ)
-			{
-
-				//=================DESDE AQUI==============================================
-				// Recibir datos del cliente
-				memset(buffer, 0, sizeof(buffer));
-				int n = recv(evList[i].ident, buffer, sizeof(buffer), 0);
-				if (n < 0)
-				{
-					std::cerr << "Error al recibir datos: " << strerror(errno) << std::endl;
-					close(evList[i].ident);
-					continue; // Continuar con el siguiente intento de aceptar conexiones
-				}
-				//===================PETICION==============================================
-				// TODO
-				// cliente peticion
-				printPeticion(buffer);
-				//===================PARSING==============================================
-				// HTTPRequest request(buffer);
-				request.getBuffer(buffer, _multi);
-				request.print();
-				//=========================================================================
-
-				// HTTPBody body(request);
-				HTTPRes response(request, &_config, _ref);
-				// TODO
-				printResponse(response.getHeader(), response.getContent());
-
-				// _config.print();
-
-				//=========================================================================
-				// Manejo de flags para la primera peticion
-				if (evSet.flags & EV_FLAG1)
-				{
-					std::cout << " CON EV_FLAG1" << std::endl;
-				}
-				else if (evSet.flags | EV_FLAG1)
-				{
-					std::cout << " SIN EV_FLAG1" << std::endl;
-				}
-
-				if (evSet.flags & EV_FLAG0)
-				{
-					std::cout << "CON EV_FLAG0" << std::endl;
-					_flags &= ~EV_FLAG0; // Eliminar EV_FLAG0
-
-					// EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & EV_FLAG0, 0, 0, NULL);
-					EV_SET(&evSet, evList[i].ident, EVFILT_READ, _flags, 0, 0, NULL);
-					kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
-														  // checkEVFlag = true;
-					_ref = true;
-				}
-				else if (evSet.flags | EV_FLAG0)
-				{
-					std::cout << "SIN EV_FLAG0" << std::endl;
-				}
-
-				// Colocar el evento en EVFILT_WRITE para enviar la respuesta
-				// TODO controlar si es multipart y si ha acabado de enviar
-				EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, _flags, 0, 0, NULL);
-				kevent(kq, &evSet, 1, NULL, 0, NULL);
-
-				//=========================================================================
-				_header = response.getHeader();
-				_content = response.getContent();
-				//=========================================================================
-			}
-			// Escribir en el socket cuando esté listo para escribir
-			else if (evList[i].filter == EVFILT_WRITE)
-			{
-				std::cout << "ESTO ES EVFILT_WRITE" << std::endl;
-				// Enviar la respuesta al cliente
-				sendResGet(evList[i].ident, _header, _content);
-
-				int flags_tmp = evSet.flags; // para guardar los flags activos
-
-				// Después de enviar la respuesta, eliminar el evento EVFILT_WRITE
-				EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
-				kevent(kq, &evSet, 1, NULL, 0, NULL);
-				evSet.flags = flags_tmp; // asignamos los flags activos
 			}
 		}
 	}
 
-	// Cerrar el socket del servidor (esto no se alcanzará)
-	close(_config.getServerSocket());
+	if (multi)
+	{
+		if (_map.find("Content-Type") != _map.end())
+			boundary = "--" + _map["Content-Type"].substr(_map["Content-Type"].find("boundary=") + 9);
+
+		bool boundaryEndFound = false;
+		while (std::getline(stream, line))
+		{
+			if (line.find(boundary) != std::string::npos)
+			{
+				if (line.find(boundary + "--") != std::string::npos)
+				{
+					boundaryEndFound = true;
+					break;
+				}
+
+				// Skip the header lines for the part
+				while (std::getline(stream, line) && line != "\r")
+				{
+				}
+
+				// Read the content of the part
+				std::ostringstream partContent;
+				while (std::getline(stream, line) && line.find(boundary) == std::string::npos)
+				{
+					partContent << line << "\n";
+				}
+
+				// Handle binary data
+				std::string partData = partContent.str();
+				std::size_t endPos = partData.find_last_of('\n');
+				if (endPos != std::string::npos && endPos == partData.size() - 1)
+					partData.erase(endPos);
+
+				_content.append(partData.begin(), partData.end());
+			}
+		}
+
+		if (boundaryEndFound)
+			write = true;
+	}
 }

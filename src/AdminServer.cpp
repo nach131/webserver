@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/30 00:07:32 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/30 12:11:27 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,11 +210,29 @@ int delConnect(int fd)
 // 	}
 // }
 
+void saveContentToFile(const std::string &filename, const std::string &content)
+{
+	std::ofstream file(filename.c_str(), std::ios::binary);
+	if (file.is_open())
+	{
+		file.write(content.c_str(), content.size());
+		file.close();
+		std::cout << "File saved: " << filename << std::endl;
+	}
+	else
+	{
+		std::cerr << "Error: Unable to open file for writing." << std::endl;
+	}
+}
+
 void AdminServer::run(int sockfd, int kq)
 {
-	_multi = false;
 	HTTPRequest request;
 	char buffer[MAX_MSG_SIZE];
+
+	_multi = false;
+	_multinach = false;
+
 	struct kevent evSet;
 	struct kevent evList[MAX_EVENTS];
 	struct sockaddr_storage addr;
@@ -278,10 +296,29 @@ void AdminServer::run(int sockfd, int kq)
 				request.getBuffer(buffer, _multi);
 				// [ Request client ]
 				request.print();
+
+				//=============NEW=====PARSING==============================================
+				HTTPRequestHandler req(buffer, _multinach, _write, _boundary);
+
+				!_multinach ? _contentNew = req.getCount() : _contentNew.append(req.getCount());
+
+				if (_write)
+				{
+					saveContentToFile("./pruebas/file/toma.out", _contentNew);
+				}
+				std::cout << GREEN;
+				std::cout << "_multinach: " << _multinach << std::endl;
+				std::cout << "_boundary: " << _boundary << std::endl;
+				std::cout << "_write: " << _write << std::endl;
+				std::cout << "_contentNew: " << _contentNew << std::endl;
+				std::cout << "_contentNew len: " << _contentNew.length() << std::endl;
+				req.print();
+				std::cout << RESET;
 				//=========================================================================
 
 				// HTTPBody body(request);
 				HTTPRes response(request, &_config, _ref);
+
 				// TODO
 				// printResponse(response.getHeader(), response.getContent());
 
@@ -316,6 +353,7 @@ void AdminServer::run(int sockfd, int kq)
 
 				// Colocar el evento en EVFILT_WRITE para enviar la respuesta
 				// TODO controlar si es multipart y si ha acabado de enviar
+				// CUANDO SEA FIN DE FICHERO SEA ON
 				EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, _flags, 0, 0, NULL);
 				kevent(kq, &evSet, 1, NULL, 0, NULL);
 
