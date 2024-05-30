@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 00:08:38 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/30 11:46:31 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/30 16:44:49 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,9 @@ public:
     std::string getFileName();
     std::string getFileType();
     void findFileName(const char *);
-    void takeHeader(std::stringstream &);
-    void checkFirstBoundary(std::vector<std::string> &);
-    void checkLastBoundary(std::vector<std::string> &);
+    void takeHeader(std::stringstream &, int &);
+    void checkLastBoundary(const char *, int &, int);
+    void checkFirstBoundary(std::vector<std::string> &, int &);
     void getBuffer(const char *, int, bool &);
 
     std::string getLocation();
