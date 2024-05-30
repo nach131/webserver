@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/30 13:45:52 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/30 17:11:50 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,7 +212,7 @@ int delConnect(int fd)
 
 void saveContentToFile(const std::string &filename, const std::string &content)
 {
-	std::ofstream file(filename.c_str(), std::ios::binary);
+	std::ofstream file(filename.c_str(), std::ios::out | std::ios::binary);
 	if (file.is_open())
 	{
 		file.write(content.c_str(), content.size());
@@ -298,22 +298,22 @@ void AdminServer::run(int sockfd, int kq)
 				request.print();
 
 				//=============NEW=====PARSING==============================================
-				HTTPRequestHandler req(buffer, _multinach, _write, _boundary);
+				// HTTPRequestHandler req(buffer, _multinach, _write, _boundary);
 
-				!_multinach ? _contentNew = req.getCount() : _contentNew.append(req.getCount());
+				// !_multinach ? _contentNew = req.getCount() : _contentNew.append(req.getCount());
 
-				if (_write)
-				{
-					saveContentToFile("./pruebas/file/toma.out", _contentNew);
-				}
-				std::cout << GREEN;
-				std::cout << "_multinach: " << _multinach << std::endl;
-				std::cout << "_boundary: " << _boundary << std::endl;
-				std::cout << "_write: " << _write << std::endl;
-				std::cout << "_contentNew: " << _contentNew << std::endl;
-				std::cout << "_contentNew len: " << _contentNew.length() << std::endl;
-				req.print();
-				std::cout << RESET;
+				// if (_write)
+				// {
+				// 	saveContentToFile("./pruebas/file/toma.out", _contentNew);
+				// }
+				// std::cout << GREEN;
+				// std::cout << "_multinach: " << _multinach << std::endl;
+				// std::cout << "_boundary: " << _boundary << std::endl;
+				// std::cout << "_write: " << _write << std::endl;
+				// std::cout << "_contentNew: " << _contentNew << std::endl;
+				// std::cout << "_contentNew len: " << _contentNew.length() << std::endl;
+				// req.print();
+				// std::cout << RESET;
 				//=========================================================================
 
 				// HTTPBody body(request);

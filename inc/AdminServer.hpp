@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:26:56 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/30 12:03:27 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/30 17:11:43 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,9 @@ private:
 	// Run run;
 	bool _ref;	 // EV_FLAG0
 	bool _multi; // EV_FLAG1
-	std::string _boundary;
-	bool _multinach; // EV_FLAG1
 	bool _write;
+	bool _multinach; // EV_FLAG1
+	std::string _boundary;
 
 	int _flags;
 	// bool _writeFault;

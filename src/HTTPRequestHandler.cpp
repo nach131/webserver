@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequestHandler.cpp                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/30 10:02:13 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/30 12:16:22 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/30 12:50:29 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ void HTTPRequestHandler::print() const
 
 void HTTPRequestHandler::processRequest(char buffer[MAX_MSG_SIZE], bool &multi, bool &write, std::string &boundary)
 {
-    std::istringstream stream(buffer);
     std::string line;
+    std::istringstream stream(buffer);
 
     // Parse HTTP headers
     if (!multi)
@@ -60,7 +60,6 @@ void HTTPRequestHandler::processRequest(char buffer[MAX_MSG_SIZE], bool &multi, 
     {
         if (_map.find("Content-Type") != _map.end())
             boundary = "--" + _map["Content-Type"].substr(_map["Content-Type"].find("boundary=") + 9);
-
         bool boundaryEndFound = false;
         while (std::getline(stream, line))
         {
@@ -97,9 +96,11 @@ void HTTPRequestHandler::processRequest(char buffer[MAX_MSG_SIZE], bool &multi, 
                 _content.append(partData.begin(), partData.end());
             }
         }
-
         if (boundaryEndFound)
+        {
             write = true;
+            multi = false;
+        }
     }
 }
 

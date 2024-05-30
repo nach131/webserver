@@ -63,6 +63,7 @@
     "*.php": "php",
     "*.cpp": "cpp",
     "string": "cpp",
-    "ostream": "cpp"
+    "vector": "cpp",
+    "iostream": "cpp"
   }
 }
