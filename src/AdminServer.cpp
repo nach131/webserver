@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/30 18:40:17 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/30 20:38:05 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,23 +271,6 @@ void AdminServer::run(int sockfd, int kq)
 				// [ Request client ]
 				request.print();
 
-				//=============NEW=====PARSING==============================================
-				// HTTPRequestHandler req(buffer, _multinach, _write, _boundary);
-
-				// !_multinach ? _contentNew = req.getCount() : _contentNew.append(req.getCount());
-
-				// if (_write)
-				// {
-				// 	saveContentToFile("./pruebas/file/toma.out", _contentNew);
-				// }
-				// std::cout << GREEN;
-				// std::cout << "_multinach: " << _multinach << std::endl;
-				// std::cout << "_boundary: " << _boundary << std::endl;
-				// std::cout << "_write: " << _write << std::endl;
-				// std::cout << "_contentNew: " << _contentNew << std::endl;
-				// std::cout << "_contentNew len: " << _contentNew.length() << std::endl;
-				// req.print();
-				// std::cout << RESET;
 				//=========================================================================
 
 				// HTTPBody body(request);
@@ -331,61 +314,6 @@ void AdminServer::run(int sockfd, int kq)
 				_header = response.getHeader();
 				_content = response.getContent();
 
-				// //========================VALERIO===========================================
-				// // TODO Poner este codigo comentado en la primera peticion
-				// if (!_multi)
-				// {
-				// 	_header = response.getHeader();
-				// 	_content = response.getContent();
-				// }
-				// else
-				// 	_content.append(response.getContent());
-				// request.setMulti(_multi);
-				// std::cout << GREEN "Multi: " << _multi << RESET << std::endl;
-
-				// //=========================================================================
-				// if (evSet.flags & EV_FLAG0)
-				// {
-				// 	std::cout << "CON EV_FLAG0" << std::endl;
-				// 	_flags &= ~EV_FLAG0; // Eliminar EV_FLAG0
-
-				// 	// EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & EV_FLAG0, 0, 0, NULL);
-				// 	EV_SET(&evSet, evList[i].ident, EVFILT_READ, _flags, 0, 0, NULL);
-				// 	kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
-				// 	_ref = false;
-				// }
-				// else
-				// {
-				// 	std::cout << "SIN EV_FLAG0" << std::endl;
-				// }
-				// //=======================VALERIO==================================================
-				// // Manejo de flags para la primera peticion
-				// if (_multi)
-				// {
-				// 	std::cout << "CON EV_FLAG1" << std::endl;
-				// 	int flags_tmp = evSet.flags;
-				// 	flags_tmp |= ~EV_FLAG1; // Eliminar EV_FLAG1
-
-				// 	// EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & EV_FLAG0, 0, 0, NULL);
-				// 	EV_SET(&evSet, evList[i].ident, EVFILT_READ, flags_tmp, 0, 0, NULL);
-				// 	kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
-				// }
-				// else
-				// {
-				// 	std::cout << "SIN EV_FLAG1" << std::endl;
-				// 	int flags_tmp = evSet.flags;
-				// 	flags_tmp &= ~EV_FLAG1; // Eliminar EV_FLAG1
-
-				// 	// EV_SET(&evSet, evList[i].ident, EVFILT_READ, _flags, 0, 0, NULL);
-				// 	// kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
-				// 	// Colocar el evento en EVFILT_WRITE para enviar la respuesta
-				// 	EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, flags_tmp, 0, 0, NULL);
-				// 	kevent(kq, &evSet, 1, NULL, 0, NULL);
-				// }
-				// //=========================================================================
-				// // EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, _flags, 0, 0, NULL);
-				// // kevent(kq, &evSet, 1, NULL, 0, NULL);
-				// //=========================================================================
 				if (!_multi)
 					request.cleanObject();
 			}
