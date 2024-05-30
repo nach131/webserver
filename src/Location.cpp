@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 17:46:33 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/30 15:11:06 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/30 16:49:23 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,7 +183,14 @@ void Location::init(const LocationResult &location, const std::string &path, con
 
 							// si en path esta _location.name; solo poner path
 							// toma es necesario para la vuelta de un ref
+
+						// std::string toma =	!_location.name.find(path) ? _location.name + path : path;
+
+						// 	if(path == "/")
+						// 	 =;
+						// 	else
 						std::string toma =	!_location.name.find(path) ? _location.name + path : path;
+
 						_location.realPath = root + toma + fileName;
 						// _location.realPath = root + _location.name + path + fileName;
 				
@@ -220,11 +227,7 @@ void Location::init_no(const LocationResult &location, const std::string &path, 
 	if (_location.name == path && !index.empty() && !autoindex)
 	{
 		std::cout << "one\n";
-		// if (path == "/")
-		// {
-		// std::cout << "one if\n";
-		// 	_location.realPath = root + path + "/" + index;
-		// }
+
 		if (root == "./")
 		{
 			std::cout << "one  if 1\n";
