@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/29 19:52:58 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/30 19:14:13 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,9 @@ void removeLocationFromPath(const std::string &location, std::string &path)
 		path = path.substr(location.length()); // Modifica path eliminando la parte de location
 }
 
-HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &ref) : _request(request), _config(config), _ref(ref)
+HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &ref, bool &write) : _request(request), _config(config), _ref(ref), _write(write)
 {
+
 	std::string path = _request.getHeader("Path");
 	std::string method = _request.getHeader("Method");
 	std::string referer = _request.getHeader("Referer");
@@ -181,28 +182,35 @@ void HTTPRes::methodPost(const bool &autoindex)
 	{
 		if (realPath.find("upload.py") != std::string::npos)
 		{
+
+			if (_write)
+			{
+			}
+			else
+
+				;
 			// TODO
 			// CGI UPLOAD
 			// writeToFile(_request.getHeader("Content"));
-			std::cout << RED << "UPLOAD" << std::endl;
+			// std::cout << RED << "UPLOAD" << std::endl;
 
-			if (!directoryExists("./upload" + _locationConf.getRef()))
-				createDirectory("./upload" + _locationConf.getRef());
+			// if (!directoryExists("./upload" + _locationConf.getRef()))
+			// 	createDirectory("./upload" + _locationConf.getRef());
 
-			// std::string  pathFileName = "./upload" + _locationConf.getRef() + _request.getFileName();
-			std::string pathFileName = "./upload" + _locationConf.getRef() + "/nombrefichero.png";
-			std::string command = "touch "
-														" \"" +
-														pathFileName + "\"";
-			int returnCode = std::system(command.c_str());
-			// Verificar el éxito del comando del sistema
-			if (returnCode != 0)
-				throw std::system_error(returnCode, std::generic_category(), "Error al ejecutar el comando del sistema");
+			// // std::string  pathFileName = "./upload" + _locationConf.getRef() + _request.getFileName();
+			// std::string pathFileName = "./upload" + _locationConf.getRef() + "/nombrefichero.png";
+			// std::string command = "touch "
+			// 											" \"" +
+			// 											pathFileName + "\"";
+			// int returnCode = std::system(command.c_str());
+			// // Verificar el éxito del comando del sistema
+			// if (returnCode != 0)
+			// 	throw std::system_error(returnCode, std::generic_category(), "Error al ejecutar el comando del sistema");
 
-			std::cout << pathFileName << std::endl;
-			std::cout << RESET << std::endl;
+			// std::cout << pathFileName << std::endl;
+			// std::cout << RESET << std::endl;
 
-			std::string res = execPythonFile("./cgi_bin/upload.py", pathFileName, _request.getHeader("Content"));
+			// std::string res = execPythonFile("./cgi_bin/upload.py", pathFileName, _request.getHeader("Content"));
 		}
 		else if (realPath.find("register.py") != std::string::npos)
 		{
@@ -222,18 +230,19 @@ void HTTPRes::methodPost(const bool &autoindex)
 			std::cout << "res: " << res << std::endl;
 			res == "0\n" ? _header.addField("Location", "/web") : _header.addField("Location", "/web/login_err.html");
 		}
-		else
-		{
-			std::string pathFileName = "./upload" + _locationConf.getRef() + "/nombrefichero.png";
+		// else
+		// {
+		;
+		// std::string pathFileName = "./upload" + _locationConf.getRef() + "/nombrefichero.png";
 
-			std::string command = "touch "
-														" \"" +
-														pathFileName + "\"";
-			std::string res = execPythonFile("./cgi_bin/upload.py", pathFileName, _request.getHeader("Content"));
+		// std::string command = "touch "
+		// 											" \"" +
+		// 											pathFileName + "\"";
+		// std::string res = execPythonFile("./cgi_bin/upload.py", pathFileName, _request.getHeader("Content"));
 
-			std::cout << "pathFileName: " << pathFileName << std::endl;
-			std::cout << "res: " << res << std::endl;
-		}
+		// std::cout << "pathFileName: " << pathFileName << std::endl;
+		// std::cout << "res: " << res << std::endl;
+		// }
 	}
 	else
 	{
