@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/30 17:11:50 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/30 18:40:17 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,32 +184,6 @@ int delConnect(int fd)
 	return close(fd);
 }
 
-// void multi()
-// {
-// }
-
-// void normal()
-// {
-
-// 	_header = response.getHeader();
-// 	_content = response.getContent();
-
-// 	if (evSet.flags & EV_FLAG0)
-// 	{
-// 		std::cout << "CON EV_FLAG0" << std::endl;
-// 		_flags &= ~EV_FLAG0; // Eliminar EV_FLAG0
-
-// 		// EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & EV_FLAG0, 0, 0, NULL);
-// 		EV_SET(&evSet, evList[i].ident, EVFILT_READ, _flags, 0, 0, NULL);
-// 		kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
-// 		_ref = false;
-// 	}
-// 	else
-// 	{
-// 		std::cout << "SIN EV_FLAG0" << std::endl;
-// 	}
-// }
-
 void saveContentToFile(const std::string &filename, const std::string &content)
 {
 	std::ofstream file(filename.c_str(), std::ios::out | std::ios::binary);
@@ -293,7 +267,7 @@ void AdminServer::run(int sockfd, int kq)
 				printPeticion(buffer);
 				//===================PARSING==============================================
 				// HTTPRequest request(buffer);
-				request.getBuffer(buffer, n, _multi);
+				request.takeBuffer(buffer, n, _multi, _write);
 				// [ Request client ]
 				request.print();
 
@@ -319,10 +293,6 @@ void AdminServer::run(int sockfd, int kq)
 				// HTTPBody body(request);
 				HTTPRes response(request, &_config, _ref);
 
-				// TODO
-				// printResponse(response.getHeader(), response.getContent());
-
-				// _config.print();
 				// //=========================================================================
 
 				// Manejo de flags para la primera peticion
@@ -416,8 +386,8 @@ void AdminServer::run(int sockfd, int kq)
 				// // EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, _flags, 0, 0, NULL);
 				// // kevent(kq, &evSet, 1, NULL, 0, NULL);
 				// //=========================================================================
-				// if (!_multi)
-				// 	request.cleanObject();
+				if (!_multi)
+					request.cleanObject();
 			}
 			// Escribir en el socket cuando esté listo para escribir
 			else if (evList[i].filter == EVFILT_WRITE)

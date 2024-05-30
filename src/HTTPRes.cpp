@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRes.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/29 19:52:58 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/30 18:38:35 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,7 +177,7 @@ void HTTPRes::methodPost(const bool &autoindex)
 	// _header.addOne(_request.getHeader("Version"), "200 OK");
 	// _header.addField("Content-Type", "text/html");
 
-	if (!autoindex)
+	if (!autoindex && 0)
 	{
 		if (realPath.find("upload.py") != std::string::npos)
 		{
@@ -235,7 +235,7 @@ void HTTPRes::methodPost(const bool &autoindex)
 			std::cout << "res: " << res << std::endl;
 		}
 	}
-	else
+	else if (0)
 	{
 		std::cout << YELLOW;
 		std::cout << " EXPLORE POST\n";

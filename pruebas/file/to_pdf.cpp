@@ -12,7 +12,7 @@ int main(int argc, char **argv)
 	// int returnCode = std::system(command.c_str());
 	// std::cout << returnCode << std::endl;
 	std::ifstream in(".bin", std::ios::in | std::ios::binary);
-	std::ofstream out("img.png", std::ios::out | std::ios::binary);
+	std::ofstream out("file.pdf", std::ios::out | std::ios::binary);
 	if (!in.good())
 	{
 		std::cout << "In error" << std::endl;

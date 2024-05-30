@@ -6,3 +6,5 @@ BackEnd/node_modules
 BackEnd/dist
 BackEnd/docker-compose.yml_ori
 *.env
+tmp.txt
+.tmp
