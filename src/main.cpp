@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/30 11:35:05 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/30 19:27:24 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,12 +42,8 @@ void checkArg(int argc, char **argv)
 			throw std::logic_error(RED "Error: file is not a configuration file!" RESET);
 		in.open(argv[1]);
 		if (!in.good())
-			throw std::runtime_error(RED "config file error!" RESET);
+			throw std::runtime_error("config file error!");
 	}
-	// 	for (std::vector<std::string>::iterator it = content.begin(); it != content.end(); it++)
-	// 	{
-	// 		std::cout << "Array line: " << *it << std::endl;
-	// 	}
 }
 
 static void printServers(std::vector<ServerConfig *> &servers)
@@ -81,7 +77,7 @@ void createSocket()
 
 	if (bind(sockfd, addr->ai_addr, addr->ai_addrlen) < 0)
 	{
-		std::string errorMsg = "Socket binding error:\n";
+		std::string errorMsg = "socket binding:\n";
 		errorMsg += "Port: " + std::to_string(ntohs((reinterpret_cast<sockaddr_in *>(addr->ai_addr))->sin_port)) + "\n";
 		errorMsg += strerror(errno);
 		throw std::runtime_error(errorMsg);
@@ -99,7 +95,7 @@ void createKqueue()
 	if (kq == -1)
 	{
 		std::cerr << "Error creating kqueue: " << strerror(errno) << std::endl;
-		throw std::runtime_error("creating kqueue");
+		throw std::runtime_error("kqueue creation failed!");
 	}
 }
 
@@ -149,7 +145,7 @@ int main(int argc, char **argv)
 	}
 	catch (const std::runtime_error &e)
 	{
-		std::cerr << RED << "Error: " << e.what() << std::endl;
+		std::cerr << RED << "Error: " << e.what() << RESET << std::endl;
 		return EXIT_FAILURE;
 	}
 	catch (const std::exception &e)
