@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Location.cpp                                       :+:      :+:    :+:   */
+/*   location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 17:46:33 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/29 10:35:58 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/30 15:11:06 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,18 +31,17 @@ void Location::init(const LocationResult &location, const std::string &path, con
 	std::string fileName = isFile(path) && !isFileLocation() ? getFileName(path) : index;
 	std::string pathFile = removeSubstring(path, location.name);
 
-	// std::string referer_location = removeBeforeNumber(referer, "8080");
-	std::string referer_location = _location.name;
-
+	// std::string referer_location = _location.name;
+	
 	std::cout << MAGENTA;
 	std::cout << " path: " << path << std::endl;
 	std::cout << " referer: " << referer << std::endl;
-	std::cout << " referer_location: " << referer_location << std::endl;
+	std::cout << " _location.name: " << _location.name << std::endl;
 	// std::map<std::string, std::string>::iterator it = _location.config.find("allow_methods");
 	// std::cout << " metodos: " << it->second << std::endl;
 
 	std::cout << "==============\n";
-	// std::cout << "refer + path: " << referer_location + path << std::endl;
+	// std::cout << "refer + path: " << _location.name + path << std::endl;
 	std::cout << "==============\n";
 
 	std::cout << " isFileLocation : " << isFileLocation() << std::endl;
@@ -63,7 +62,7 @@ void Location::init(const LocationResult &location, const std::string &path, con
 		if (!alias.empty())
 		{
 			std::cout << "!alias.empty if\n";
-			// if (!referer_location.empty())
+			// if (!_location.name.empty())
 			if (_location.name == path)
 			{
 				std::cout << " _location.name == path: " << alias << std::endl;
@@ -122,15 +121,15 @@ void Location::init(const LocationResult &location, const std::string &path, con
 						std::cout << "  root SIN ref: " << root + path << std::endl;
 						_location.realPath = root + path;
 					}
-					else if (pathStartsWithLocation(path, referer_location))
+					else if (pathStartsWithLocation(path, _location.name))
 					{
 						std::cout << "  root CON ref pathStartsWithLocation: " << root + path << std::endl;
 						_location.realPath = root + path;
 					}
 					else
 					{
-						std::cout << "  root CON ref: " << root + referer_location + path << std::endl;
-						_location.realPath = root + referer_location + path;
+						std::cout << "  root CON ref: " << root + _location.name + path << std::endl;
+						_location.realPath = root + _location.name + path;
 					}
 				}
 			}
@@ -174,10 +173,20 @@ void Location::init(const LocationResult &location, const std::string &path, con
 				else
 				{
 					std::cout << "  else: " << std::endl;
-					if (path != referer_location)
+					if (path != _location.name)
 					{
-						std::cout << "   root con ref != path: " << root + referer_location + path + fileName << std::endl;
-						_location.realPath = root + referer_location + path + fileName;
+						std::cout << "   root con ref != path: " << root + _location.name + path + fileName << std::endl;
+						std::cout << "    root: " << root << std::endl;
+						std::cout << "    _location.name: " << _location.name << std::endl;
+						std::cout << "    path: " << path << std::endl;
+						std::cout << "    fileName: " << fileName << std::endl;
+
+							// si en path esta _location.name; solo poner path
+							// toma es necesario para la vuelta de un ref
+						std::string toma =	!_location.name.find(path) ? _location.name + path : path;
+						_location.realPath = root + toma + fileName;
+						// _location.realPath = root + _location.name + path + fileName;
+				
 					}
 
 					else
