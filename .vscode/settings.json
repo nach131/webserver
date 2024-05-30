@@ -62,6 +62,7 @@
     "*.c": "c",
     "*.php": "php",
     "*.cpp": "cpp",
-    "string": "cpp"
+    "string": "cpp",
+    "ostream": "cpp"
   }
 }

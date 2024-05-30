@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/30 12:30:48 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/30 13:45:52 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -426,6 +426,11 @@ void AdminServer::run(int sockfd, int kq)
 				// Enviar la respuesta al cliente
 				sendResGet(evList[i].ident, _header, _content);
 
+				if (_write)
+				{
+					_content.clear();
+					_header.clear();
+				}
 				int flags_tmp = evSet.flags; // para guardar los flags activos
 
 				// Después de enviar la respuesta, eliminar el evento EVFILT_WRITE
