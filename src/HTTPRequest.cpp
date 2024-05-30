@@ -6,19 +6,21 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/30 17:10:06 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/30 19:05:55 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HTTPRequest.hpp"
 #include "WebServer.hpp"
 
-HTTPRequest::HTTPRequest() : _last(false) {}
+HTTPRequest::HTTPRequest() : _last(false), _firstBound(false) {}
 
 HTTPRequest::HTTPRequest(const HTTPRequest &rhs)
 {
 	_last = rhs._last;
+	_firstBound = rhs._firstBound;
 	_fileName = rhs._fileName;
+	_fileType = rhs._fileType;
 	_boundary = rhs._boundary;
 	_map = rhs._map;
 }
@@ -30,6 +32,20 @@ void HTTPRequest::setMulti(bool &multi) { multi = _last; }
 std::string HTTPRequest::getFileName() { return _fileName; }
 
 std::string HTTPRequest::getFileType() { return _fileType; }
+
+const std::map<std::string, std::string> &HTTPRequest::getMap() const { return _map; }
+
+const std::string &HTTPRequest::getHeader(const std::string name) const { return _map.find(name)->second; }
+
+// esto esta mal hay que componerlo bien
+std::string HTTPRequest::getLocation()
+{
+	std::string path = getHeader("Path");
+	if (path == "/" || path == "/index.html")
+		return "/";
+	std::vector<std::string> parts = split(path, '/');
+	return "/" + parts[0];
+}
 
 void HTTPRequest::findFileName(const char *buf)
 {
@@ -103,6 +119,7 @@ void HTTPRequest::checkFirstBoundary(std::vector<std::string> &content, int &sta
 	if (content[0].find(_boundary) == std::string::npos)
 		return;
 	int count = 0;
+	_firstBound = true;
 	for (std::vector<std::string>::iterator it = content.begin(); it != content.end() && count < 4;)
 	{
 		start += (*it).length();
@@ -112,139 +129,96 @@ void HTTPRequest::checkFirstBoundary(std::vector<std::string> &content, int &sta
 	}
 }
 
-void HTTPRequest::checkLastBoundary(const char *buffer, int &start, int len)
+void HTTPRequest::checkLastBoundary(const char *buffer, int &start, int &end, int len)
 {
-	// for (std::vector<std::string>::iterator it = content.begin(); it != content.end();)
-	// {
-	// 	if ((*it).find(_boundary) != std::string::npos)
-	// 	{
-	// 		_last = false;
-	// 		start += (*it).length();
-	// 		content.erase(it);
-	// 		if (it == content.end())
-	// 			break;
-	// 		continue;
-	// 	}
-	// 	it++;
-	// }
-	// std::string mapContent;
-	// for (std::vector<std::string>::iterator it = content.begin(); it != content.end(); it++)
-	// 	mapContent += *it;
-	// _map["Content"] = mapContent;
-	bool check;
-	for (int i = start; i < len; i++)
+	if (_last)
 	{
-		check = true;
-		if (buffer[i] == '-')
+		bool check;
+		for (int i = start; i < len; i++)
 		{
-			for (int j = i; j < i + 8; j++)
+			check = true;
+			if (buffer[i] == '-')
 			{
-				// std::cout << ORANGE "J CHAR: " << buffer[j] << " J: " << j << RESET << std::endl;
-				if (buffer[j] != '-')
+				for (int j = i; j < i + 8; j++)
 				{
-					check = false;
-					break;
+					// std::cout << ORANGE "J CHAR: " << buffer[j] << " J: " << j << RESET << std::endl;
+					if (buffer[j] != '-')
+					{
+						check = false;
+						break;
+					}
 				}
+				if (!check)
+					continue;
+				_last = false;
+				for (int j = i; buffer[j] != '\0'; j++)
+				{
+					end++;
+					// std::cout << MAGENTA "Char last boundary: " << buffer[j] << " End: " << end << RESET << std::endl;
+				}
+				end++;
+				break;
 			}
-			if (!check)
-				continue;
-			for (int j = i; buffer[j] != '\0'; j++)
-			{
-				start++;
-				// std::cout << MAGENTA "Char last boundary: " << buffer[j] << " Start: " << start << RESET << std::endl;
-			}
-			break;
 		}
 	}
 }
 
-void HTTPRequest::getBuffer(const char *buf, int len, bool &multi)
+void HTTPRequest::takeBuffer(const char *buf, int len, bool &multi, bool &write)
 {
-	int i;
+	int end;
 	int start;
-	// std::ifstream in(buf, std::ios::in | std::ios::binary);
-	// std::stringstream in(buf);
-	std::vector<std::string> content;
-	// unsigned int mySize = len;
-	// out.write(reinterpret_cast<char *>(&mySize), sizeof(unsigned int));
-	// out.write(buf, mySize * sizeof(char));
 	std::string line, input(buf);
 	std::stringstream ss(input);
+	std::vector<std::string> content;
 	if (!multi)
 	{
+		end = 0;
 		start = 0;
 		findFileName(buf);
 		takeHeader(ss, start);
-		// std::cout << RED << "Print header:\n";
-		// for (std::map<std::string, std::string>::iterator it = _map.begin(); it != _map.end(); it++)
-		// 	std::cout << "Key: " << it->first << " Value: " << it->second << std::endl;
-		// std::cout << RESET << std::endl;
 		while (getline(ss, line))
 			content.push_back(line + "\n");
-		if (content.size() > 0)
+		// std::cout << ORANGE "Is multi" << _last << " And size: " << content.size() << RESET << std::endl;
+		if (content.size() > 0 && _last)
 		{
-			if (_last)
-				checkFirstBoundary(content, start);
+			checkFirstBoundary(content, start);
 			_boundary.append("--");
-			checkLastBoundary(buf, start, len);
+			checkLastBoundary(buf, start, end, len);
+			std::ofstream out(".tmpdir/.bin", std::ios::app | std::ios::binary);
+			if (!out.good())
+				exit(0);
+			out.write(&buf[start], len - start - end);
+			out.close();
 		}
-		std::ofstream out("conf_web/out", std::ios::app | std::ios::binary);
-		if (!out.good())
-		{
-			// std::cout << "Out bad" << std::endl;
-			exit(0);
-		}
-		for (i = 0; i < len; i++)
-			;
-		// std::cout << "\nBuf length: ";
-		// std::cout << i << " Len: " << len << std::endl
-		//   << std::endl;
-		// std::cout << "No Multi Written characters: " << i - start << " I:" << i << " Start: " << start << std::endl;
-		out.write(&buf[start], i - start);
-		out.close();
 		setMulti(multi);
+		content.clear();
+		// std::cout << "No Multi Written characters: " << i - start << " I:" << i << " Start: " << start << std::endl;
+		std::cout << GREEN "Multi: " << multi << RESET << std::endl;
 	}
 	else
 	{
+		end = 0;
 		start = 0;
-		// std::cout << RED << "Print header:\n";
-		// for (std::map<std::string, std::string>::iterator it = _map.begin(); it != _map.end(); it++)
-		// 	std::cout << "Key: " << it->first << " Value: " << it->second << std::endl;
-		// std::cout << RESET << std::endl;
 		while (getline(ss, line))
 			content.push_back(line + "\n");
-		checkFirstBoundary(content, start);
-		checkLastBoundary(buf, start, len);
-		std::ofstream out("conf_web/out", std::ios::app | std::ios::binary);
+		if (!_firstBound)
+			checkFirstBoundary(content, start);
+		checkLastBoundary(buf, start, end, len);
+		std::ofstream out(".tmpdir/.bin", std::ios::app | std::ios::binary);
 		if (!out.good())
-		{
-			// std::cout << "Out bad" << std::endl;
 			exit(0);
-		}
-		for (i = 0; i < len; i++)
-			;
 		// std::cout << "Multi Written characters: " << i - start << " I:" << i << " Start: " << start << std::endl;
-		out.write(buf, i - start);
+		out.write(&buf[start], len - start - end);
 		out.close();
 		setMulti(multi);
 	}
-	content.clear();
-	std::cout << RED << "Content: " << std::endl;
-	std::cout << _map["Content"] << std::endl;
-}
-
-const std::map<std::string, std::string> &HTTPRequest::getMap() const { return _map; }
-
-const std::string &HTTPRequest::getHeader(const std::string name) const { return _map.find(name)->second; }
-
-// esto esta mal hay que componerlo bien
-std::string HTTPRequest::getLocation()
-{
-	std::string path = getHeader("Path");
-	if (path == "/" || path == "/index.html")
-		return "/";
-	std::vector<std::string> parts = split(path, '/');
-	return "/" + parts[0];
+	if (!multi)
+	{
+		_firstBound = false;
+		write = true;
+	}
+	// std::cout << RED << "Content: " << std::endl;
+	// std::cout << _map["Content"] << std::endl;
 }
 
 void HTTPRequest::print()

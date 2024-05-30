@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/30 19:14:13 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/30 19:19:42 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,10 +185,10 @@ void HTTPRes::methodPost(const bool &autoindex)
 
 			if (_write)
 			{
+				std::cout << " write SI\n";
 			}
 			else
-
-				;
+				std::cout << " write NO\n";
 			// TODO
 			// CGI UPLOAD
 			// writeToFile(_request.getHeader("Content"));

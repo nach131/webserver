@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/30 19:15:39 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/30 19:18:18 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,32 +184,6 @@ int delConnect(int fd)
 	return close(fd);
 }
 
-// void multi()
-// {
-// }
-
-// void normal()
-// {
-
-// 	_header = response.getHeader();
-// 	_content = response.getContent();
-
-// 	if (evSet.flags & EV_FLAG0)
-// 	{
-// 		std::cout << "CON EV_FLAG0" << std::endl;
-// 		_flags &= ~EV_FLAG0; // Eliminar EV_FLAG0
-
-// 		// EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & EV_FLAG0, 0, 0, NULL);
-// 		EV_SET(&evSet, evList[i].ident, EVFILT_READ, _flags, 0, 0, NULL);
-// 		kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
-// 		_ref = false;
-// 	}
-// 	else
-// 	{
-// 		std::cout << "SIN EV_FLAG0" << std::endl;
-// 	}
-// }
-
 void saveContentToFile(const std::string &filename, const std::string &content)
 {
 	std::ofstream file(filename.c_str(), std::ios::out | std::ios::binary);
@@ -293,16 +267,12 @@ void AdminServer::run(int sockfd, int kq)
 				printPeticion(buffer);
 				//===================PARSING==============================================
 				// HTTPRequest request(buffer);
-				request.getBuffer(buffer, n, _multi);
+				request.takeBuffer(buffer, n, _multi, _write);
 				// [ Request client ]
 				request.print();
 
 				HTTPRes response(request, &_config, _ref, _write);
 
-				// TODO
-				// printResponse(response.getHeader(), response.getContent());
-
-				// _config.print();
 				// //=========================================================================
 
 				// Manejo de flags para la primera peticion
