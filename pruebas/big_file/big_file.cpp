@@ -396,7 +396,7 @@ void run(int sockfd, int kq)
 	std::string _header;
 	std::string _content;
 
-	int flags = EV_ADD | EV_FLAG0; // Poner EV_FLAG1 si hay multipart
+	int flags = EV_ADD | EV_ENABLE | EV_FLAG0; // Poner EV_FLAG1 si hay multipart
 
 	while (42)
 	{

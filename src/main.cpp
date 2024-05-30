@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/29 13:31:56 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/30 11:35:05 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "AdminServer.hpp"
 #include "FileContent.hpp"
 #include <netdb.h>
+#include <fcntl.h>
 
 int kq;
 int sockfd;
@@ -65,6 +66,18 @@ void createSocket()
 	hints.ai_socktype = SOCK_STREAM;  // tipo del socket
 	getaddrinfo("127.0.0.1", "8080", &hints, &addr);
 	sockfd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+
+	int flags = fcntl(sockfd, F_GETFL, 0);
+	if (flags == -1)
+	{
+		perror("fcntl");
+		exit(EXIT_FAILURE);
+	}
+	if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1)
+	{
+		perror("fcntl");
+		exit(EXIT_FAILURE);
+	}
 
 	if (bind(sockfd, addr->ai_addr, addr->ai_addrlen) < 0)
 	{

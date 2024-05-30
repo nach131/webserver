@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 00:08:38 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/29 10:17:20 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/30 11:46:31 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ public:
     void takeHeader(std::stringstream &);
     void checkFirstBoundary(std::vector<std::string> &);
     void checkLastBoundary(std::vector<std::string> &);
-    void getBuffer(const char *, bool &);
+    void getBuffer(const char *, int, bool &);
 
     std::string getLocation();
     const std::map<std::string, std::string> &getMap() const;

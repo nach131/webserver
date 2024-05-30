@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/29 12:01:57 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/30 12:10:41 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,11 +128,26 @@ void HTTPRequest::checkLastBoundary(std::vector<std::string> &content)
 	_map["Content"] = mapContent;
 }
 
-void HTTPRequest::getBuffer(const char *buf, bool &multi)
+void HTTPRequest::getBuffer(const char *buf, int len, bool &multi)
 {
 	std::string line, input(buf);
 	std::stringstream ss(input);
+	std::cout << "Input length: " << input.length() << " Buf length: ";
+	int i;
+	// std::ifstream in(buf, std::ios::in | std::ios::binary);
+	// std::stringstream in(buf);
+	std::ofstream out("conf_web/out", std::ios::out | std::ios::ate | std::ios::binary);
+	if (!out.good())
+	{
+		std::cout << "Out bad" << std::endl;
+		exit(0);
+	}
+	for (i = 0; i < len; i++)
+		;
+	std::cout << i << std::endl;
 	std::vector<std::string> content;
+	out.write(buf, len);
+	out.close();
 	if (!multi)
 	{
 		findFileName(buf);
@@ -150,6 +165,7 @@ void HTTPRequest::getBuffer(const char *buf, bool &multi)
 			_boundary.append("--");
 			checkLastBoundary(content);
 		}
+		setMulti(multi);
 	}
 	else
 	{
@@ -161,6 +177,7 @@ void HTTPRequest::getBuffer(const char *buf, bool &multi)
 			content.push_back(line + "\n");
 		checkFirstBoundary(content);
 		checkLastBoundary(content);
+		setMulti(multi);
 	}
 	content.clear();
 	std::cout << RED << "Content: " << std::endl;
