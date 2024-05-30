@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/30 20:38:05 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/30 23:54:15 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -279,14 +279,6 @@ void AdminServer::run(int sockfd, int kq)
 				// //=========================================================================
 
 				// Manejo de flags para la primera peticion
-				if (evSet.flags & EV_FLAG1)
-				{
-					std::cout << " CON EV_FLAG1" << std::endl;
-				}
-				else if (evSet.flags | EV_FLAG1)
-				{
-					std::cout << " SIN EV_FLAG1" << std::endl;
-				}
 
 				if (evSet.flags & EV_FLAG0)
 				{

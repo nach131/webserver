@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRes.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/30 18:38:35 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/30 23:35:33 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,32 +177,20 @@ void HTTPRes::methodPost(const bool &autoindex)
 	// _header.addOne(_request.getHeader("Version"), "200 OK");
 	// _header.addField("Content-Type", "text/html");
 
-	if (!autoindex && 0)
+	if (!autoindex)
 	{
 		if (realPath.find("upload.py") != std::string::npos)
 		{
-			// TODO
 			// CGI UPLOAD
 			// writeToFile(_request.getHeader("Content"));
 			std::cout << RED << "UPLOAD" << std::endl;
 
-			if (!directoryExists("./upload" + _locationConf.getRef()))
-				createDirectory("./upload" + _locationConf.getRef());
+			// if (!directoryExists("./upload" + _locationConf.getRef()))
+			// 	createDirectory("./upload" + _locationConf.getRef());
 
-			// std::string  pathFileName = "./upload" + _locationConf.getRef() + _request.getFileName();
-			std::string pathFileName = "./upload" + _locationConf.getRef() + "/nombrefichero.png";
-			std::string command = "touch "
-														" \"" +
-														pathFileName + "\"";
-			int returnCode = std::system(command.c_str());
-			// Verificar el éxito del comando del sistema
-			if (returnCode != 0)
-				throw std::system_error(returnCode, std::generic_category(), "Error al ejecutar el comando del sistema");
-
-			std::cout << pathFileName << std::endl;
 			std::cout << RESET << std::endl;
 
-			std::string res = execPythonFile("./cgi_bin/upload.py", pathFileName, _request.getHeader("Content"));
+			// std::string res = execPythonFile("./cgi_bin/upload.py", pathFileName, _request.getHeader("Content"));
 		}
 		else if (realPath.find("register.py") != std::string::npos)
 		{

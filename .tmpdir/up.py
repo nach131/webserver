@@ -1,4 +1,5 @@
 import sys
+import os
 import shutil
 
 def main():
@@ -21,8 +22,12 @@ def main():
     except IOError:
         print("Out error")
         return 1
+    os.remove('.bin')
 
     return 0
 
 if __name__ == "__main__":
     print(main())
+
+
+# python3 up.py toma.jpg
