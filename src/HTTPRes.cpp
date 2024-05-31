@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/31 12:55:06 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 14:22:33 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,7 +229,6 @@ void HTTPRes::methodPost(const bool &autoindex)
 	}
 	else
 	{
-		std::cout << YELLOW;
 		std::cout << " EXPLORE POST\n";
 
 		// TODO solo funcionaa TEXTO, incorporar nombre fichero
@@ -237,26 +236,30 @@ void HTTPRes::methodPost(const bool &autoindex)
 
 		if (_write)
 		{
-
+			std::string res;
 			if (!directoryExists(realPath))
 			{
-				std::cout << " crea: " << realPath << std::endl;
 				createDirectory(realPath);
 			}
-			std::cout << "realPath + filename\n";
-			std::cout << realPath + "/" + fileName;
+
 			if (!fileName.empty())
 			{
-				execPython("./cgi_bin/upload.py", realPath + "/" + fileName);
+				res = execPython("./cgi_bin/upload.py", realPath + "/" + fileName);
 			}
 			else
 				throw std::runtime_error("FILENAME empty!");
+			if (res == "0\n")
+			{
+				// std::cout << "OK\n";
+				// _header.addOne(_request.getHeader("Version"), "200 OK");
+				// _header.addField("Content-Type", "text/html");
+				// _content = readFile("./conf_web/error/basico/upload.html");
+			}
 
 			_write = false;
 		}
 
 		// std::cout << "content: " << _request.getHeader("Content") << std::endl;
-		std::cout << RESET;
 	}
 }
 

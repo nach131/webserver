@@ -13,6 +13,7 @@ def main():
     open(file_name, 'a').close()
 
     try:
+        # with open('/Users/nmota-bu/Desktop/webserver/.tmpdir/.bin', 'rb') as in_file:
         with open('./.tmpdir/.bin', 'rb') as in_file:
             with open(file_name, 'wb') as out_file:
                 shutil.copyfileobj(in_file, out_file)
@@ -20,11 +21,11 @@ def main():
         return 1
     except IOError:
         return 1
-    os.remove('./.tmpdir/.bin')
     
     return 0
 
 if __name__ == "__main__":
     print(main())
+    # print(0)
 
 # python3 up.py toma.jpg

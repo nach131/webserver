@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/31 11:52:04 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 13:21:45 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -294,6 +294,9 @@ void AdminServer::run(int sockfd, int kq)
 			{
 				std::cout << YELLOW;
 				std::cout << "ESTO ES EVFILT_WRITE" << std::endl;
+				std::cout << "_header: \n"
+									<< _header;
+
 				// Enviar la respuesta al cliente
 				sendResGet(evList[i].ident, _header, _content);
 
