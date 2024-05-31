@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/30 23:54:15 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 00:28:25 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ AdminServer::~AdminServer() {}
 
 void sendResGet(int newsockfd, const std::string &header, const std::string &content)
 {
-	std::cout << "[ GET ]" << std::endl;
+	std::cout << "[ sendResGet ]" << std::endl;
 
 	int n;
 	// Enviar la respuesta al cliente utilizando el descriptor de archivo correcto (newsockfd)
@@ -184,28 +184,12 @@ int delConnect(int fd)
 	return close(fd);
 }
 
-void saveContentToFile(const std::string &filename, const std::string &content)
-{
-	std::ofstream file(filename.c_str(), std::ios::out | std::ios::binary);
-	if (file.is_open())
-	{
-		file.write(content.c_str(), content.size());
-		file.close();
-		std::cout << "File saved: " << filename << std::endl;
-	}
-	else
-	{
-		std::cerr << "Error: Unable to open file for writing." << std::endl;
-	}
-}
-
 void AdminServer::run(int sockfd, int kq)
 {
 	HTTPRequest request;
 	char buffer[MAX_MSG_SIZE];
 
 	_multi = false;
-	_multinach = false;
 
 	struct kevent evSet;
 	struct kevent evList[MAX_EVENTS];
@@ -250,8 +234,10 @@ void AdminServer::run(int sockfd, int kq)
 			} // read message from client
 			else if (evList[i].filter == EVFILT_READ)
 			{
-
 				//=================DESDE AQUI==============================================
+				std::cout << RED << " [=================EVFILT_READ=================]" << std::endl;
+				std::cout << "_write: " << _write << RESET << std::endl;
+
 				// Recibir datos del cliente
 				memset(buffer, 0, sizeof(buffer));
 				int n = recv(evList[i].ident, buffer, sizeof(buffer), 0);
@@ -291,14 +277,7 @@ void AdminServer::run(int sockfd, int kq)
 														  // checkEVFlag = true;
 					_ref = true;
 				}
-				else if (evSet.flags | EV_FLAG0)
-				{
-					std::cout << "SIN EV_FLAG0" << std::endl;
-				}
 
-				// Colocar el evento en EVFILT_WRITE para enviar la respuesta
-				// TODO controlar si es multipart y si ha acabado de enviar
-				// CUANDO SEA FIN DE FICHERO SEA ON
 				EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, _flags, 0, 0, NULL);
 				kevent(kq, &evSet, 1, NULL, 0, NULL);
 
@@ -312,9 +291,13 @@ void AdminServer::run(int sockfd, int kq)
 			// Escribir en el socket cuando esté listo para escribir
 			else if (evList[i].filter == EVFILT_WRITE)
 			{
+				std::cout << YELLOW;
 				std::cout << "ESTO ES EVFILT_WRITE" << std::endl;
 				// Enviar la respuesta al cliente
 				sendResGet(evList[i].ident, _header, _content);
+
+				std::cout << YELLOW << " [=================EVFILT_WRITE=================]" << std::endl;
+				std::cout << " _write: " << _write << std::endl;
 
 				if (_write)
 				{
@@ -327,6 +310,7 @@ void AdminServer::run(int sockfd, int kq)
 				EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
 				kevent(kq, &evSet, 1, NULL, 0, NULL);
 				evSet.flags = flags_tmp; // asignamos los flags activos
+				std::cout << RESET;
 			}
 		}
 	}

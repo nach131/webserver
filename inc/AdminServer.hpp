@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:26:56 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/30 17:11:43 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/31 00:15:00 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,32 +28,19 @@
 
 class ServerConfig;
 
-// struct Run
-// {
-// 	struct kevent evSet;
-// 	struct kevent evList[MAX_EVENTS];
-// 	struct sockaddr_storage addr;
-// 	socklen_t socklen = sizeof(addr);
-// };
-
 class AdminServer
 {
 private:
-	// Run run;
 	bool _ref;	 // EV_FLAG0
 	bool _multi; // EV_FLAG1
 	bool _write;
-	bool _multinach; // EV_FLAG1
 	std::string _boundary;
 
 	int _flags;
-	// bool _writeFault;
 	LogFile _log;
 	ServerConfig _config;
 	std::string _header;
-	std::string _headerNew;
 	std::string _content;
-	std::string _contentNew;
 
 public:
 	AdminServer(const ServerConfig &config);
