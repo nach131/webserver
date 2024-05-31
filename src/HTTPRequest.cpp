@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/30 19:05:55 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/31 11:37:32 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,12 @@ std::string HTTPRequest::getFileType() { return _fileType; }
 
 const std::map<std::string, std::string> &HTTPRequest::getMap() const { return _map; }
 
-const std::string &HTTPRequest::getHeader(const std::string name) const { return _map.find(name)->second; }
+const std::string &HTTPRequest::getHeader(const std::string name) const
+{
+
+	std::string finded = _map.find(name)->second.empty() ? "" : _map.find(name)->second;
+	return _map.find(name)->second;
+}
 
 // esto esta mal hay que componerlo bien
 std::string HTTPRequest::getLocation()

@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/30 23:35:33 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 10:38:21 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,6 +205,7 @@ void HTTPRes::methodPost(const bool &autoindex)
 		{
 			_header.addOne(_request.getHeader("Version"), "301 Moved Permanently");
 			_header.addField("Content-Type", "text/html");
+
 			std::string res = execPython(realPath, _request.getHeader("Content"));
 
 			std::cout << "res: " << res << std::endl;
@@ -223,7 +224,7 @@ void HTTPRes::methodPost(const bool &autoindex)
 			std::cout << "res: " << res << std::endl;
 		}
 	}
-	else if (0)
+	else
 	{
 		std::cout << YELLOW;
 		std::cout << " EXPLORE POST\n";
