@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/31 11:37:32 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 11:38:15 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,9 @@ void HTTPRequest::findFileName(const char *buf)
 	if (input.find("filename=") != std::string::npos)
 	{
 		_fileName = input.substr(input.find("filename=") + 10,
-								 input.find_last_of("\"") - (input.find("filename=") + 10));
+														 input.find_last_of("\"") - (input.find("filename=") + 10));
 		_fileType = _fileName.substr(_fileName.find_last_of(".") + 1,
-									 _fileName.length() - (_fileName.find(".") + 1) - 1);
+																 _fileName.length() - (_fileName.find(".") + 1) - 1);
 		// std::cout << RED "Filename: -" << _fileName << "- FileType: -" << _fileType << "-" RESET << std::endl;
 	}
 }
@@ -109,7 +109,7 @@ void HTTPRequest::takeHeader(std::stringstream &ss, int &start)
 	for (std::map<std::string, std::string>::iterator it = _map.begin(); it != _map.end(); it++)
 	{
 		if (it->first.find("Content-Type") != std::string::npos &&
-			it->second.find("multipart") != std::string::npos)
+				it->second.find("multipart") != std::string::npos)
 		{
 			_boundary = it->second.substr(it->second.find("boundary") + 9, it->second.length() - (it->second.find("boundary") + 9) - 1);
 			std::cout << RED << "Boundary -> -" << _boundary << RESET << std::endl;
@@ -194,6 +194,15 @@ void HTTPRequest::takeBuffer(const char *buf, int len, bool &multi, bool &write)
 				exit(0);
 			out.write(&buf[start], len - start - end);
 			out.close();
+		}
+		else if (content.size() > 0 && !_last)
+		{
+			std::string mapContent;
+			for (std::vector<std::string>::iterator it = content.begin(); it != content.end(); it++)
+				mapContent += *it;
+			_map["Content"] = mapContent;
+			std::cout << GREEN "Map Content: " << std::endl
+								<< _map["Content"] << RESET << std::endl;
 		}
 		setMulti(multi);
 		content.clear();
