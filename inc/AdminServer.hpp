@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:26:56 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/31 00:15:00 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 19:23:32 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ private:
 	bool _ref;	 // EV_FLAG0
 	bool _multi; // EV_FLAG1
 	bool _write;
+	bool _send;
 	std::string _boundary;
 
 	int _flags;

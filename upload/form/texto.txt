@@ -1,4 +1,0 @@
-  rwxr-xr-x    7   nacho   staff    224 B     Fri May 31 00:06:20 2024    ./
-   rwxr-xr-x   36   nacho   staff      1 KiB   Fri May 31 00:04:10 2024    ../  rwxr-xr-x    7   nacho   staff    224 B     Fri May 31 00:06:20 2024    ./
-   rwxr-xr-x   36   nacho   staff      1 KiB   Fri May 31 00:04:10 2024    ../  rwxr-xr-x    7   nacho   staff    224 B     Fri May 31 00:06:20 2024    ./
-   rwxr-xr-x   36   nacho   staff      1 KiB   Fri May 31 00:04:10 2024    ../

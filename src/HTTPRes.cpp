@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/31 18:16:41 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 20:05:50 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void removeLocationFromPath(const std::string &location, std::string &path)
 		path = path.substr(location.length()); // Modifica path eliminando la parte de location
 }
 
-HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &ref, bool &write) : _request(request), _config(config), _ref(ref), _write(write)
+HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &ref, bool &write, bool &send) : _request(request), _config(config), _ref(ref), _write(write), _send(send)
 {
 	std::string path = _request.getHeader("Path");
 	std::string method = _request.getHeader("Method");
@@ -170,11 +170,6 @@ void HTTPRes::methodPost(const bool &autoindex)
 	std::string realPath = _locationConf.realPath();
 	std::string fileName = _request.getFileName();
 
-	std::cout << "fileName: " << fileName << std::endl;
-
-	// _header.addOne(_request.getHeader("Version"), "200 OK");
-	// _header.addField("Content-Type", "text/html");
-
 	if (!autoindex)
 	{
 		std::cout << "==========autoindex==========\n";
@@ -184,27 +179,17 @@ void HTTPRes::methodPost(const bool &autoindex)
 			std::cout << RED << "UPLOAD" << std::endl;
 
 			std::string ref = _locationConf.getRef();
-			std::cout << "ref: " << _ref << std::endl;
 
 			if (!directoryExists("./upload" + ref))
 				createDirectory("./upload" + ref);
 
 			if (_write)
 			{
-
-				std::string res = execPython("./cgi_bin/upload.py", "./upload" + ref + "/" + fileName);
-
-				if (res == "0\n")
-				{
-
-					std::cout << "OK\n";
-					_header.addOne(_request.getHeader("Version"), "200 OK");
-					_header.addField("Content-Type", "text/html");
-					_content = readFile("./conf_web/error/basico/upload.html");
-				}
-				std::system("rm ./.tmpdir/.bin");
-
-				_write = false;
+				if (!fileName.empty())
+					execUpload("./upload" + ref + "/" + fileName);
+				else
+					// TODO CUIDAD AQUI SALE DE WEBSERVER
+					throw std::runtime_error("FILENAME empty!");
 			}
 
 			std::cout << RESET << std::endl;
@@ -245,9 +230,6 @@ void HTTPRes::methodPost(const bool &autoindex)
 	{
 		std::cout << " EXPLORE POST\n";
 
-		// TODO solo funcionaa TEXTO, incorporar nombre fichero
-		// CGI UPLOAD
-
 		if (_write)
 		{
 			std::string res;
@@ -255,23 +237,11 @@ void HTTPRes::methodPost(const bool &autoindex)
 				createDirectory(realPath);
 
 			if (!fileName.empty())
-				res = execPython("./cgi_bin/upload.py", realPath + "/" + fileName);
+				execUpload(realPath + "/" + fileName);
 			else
 				// TODO CUIDAD AQUI SALE DE WEBSERVER
 				throw std::runtime_error("FILENAME empty!");
-			if (res == "0\n")
-			{
-
-				// std::cout << "OK\n";
-				// _header.addOne(_request.getHeader("Version"), "200 OK");
-				// _header.addField("Content-Type", "text/html");
-				// _content = readFile("./conf_web/error/basico/upload.html");
-			}
-			std::system("rm ./.tmpdir/.bin");
-			_write = false;
 		}
-
-		// std::cout << "content: " << _request.getHeader("Content") << std::endl;
 	}
 }
 
@@ -296,6 +266,22 @@ void HTTPRes::methodDelete()
 	_header.addField("Content-Type", "text/html");
 
 	_content = execPython(py, realPath, realFileName);
+}
+
+void HTTPRes::execUpload(const std::string &pathFile)
+{
+
+	std::string res = execPython("./cgi_bin/upload.py", pathFile);
+
+	if (res == "0\n")
+	{
+		_header.addOne(_request.getHeader("Version"), "200 OK");
+		_header.addField("Content-Type", "text/html");
+		_content = readFile("./conf_web/error/basico/upload.html");
+	}
+	std::system("rm ./.tmpdir/.bin");
+	_write = false;
+	_send = true;
 }
 
 void HTTPRes::methodErr()

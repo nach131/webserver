@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/31 17:44:40 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 19:37:53 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,7 @@ void AdminServer::run(int sockfd, int kq)
 
 	_write = false;
 	_multi = false;
+	_send = false;
 
 	struct kevent evSet;
 	struct kevent evList[MAX_EVENTS];
@@ -176,6 +177,7 @@ void AdminServer::run(int sockfd, int kq)
 				//=================DESDE AQUI==============================================
 				std::cout << RED << " [=================EVFILT_READ=================]" << std::endl;
 				std::cout << "_write: " << _write << RESET << std::endl;
+				_send = false;
 
 				// Recibir datos del cliente
 				memset(buffer, 0, sizeof(buffer));
@@ -199,21 +201,18 @@ void AdminServer::run(int sockfd, int kq)
 				//=========================================================================
 
 				// HTTPBody body(request);
-				HTTPRes response(request, &_config, _ref, _write);
+				HTTPRes response(request, &_config, _ref, _write, _send);
 
 				// //=========================================================================
 
 				// Manejo de flags para la primera peticion
-
 				if (evSet.flags & EV_FLAG0)
 				{
 					std::cout << "CON EV_FLAG0" << std::endl;
 					_flags &= ~EV_FLAG0; // Eliminar EV_FLAG0
 
-					// EV_SET(&evSet, evList[i].ident, EVFILT_READ, EV_ADD & EV_FLAG0, 0, 0, NULL);
 					EV_SET(&evSet, evList[i].ident, EVFILT_READ, _flags, 0, 0, NULL);
-					kevent(kq, &evSet, 1, NULL, 0, NULL); // Agregar el evento modificado al conjunto de eventos
-														  // checkEVFlag = true;
+					kevent(kq, &evSet, 1, NULL, 0, NULL);
 					_ref = true;
 				}
 
@@ -232,15 +231,16 @@ void AdminServer::run(int sockfd, int kq)
 			{
 				std::cout << YELLOW;
 				std::cout << "ESTO ES EVFILT_WRITE" << std::endl;
-				std::cout << "_header: \n"
-									<< _header;
 
-				// Enviar la respuesta al cliente
-				sendResGet(evList[i].ident, _header, _content);
+				if (!_multi)
+					sendResGet(evList[i].ident, _header, _content);
+				else if (_multi && _send)
+					sendResGet(evList[i].ident, _header, _content);
 
 				std::cout << YELLOW << " [=================EVFILT_WRITE=================]" << std::endl;
 				std::cout << " _write: " << _write << std::endl;
 
+				// TODO esto nunca pasas
 				if (_write)
 				{
 					_content.clear();

@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:32 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/31 17:41:04 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 19:58:38 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ private:
 	Location _locationConf;
 	bool _ref;
 	bool &_write;
+	bool &_send;
 
 	std::string getRootLocate(const std::string &path) const;
 
@@ -60,9 +61,10 @@ private:
 	void methodErr();
 
 	void exploreFiles();
+	void execUpload(const std::string &pathFile);
 
 public:
-	HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &ref, bool &write);
+	HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &ref, bool &write, bool &send);
 	~HTTPRes();
 
 	std::string const getHeader() const;
