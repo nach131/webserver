@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/31 22:02:28 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 22:20:05 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,9 +107,6 @@ void HTTPRes::createContent(std::string filePath, bool file)
 {
 	std::string extension = getExtension(filePath);
 
-	// TODO comprobar que el py es de la lista que se pueden ejecutat
-	// hacer lista en config file
-
 	std::cout << RED << "extension: " << extension << RESET << std::endl;
 
 	if (extension == "py")
@@ -120,8 +117,6 @@ void HTTPRes::createContent(std::string filePath, bool file)
 			std::cout << RED << "PHOTO" << RESET << std::endl;
 			_content = execPython(_locationConf.realPath());
 		}
-		// TODO
-		// _content = execPython(filePath);
 	}
 	else if (extension == "php")
 	{
@@ -149,15 +144,18 @@ void HTTPRes::exploreFiles()
 
 	if (!isFile(realPath))
 	{
-		// std::cout << "CARPETA\n";
+		if (directoryExists(realPath))
+		{
+			std::string py = "./cgi_bin/explorer.py";
+			_header.addOne(_request.getHeader("Version"), "200 OK");
+			_header.addField("Content-Type", "text/html");
 
-		std::string py = "./cgi_bin/explorer.py";
-		_header.addOne(_request.getHeader("Version"), "200 OK");
-		_header.addField("Content-Type", "text/html");
+			std::string root = _locationConf.getRoot().empty() ? _locationConf.getAlias() : _locationConf.getRoot();
 
-		std::string root = _locationConf.getRoot().empty() ? _locationConf.getAlias() : _locationConf.getRoot();
-
-		_content = execPython(py, realPath, root);
+			_content = execPython(py, realPath, root);
+		}
+		else
+			error404();
 	}
 	else
 		createContent(realPath, false);
