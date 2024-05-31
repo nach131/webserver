@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/31 12:50:26 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 13:21:05 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,12 +62,14 @@ void HTTPRequest::findFileName(const char *buf)
 	std::string input(buf);
 	if (input.find("filename=") != std::string::npos)
 	{
-		std::cout << "FILENAME POS: " << input.find("filename=") << " " << input.find_first_of("\r", input.find("filename=\"") + 10) << std::endl;
-		_fileName = input.substr(input.find("filename=") + 9,
-														 input.find_first_of("\r", input.find("filename=") + 9) - (input.find("filename=") + 9));
+		unsigned long start = input[input.find("filename=") + 9] == '\"' ? input.find("filename=") + 10 : input.find("filename=") + 9;
+		unsigned long end = start == input.find("filename=") + 10 ? input.find_first_of("\"", input.find("filename=") + 11) : input.find_first_of("\r", input.find("filename=") + 9);
+		std::cout << "FILENAME POS: " << input.find("filename=") << " " << start << " " << end << std::endl;
+		_fileName = input.substr(start, end - start);
 		_fileType = _fileName.substr(_fileName.find_last_of(".") + 1,
-																 _fileName.length() - (_fileName.find(".") + 1) - 1);
-		// std::cout << RED "Filename: -" << _fileName << "- FileType: -" << _fileType << "-" RESET << std::endl;
+									 _fileName.length() - (_fileName.find(".") + 1));
+		std::cout << RED "Filename: -" << _fileName << "- FileType: -" << _fileType << "-" RESET << std::endl;
+		exit(0);
 	}
 }
 
