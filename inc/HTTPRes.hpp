@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:32 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/31 20:11:49 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 22:31:49 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ private:
 	std::string const OtherPath() const;
 
 	void locateOK(const std::string &path);
-	void createContent(std::string filePath, bool file);
+	void createContent(std::string filePath);
 	void folder();
 
 	void methodGet();

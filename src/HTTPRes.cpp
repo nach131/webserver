@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/31 22:20:05 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 22:31:36 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &r
 			std::cout << "realPath: " << _locationConf.realPath() << std::endl;
 
 			if (isFile(_locationConf.realPath()))
-				createContent(_locationConf.realPath(), true);
+				createContent(_locationConf.realPath());
 			else
 				error403();
 		}
@@ -103,7 +103,7 @@ HTTPRes::~HTTPRes() {}
 
 //=========================================================================
 
-void HTTPRes::createContent(std::string filePath, bool file)
+void HTTPRes::createContent(std::string filePath)
 {
 	std::string extension = getExtension(filePath);
 
@@ -119,13 +119,9 @@ void HTTPRes::createContent(std::string filePath, bool file)
 		}
 	}
 	else if (extension == "php")
-	{
-		// error501();
-		_content = execPython("./cgi_bin/php.py");
-	}
+		_content = execPython("./cgi_bin/php.py"); // error501();
 	else
 		_content = readFile(filePath);
-	// comprueba si el fichero a pasar tiene datos
 	if (!_content.empty())
 	{
 		_header.addOne(_request.getHeader("Version"), "200 OK");
@@ -135,7 +131,8 @@ void HTTPRes::createContent(std::string filePath, bool file)
 			_header.addField("Content-Type", _config->getContentType(extension));
 	}
 	else
-		file ? error404() : error403();
+		error403();
+	// file ? error404() : error403();
 }
 
 void HTTPRes::exploreFiles()
@@ -158,7 +155,7 @@ void HTTPRes::exploreFiles()
 			error404();
 	}
 	else
-		createContent(realPath, false);
+		createContent(realPath);
 }
 
 void HTTPRes::methodPost(const bool &autoindex)
