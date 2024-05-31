@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/31 10:38:21 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 12:55:06 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void removeLocationFromPath(const std::string &location, std::string &path)
 		path = path.substr(location.length()); // Modifica path eliminando la parte de location
 }
 
-HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &ref) : _request(request), _config(config), _ref(ref)
+HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &ref, bool &write) : _request(request), _config(config), _ref(ref), _write(write)
 {
 	std::string path = _request.getHeader("Path");
 	std::string method = _request.getHeader("Method");
@@ -171,14 +171,17 @@ void HTTPRes::methodPost(const bool &autoindex)
 	std::cout << "==========POST==========\n";
 
 	std::string realPath = _locationConf.realPath();
+	std::string fileName = _request.getFileName();
 
-	std::cout << "getFileName: " << _request.getFileName() << std::endl;
+	std::cout << "fileName: " << fileName << std::endl;
 
 	// _header.addOne(_request.getHeader("Version"), "200 OK");
 	// _header.addField("Content-Type", "text/html");
 
 	if (!autoindex)
 	{
+		std::cout << "==========autoindex==========\n";
+
 		if (realPath.find("upload.py") != std::string::npos)
 		{
 			// CGI UPLOAD
@@ -213,32 +216,44 @@ void HTTPRes::methodPost(const bool &autoindex)
 		}
 		else
 		{
-			std::string pathFileName = "./upload" + _locationConf.getRef() + "/nombrefichero.png";
+			// std::string pathFileName = "./upload" + _locationConf.getRef() + "/nombrefichero.png";
 
-			std::string command = "touch "
-														" \"" +
-														pathFileName + "\"";
-			std::string res = execPythonFile("./cgi_bin/upload.py", pathFileName, _request.getHeader("Content"));
+			// std::string command = "touch "
+			// 											" \"" +
+			// 											pathFileName + "\"";
+			// std::string res = execPythonFile("./cgi_bin/upload.py", pathFileName, _request.getHeader("Content"));
 
-			std::cout << "pathFileName: " << pathFileName << std::endl;
-			std::cout << "res: " << res << std::endl;
+			// std::cout << "pathFileName: " << pathFileName << std::endl;
+			// std::cout << "res: " << res << std::endl;
 		}
 	}
 	else
 	{
 		std::cout << YELLOW;
 		std::cout << " EXPLORE POST\n";
-		if (!directoryExists(realPath))
-		{
-			std::cout << " crea: " << realPath << std::endl;
-			createDirectory(realPath);
-		}
+
 		// TODO solo funcionaa TEXTO, incorporar nombre fichero
 		// CGI UPLOAD
-		if (isText(_request.getHeader("Content-Type")))
-			;
 
-		// writeToFile(realPath + "/text.txt", _request.getHeader("Content"));
+		if (_write)
+		{
+
+			if (!directoryExists(realPath))
+			{
+				std::cout << " crea: " << realPath << std::endl;
+				createDirectory(realPath);
+			}
+			std::cout << "realPath + filename\n";
+			std::cout << realPath + "/" + fileName;
+			if (!fileName.empty())
+			{
+				execPython("./cgi_bin/upload.py", realPath + "/" + fileName);
+			}
+			else
+				throw std::runtime_error("FILENAME empty!");
+
+			_write = false;
+		}
 
 		// std::cout << "content: " << _request.getHeader("Content") << std::endl;
 		std::cout << RESET;

@@ -20,7 +20,7 @@ def main():
         return 1
     except IOError:
         return 1
-    os.remove('.bin')
+    os.remove('./.tmpdir/.bin')
     
     return 0
 

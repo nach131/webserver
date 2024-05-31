@@ -6,14 +6,19 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/31 11:38:15 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 12:50:26 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "HTTPRequest.hpp"
 #include "WebServer.hpp"
 
-HTTPRequest::HTTPRequest() : _last(false), _firstBound(false) {}
+HTTPRequest::HTTPRequest() : _last(false), _firstBound(false)
+{
+	_fileName = "";
+	_fileType = "";
+	_boundary = "";
+}
 
 HTTPRequest::HTTPRequest(const HTTPRequest &rhs)
 {
@@ -57,8 +62,9 @@ void HTTPRequest::findFileName(const char *buf)
 	std::string input(buf);
 	if (input.find("filename=") != std::string::npos)
 	{
-		_fileName = input.substr(input.find("filename=") + 10,
-														 input.find_last_of("\"") - (input.find("filename=") + 10));
+		std::cout << "FILENAME POS: " << input.find("filename=") << " " << input.find_first_of("\r", input.find("filename=\"") + 10) << std::endl;
+		_fileName = input.substr(input.find("filename=") + 9,
+														 input.find_first_of("\r", input.find("filename=") + 9) - (input.find("filename=") + 9));
 		_fileType = _fileName.substr(_fileName.find_last_of(".") + 1,
 																 _fileName.length() - (_fileName.find(".") + 1) - 1);
 		// std::cout << RED "Filename: -" << _fileName << "- FileType: -" << _fileType << "-" RESET << std::endl;
@@ -252,4 +258,8 @@ void HTTPRequest::cleanObject()
 	_map.clear();
 	_boundary.clear();
 	_fileName.clear();
+	_fileType.clear();
+	// _boundary = "";
+	// _fileName = "";
+	// _fileType = "";
 }

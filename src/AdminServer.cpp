@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/31 00:28:25 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 11:52:04 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,6 +189,7 @@ void AdminServer::run(int sockfd, int kq)
 	HTTPRequest request;
 	char buffer[MAX_MSG_SIZE];
 
+	_write = false;
 	_multi = false;
 
 	struct kevent evSet;
@@ -260,7 +261,7 @@ void AdminServer::run(int sockfd, int kq)
 				//=========================================================================
 
 				// HTTPBody body(request);
-				HTTPRes response(request, &_config, _ref);
+				HTTPRes response(request, &_config, _ref, _write);
 
 				// //=========================================================================
 

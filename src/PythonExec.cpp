@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/28 10:02:31 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/31 10:51:32 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 13:03:34 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ std::string execPython(const std::string &py)
 	std::cout << RESET;
 
 	// Construir el comando del sistema
-	std::string command = "python3 " + py + " > ./conf_web/.tmp";
+	std::string command = "python3 " + py + " > ./.tmpdir/.tmp";
 	int returnCode = std::system(command.c_str());
 
 	// Verificar el éxito del comando del sistema
@@ -41,7 +41,7 @@ std::string execPython(const std::string &py)
 		throw std::system_error(returnCode, std::generic_category(), "Error al ejecutar el comando del sistema");
 
 	// Leer el archivo temporal
-	std::ifstream tempFile("./conf_web/.tmp");
+	std::ifstream tempFile("./.tmpdir/.tmp");
 	if (!tempFile.good())
 		throw std::runtime_error("Error: No se pudo abrir el archivo temporal para leer");
 
@@ -65,7 +65,7 @@ std::string execPython(const std::string &py, const std::string &data)
 
 	removeLastNewline(dataTmp);
 	// Construir el comando del sistema
-	std::string command = "python3 " + py + " \"" + dataTmp + "\" > ./conf_web/.tmp";
+	std::string command = "python3 " + py + " \"" + dataTmp + "\" > ./.tmpdir/.tmp";
 	int returnCode = std::system(command.c_str());
 
 	// Verificar el éxito del comando del sistema
@@ -73,7 +73,7 @@ std::string execPython(const std::string &py, const std::string &data)
 		throw std::system_error(returnCode, std::generic_category(), "Error al ejecutar el comando del sistema");
 
 	// Leer el archivo temporal
-	std::ifstream tempFile("./conf_web/.tmp");
+	std::ifstream tempFile("./.tmpdir/.tmp");
 	if (!tempFile.good())
 		throw std::runtime_error("Error: No se pudo abrir el archivo temporal para leer");
 
@@ -104,7 +104,7 @@ std::string execPython(const std::string &py, const std::string &dirPath, const 
 	// 	throw std::runtime_error("Error: No se encontró el directorio especificado: " + dirPath);
 
 	// Construir el comando del sistema
-	std::string command = "python3 " + py + " " + dirPath + " " + root_location + " > ./conf_web/.tmp";
+	std::string command = "python3 " + py + " " + dirPath + " " + root_location + " > ./.tmpdir/.tmp";
 	int returnCode = std::system(command.c_str());
 
 	// Verificar el éxito del comando del sistema
@@ -112,7 +112,7 @@ std::string execPython(const std::string &py, const std::string &dirPath, const 
 		throw std::system_error(returnCode, std::generic_category(), "Error al ejecutar el comando del sistema");
 
 	// Leer el archivo temporal
-	std::ifstream tempFile("./conf_web/.tmp");
+	std::ifstream tempFile("./.tmpdir/.tmp");
 	if (!tempFile.good())
 		throw std::runtime_error("Error: No se pudo abrir el archivo temporal para leer");
 
@@ -121,7 +121,7 @@ std::string execPython(const std::string &py, const std::string &dirPath, const 
 	result = ss.str();
 
 	// Limpiar el archivo temporal
-	// if (std::remove("./conf_web/.tmp") != 0)
+	// if (std::remove("./.tmpdir/.tmp") != 0)
 	// 	std::cerr << "Advertencia: No se pudo eliminar el archivo temporal" << std::endl;
 
 	return result;
@@ -158,7 +158,7 @@ std::string execPythonFile(const std::string &py, const std::string &filename, c
 		throw std::system_error(returnCode, std::generic_category(), "Error al ejecutar el comando del sistema");
 
 	// Leer el archivo temporal
-	std::ifstream tempFile("./conf_web/.tmp");
+	std::ifstream tempFile("./.tmpdir/.tmp");
 	if (!tempFile.good())
 		throw std::runtime_error("Error: No se pudo abrir el archivo temporal para leer");
 
