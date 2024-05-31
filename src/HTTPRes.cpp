@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/31 14:22:33 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 18:16:41 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,7 +149,7 @@ void HTTPRes::exploreFiles()
 
 	if (!isFile(realPath))
 	{
-		std::cout << "CARPETA\n";
+		// std::cout << "CARPETA\n";
 
 		std::string py = "./cgi_bin/explorer.py";
 		_header.addOne(_request.getHeader("Version"), "200 OK");
@@ -160,10 +160,7 @@ void HTTPRes::exploreFiles()
 		_content = execPython(py, realPath, root);
 	}
 	else
-	{
-		std::cout << "FILE\n";
 		createContent(realPath, false);
-	}
 }
 
 void HTTPRes::methodPost(const bool &autoindex)
@@ -184,16 +181,33 @@ void HTTPRes::methodPost(const bool &autoindex)
 
 		if (realPath.find("upload.py") != std::string::npos)
 		{
-			// CGI UPLOAD
-			// writeToFile(_request.getHeader("Content"));
 			std::cout << RED << "UPLOAD" << std::endl;
 
-			// if (!directoryExists("./upload" + _locationConf.getRef()))
-			// 	createDirectory("./upload" + _locationConf.getRef());
+			std::string ref = _locationConf.getRef();
+			std::cout << "ref: " << _ref << std::endl;
+
+			if (!directoryExists("./upload" + ref))
+				createDirectory("./upload" + ref);
+
+			if (_write)
+			{
+
+				std::string res = execPython("./cgi_bin/upload.py", "./upload" + ref + "/" + fileName);
+
+				if (res == "0\n")
+				{
+
+					std::cout << "OK\n";
+					_header.addOne(_request.getHeader("Version"), "200 OK");
+					_header.addField("Content-Type", "text/html");
+					_content = readFile("./conf_web/error/basico/upload.html");
+				}
+				std::system("rm ./.tmpdir/.bin");
+
+				_write = false;
+			}
 
 			std::cout << RESET << std::endl;
-
-			// std::string res = execPythonFile("./cgi_bin/upload.py", pathFileName, _request.getHeader("Content"));
 		}
 		else if (realPath.find("register.py") != std::string::npos)
 		{
@@ -212,7 +226,7 @@ void HTTPRes::methodPost(const bool &autoindex)
 			std::string res = execPython(realPath, _request.getHeader("Content"));
 
 			std::cout << "res: " << res << std::endl;
-			res == "0\n" ? _header.addField("Location", "/web") : _header.addField("Location", "/web/login_err.html");
+			res == "0\n" ? _header.addField("Location", "/web/wellcome.html") : _header.addField("Location", "/web/login_err.html");
 		}
 		else
 		{
@@ -238,24 +252,22 @@ void HTTPRes::methodPost(const bool &autoindex)
 		{
 			std::string res;
 			if (!directoryExists(realPath))
-			{
 				createDirectory(realPath);
-			}
 
 			if (!fileName.empty())
-			{
 				res = execPython("./cgi_bin/upload.py", realPath + "/" + fileName);
-			}
 			else
+				// TODO CUIDAD AQUI SALE DE WEBSERVER
 				throw std::runtime_error("FILENAME empty!");
 			if (res == "0\n")
 			{
+
 				// std::cout << "OK\n";
 				// _header.addOne(_request.getHeader("Version"), "200 OK");
 				// _header.addField("Content-Type", "text/html");
 				// _content = readFile("./conf_web/error/basico/upload.html");
 			}
-
+			std::system("rm ./.tmpdir/.bin");
 			_write = false;
 		}
 

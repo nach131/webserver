@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/31 13:21:05 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/31 17:59:00 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,8 @@ void HTTPRequest::findFileName(const char *buf)
 		_fileType = _fileName.substr(_fileName.find_last_of(".") + 1,
 									 _fileName.length() - (_fileName.find(".") + 1));
 		std::cout << RED "Filename: -" << _fileName << "- FileType: -" << _fileType << "-" RESET << std::endl;
-		exit(0);
+		// TODO Y ESTE EXIT
+		// exit(0);
 	}
 }
 

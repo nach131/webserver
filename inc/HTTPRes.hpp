@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:32 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/31 11:51:16 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 17:41:04 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ private:
 	ServerConfig *_config;
 	Location _locationConf;
 	bool _ref;
-	bool _write;
+	bool &_write;
 
 	std::string getRootLocate(const std::string &path) const;
 
