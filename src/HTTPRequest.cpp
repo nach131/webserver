@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/30 19:05:55 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/05/31 11:35:07 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,6 +189,15 @@ void HTTPRequest::takeBuffer(const char *buf, int len, bool &multi, bool &write)
 				exit(0);
 			out.write(&buf[start], len - start - end);
 			out.close();
+		}
+		else if (content.size() > 0 && !_last)
+		{
+			std::string mapContent;
+			for (std::vector<std::string>::iterator it = content.begin(); it != content.end(); it++)
+				mapContent += *it;
+			_map["Content"] = mapContent;
+			std::cout << GREEN "Map Content: " << std::endl
+					  << _map["Content"] << RESET << std::endl;
 		}
 		setMulti(multi);
 		content.clear();
