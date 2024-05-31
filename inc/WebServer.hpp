@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServer.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:34:48 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/29 19:33:24 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 13:00:31 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,5 +51,17 @@ bool pathStartsWithLocation(const std::string &path, const std::string &location
 bool createDirectory(const std::string &path);
 bool isText(const std::string &str);
 std::string intToString(int number);
+
+class LogFile
+{
+private:
+	LogFile();
+	~LogFile();
+	std::fstream file;
+	static LogFile instance;
+
+public:
+	static void print(std::string, std::string);
+};
 
 #endif

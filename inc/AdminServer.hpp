@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:26:56 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/31 00:15:00 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 12:26:50 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@
 #include "HTTPRes.hpp"
 #include "HTTPRequest.hpp"
 #include "HTTPHeader.hpp"
-#include "LogFile.hpp"
 
 #include "HTTPRequestHandler.hpp"
 
@@ -37,7 +36,6 @@ private:
 	std::string _boundary;
 
 	int _flags;
-	LogFile _log;
 	ServerConfig _config;
 	std::string _header;
 	std::string _content;
