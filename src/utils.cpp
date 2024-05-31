@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/29 19:32:34 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/06/01 00:10:03 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -313,9 +313,34 @@ bool isText(const std::string &str)
 	return str.find("text") != std::string::npos;
 }
 
+bool isCookiepy(const std::string &str)
+{
+	return str.find("setcookie.py") != std::string::npos;
+}
+
 std::string intToString(int number)
 {
 	std::stringstream ss;
 	ss << number;
 	return ss.str();
+}
+
+// Función para analizar la cadena de consulta
+std::map<std::string, std::string> parse_query_string(const std::string &query)
+{
+	std::map<std::string, std::string> query_map;
+	std::string key, value;
+	std::istringstream query_stream(query);
+	std::string pair;
+
+	while (std::getline(query_stream, pair, '&'))
+	{
+		std::istringstream pair_stream(pair);
+		if (std::getline(pair_stream, key, '=') && std::getline(pair_stream, value))
+		{
+			query_map[key] = value;
+		}
+	}
+
+	return query_map;
 }

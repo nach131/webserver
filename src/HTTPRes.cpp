@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/31 22:31:36 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/06/01 00:22:12 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,8 +120,33 @@ void HTTPRes::createContent(std::string filePath)
 	}
 	else if (extension == "php")
 		_content = execPython("./cgi_bin/php.py"); // error501();
+	// else if (isCookiepy(filePath))
+	// {
+	// 	std::cout << "TOMA\n";
+
+	// 	// std::string request = removeSubstring("/cgi_bin/setcookie.py?", filePath);
+
+	// 	// std::cout << "request: " << request << std::endl;
+
+	// 	std::map<std::string, std::string> query_map = parse_query_string(filePath);
+
+	// 	std::string key = query_map["key"];
+	// 	std::string value = query_map["value"];
+	// 	std::cout << "key: " << key << std::endl;
+	// 	std::cout << "value: " << value << std::endl;
+
+	// 	// std::string cookie = execPython(filePath, _request.getHeader("Content"));
+
+	// 	_header.addOne(_request.getHeader("Version"), "204 OK");
+	// 	_header.addField("Content-Type", "text/html");
+	// 	std::string res = "NombreCookie=" + value;
+
+	// 	// _header.addField("Set-Cookie", key + "=" + value);
+	// 	_header.addField("Set-Cookie", res);
+	// }
 	else
 		_content = readFile(filePath);
+
 	if (!_content.empty())
 	{
 		_header.addOne(_request.getHeader("Version"), "200 OK");
@@ -167,7 +192,7 @@ void HTTPRes::methodPost(const bool &autoindex)
 
 	if (!autoindex)
 	{
-		std::cout << "==========autoindex==========\n";
+		std::cout << "==========autoindex OFF==========\n";
 
 		if (realPath.find("upload.py") != std::string::npos)
 		{
@@ -207,6 +232,19 @@ void HTTPRes::methodPost(const bool &autoindex)
 
 			std::cout << "res: " << res << std::endl;
 			res == "0\n" ? _header.addField("Location", "/web/wellcome.html") : _header.addField("Location", "/web/login_err.html");
+		}
+		else if (realPath.find("setcookie.py") != std::string::npos)
+		{
+
+			std::string cookie = execPython(realPath, _request.getHeader("Content"));
+
+			_header.addOne(_request.getHeader("Version"), "204 OK");
+			_header.addField("Content-Type", "text/html");
+			_header.addField("Set-Cookie", cookie);
+
+			// _content += "<html><body>";
+			// _content += "<h1>Cookie has been set</h1>";
+			// _content += "</body></html>";
 		}
 	}
 	else
