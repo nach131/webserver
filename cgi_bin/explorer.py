@@ -9,8 +9,8 @@ def remove_after_last_slash(path):
 
 def generate_directory_listing(directory_path, root_location):
    
-    print("directory_path: ",directory_path)
-    print("root_location: ", root_location,)
+    # print("directory_path: ",directory_path)
+    # print("root_location: ", root_location,)
 
     # Sustituir %20 por un espacio en blanco
     directory_path = directory_path.replace('%20', ' ')
@@ -19,9 +19,6 @@ def generate_directory_listing(directory_path, root_location):
     else:
         path = directory_path # problema con alias hay que pasar alias y poner aqui
 
-
-    print("path", " - ", path)
-    
     pre_path = remove_after_last_slash(path)
 
     # Obtener lista de archivos y directorios
