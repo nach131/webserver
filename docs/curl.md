@@ -92,3 +92,7 @@ curl -X POST -F "file=@42_logo_black.png" -H "Content-Disposition: form-data; na
 
 ## descarga
  curl -o toma.jpg http://localhost:8080/files/example.jpg
+
+
+## DELETE
+ curl -X DELETE http://localhost:8080/files/toma/11.jpg

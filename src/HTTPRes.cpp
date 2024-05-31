@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/31 20:05:50 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 22:02:28 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &r
 			methodPost(true);
 		}
 		else if (method == "DELETE")
-			methodDelete();
+			methodDelete(true);
 	}
 	else
 	{
@@ -91,7 +91,7 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &r
 			methodPost(false);
 		}
 		else if (method == "DELETE")
-			methodDelete();
+			methodDelete(false);
 	}
 
 	//=========================================================================
@@ -213,18 +213,6 @@ void HTTPRes::methodPost(const bool &autoindex)
 			std::cout << "res: " << res << std::endl;
 			res == "0\n" ? _header.addField("Location", "/web/wellcome.html") : _header.addField("Location", "/web/login_err.html");
 		}
-		else
-		{
-			// std::string pathFileName = "./upload" + _locationConf.getRef() + "/nombrefichero.png";
-
-			// std::string command = "touch "
-			// 											" \"" +
-			// 											pathFileName + "\"";
-			// std::string res = execPythonFile("./cgi_bin/upload.py", pathFileName, _request.getHeader("Content"));
-
-			// std::cout << "pathFileName: " << pathFileName << std::endl;
-			// std::cout << "res: " << res << std::endl;
-		}
 	}
 	else
 	{
@@ -245,27 +233,25 @@ void HTTPRes::methodPost(const bool &autoindex)
 	}
 }
 
-void HTTPRes::methodDelete()
+void HTTPRes::methodDelete(const bool &autoindex)
 {
-	std::cout << "==========DELETE==========\n";
-
 	std::string realPath = _locationConf.realPath();
 	std::string remove = _locationConf.getRoot().empty() ? _locationConf.getAlias() : _locationConf.getRoot();
 
 	std::string FileName = removeSubstring(realPath, remove);
 	std::string realFileName = getFileName(FileName);
-
-	realPath = "./upload" + FileName;
-
-	std::cout << "FileName: " << FileName << std::endl;
-	std::cout << "realPath: " << realPath << std::endl;
-	std::cout << "Real File name: " << getFileName(FileName) << std::endl;
-
 	std::string py = "./cgi_bin/delete.py";
+
+	if (autoindex)
+		_content = execPython(py, realPath, realFileName);
+	else
+	{
+		realPath = "./upload" + FileName;
+		_content = execPython(py, realPath, realFileName);
+	}
+
 	_header.addOne(_request.getHeader("Version"), "200 OK");
 	_header.addField("Content-Type", "text/html");
-
-	_content = execPython(py, realPath, realFileName);
 }
 
 void HTTPRes::execUpload(const std::string &pathFile)
@@ -312,3 +298,4 @@ void HTTPRes::error403()
 std::string const HTTPRes::getHeader() const { return _header.getHeader(); }
 
 std::string const HTTPRes::getContent() const { return _content; }
+

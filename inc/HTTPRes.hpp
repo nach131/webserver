@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:32 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/31 19:58:38 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/05/31 20:11:49 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ private:
 
 	void methodGet();
 	void methodPost(const bool &autoindex);
-	void methodDelete();
+	void methodDelete(const bool &autoindex);
 	void methodErr();
 
 	void exploreFiles();
