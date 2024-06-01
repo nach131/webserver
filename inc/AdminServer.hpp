@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:26:56 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/31 19:23:32 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/06/01 18:16:47 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,15 +39,16 @@ private:
 
 	int _flags;
 	LogFile _log;
-	ServerConfig _config;
 	std::string _header;
 	std::string _content;
+	std::vector<ServerConfig *> _config;
 
 public:
-	AdminServer(const ServerConfig &config);
+	AdminServer(std::vector<ServerConfig *> &);
 	~AdminServer();
 
-	void run(int sockfd, int kq);
+	void run(int kq);
+	int takeServer(struct kevent &);
 };
 
 #endif

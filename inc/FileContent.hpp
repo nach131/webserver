@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/21 13:30:54 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/01 13:24:56 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ public:
 
 	void error(const std::string, int);
 	void createServers(std::vector<ServerConfig *> &);
+	void checkDuplicatePorts(std::vector<ServerConfig *> &);
 	void checkKeysAndValues(std::vector<std::string> &, int &);
 	void createOneServer(std::vector<ServerConfig *> &, std::vector<std::string> &);
 

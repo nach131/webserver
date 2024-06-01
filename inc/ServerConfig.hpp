@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/21 14:00:03 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/01 18:18:37 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ class ServerConfig
 private:
 	int _port;
 	int _apiPort;
-	int _serverSocketFd;
-	char *_buffer;
+	int _sockFd;
+	int *_data;
 	std::string _apiForward;
 	std::string _serverName;
 	std::string _rootDirectory;
@@ -42,28 +42,22 @@ public:
 	ServerConfig(const std::vector<std::string> &, const std::string &);
 	~ServerConfig();
 
-	// std::string getRoot(const std::string &location) const;
-	// std::string getIndex(const std::string &location) const;
-	// bool isLocationAllowed(const std::string &path);
-	// bool isMethodAllowed(const std::string &path, const std::string &method);
-
 	LocationResult getLocationConfig(const std::string &path);
 
 	void print() const;
 
-	// int getApiPort() const;
-	// std::string getApiForward() const;
+	int getData();
+	void setData(int *);
 	int getPort() const;
 	int getServerSocket() const;
+	void setServerSocket(const int);
 	std::string getServerName() const;
 	std::string getRootDirectory() const;
 	std::string getErrorPage(int errorCode) const;
 	std::string getContentType(const std::string &extension) const;
-	// std::map<std::string, std::map<std::string, std::string> > getLocation() const;
 
 	char *getBuffer() const;
 	void setBuffer(char *buf);
-	// struct sockaddr_in getServerAddress() const; No se si es necesario
 
 	int checkLine(const std::string &line);
 

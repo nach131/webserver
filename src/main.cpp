@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/30 19:27:24 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/01 19:16:36 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,11 @@
 #include <fcntl.h>
 
 int kq;
-int sockfd;
 
 void setSignals(int sig)
 {
 	std::cout << RESET << std::endl;
 	close(kq);
-	close(sockfd);
 	exit(sig);
 }
 
@@ -52,41 +50,55 @@ static void printServers(std::vector<ServerConfig *> &servers)
 		(*it)->print();
 }
 
-void createSocket()
+void createSocket(std::vector<ServerConfig *> servers)
 {
-	struct addrinfo *addr; // informacion sobre direcciones
-	struct addrinfo hints;
-	memset(&hints, 0, sizeof(hints)); // bzero to hints
-	hints.ai_flags = AI_PASSIVE;	  // se especifica que debe devolver direcciones par vincular al socket de escucha
-	hints.ai_family = PF_UNSPEC;	  // IPv4 o IPv6
-	hints.ai_socktype = SOCK_STREAM;  // tipo del socket
-	getaddrinfo("127.0.0.1", "8080", &hints, &addr);
-	sockfd = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
-
-	int flags = fcntl(sockfd, F_GETFL, 0);
-	if (flags == -1)
+	int i = 0;
+	struct kevent eventSet[MAX_EVENTS];
+	for (std::vector<ServerConfig *>::iterator it = servers.begin(); it != servers.end(); it++)
 	{
-		perror("fcntl");
-		exit(EXIT_FAILURE);
-	}
-	if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1)
-	{
-		perror("fcntl");
-		exit(EXIT_FAILURE);
-	}
+		struct addrinfo *addr; // informacion sobre direcciones
+		struct addrinfo hints;
+		memset(&hints, 0, sizeof(hints)); // bzero to hints
+		hints.ai_flags = AI_PASSIVE;	  // se especifica que debe devolver direcciones par vincular al socket de escucha
+		hints.ai_family = PF_UNSPEC;	  // IPv4 o IPv6
+		hints.ai_socktype = SOCK_STREAM;  // tipo del socket
+		getaddrinfo("127.0.0.1", intToString((*it)->getPort()).c_str(), &hints, &addr);
+		(*it)->setServerSocket(socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol));
 
-	if (bind(sockfd, addr->ai_addr, addr->ai_addrlen) < 0)
-	{
-		std::string errorMsg = "socket binding:\n";
-		errorMsg += "Port: " + std::to_string(ntohs((reinterpret_cast<sockaddr_in *>(addr->ai_addr))->sin_port)) + "\n";
-		errorMsg += strerror(errno);
-		throw std::runtime_error(errorMsg);
+		int flags = fcntl((*it)->getServerSocket(), F_GETFL, 0);
+		if (flags == -1)
+		{
+			perror("fcntl");
+			exit(EXIT_FAILURE);
+		}
+		if (fcntl((*it)->getServerSocket(), F_SETFL, flags | O_NONBLOCK) == -1)
+		{
+			perror("fcntl");
+			exit(EXIT_FAILURE);
+		}
+
+		if (bind((*it)->getServerSocket(), addr->ai_addr, addr->ai_addrlen) < 0)
+		{
+			std::string errorMsg = "socket binding:\n";
+			errorMsg += "Port: " + std::to_string(ntohs((reinterpret_cast<sockaddr_in *>(addr->ai_addr))->sin_port)) + "\n";
+			errorMsg += strerror(errno);
+			throw std::runtime_error(errorMsg);
+		}
+
+		listen((*it)->getServerSocket(), 5);
+
+		int *data = (int *)calloc(1, sizeof(int));
+		data[0] = i;
+		(*it)->setData(data);
+		std::cout << "Set data: " << i << " Pointer: " << data << std::endl;
+		// char *data = strdup();
+		EV_SET(&eventSet[i], (*it)->getServerSocket(), EVFILT_READ, EV_ADD, 0, 0, data);
+		kevent(kq, &eventSet[i], 1, NULL, 0, NULL);
+
+		std::cout << "Server online.\nlistein port: " << ntohs((reinterpret_cast<sockaddr_in *>(addr->ai_addr))->sin_port) << std::endl;
+		std::cout << "Servidor " << i << " esperando conexiones..." << std::endl;
+		i++;
 	}
-
-	listen(sockfd, 5);
-
-	std::cout << "Server online.\nlistein port: " << ntohs((reinterpret_cast<sockaddr_in *>(addr->ai_addr))->sin_port) << std::endl;
-	std::cout << "Servidor esperando conexiones..." << std::endl;
 }
 
 void createKqueue()
@@ -109,23 +121,25 @@ int main(int argc, char **argv)
 		(void)argc;
 		std::vector<ServerConfig *> servers;
 		// FileContent fc(argv[1]);
-		FileContent fc("./conf_web/default.conf");
+		FileContent fc("./conf_web/test.conf");
 		fc.createServers(servers);
 		printServers(servers);
-		// createServers(content, servers);
 		std::cout << "Parsing ok" << std::endl;
 
 		// TODO
-		AdminServer server(*servers[0]);
+		AdminServer server(servers);
 		createKqueue();
-		createSocket();
+		createSocket(servers);
 
 		// // Configurar evento para el socket de escucha
-		struct kevent eventSet;
-		EV_SET(&eventSet, sockfd, EVFILT_READ, EV_ADD, 0, 0, NULL);
-		kevent(kq, &eventSet, 1, NULL, 0, NULL);
+		// struct kevent eventSet[10];
+		// for (unsigned long i = 0; i < servers.size(); i++)
+		// {
+		// 	EV_SET(&eventSet[i], servers[i]->getServerSocket(), EVFILT_READ, EV_ADD, 0, 0, NULL);
+		// 	kevent(kq, &eventSet[i], 1, NULL, 0, NULL);
+		// }
 
-		server.run(sockfd, kq);
+		server.run(kq);
 		// config.print();
 	}
 	catch (const FileContent::ConfErrorException &e)

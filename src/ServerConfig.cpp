@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/29 09:30:36 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/01 18:18:47 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,11 @@ ServerConfig::ServerConfig(const std::vector<std::string> &content, const std::s
 	// // Escuchar por conexiones entrantes
 	// listen(_serverSocketFd, 5);
 
-	_buffer = new char[1024];
-	memset(_buffer, 0, 1024);
+	// _data = new char[1024];
+	// memset(_data, 0, 1024);
 }
 
-ServerConfig::~ServerConfig() { delete _buffer; }
+ServerConfig::~ServerConfig() { delete _data; }
 
 void ServerConfig::print() const
 {
@@ -77,9 +77,15 @@ void ServerConfig::print() const
 
 // std::string ServerConfig::getApiForward() const { return _apiForward; }
 
+int ServerConfig::getData() { return _data[0]; }
+
+void ServerConfig::setData(int *data) { _data = data; }
+
 int ServerConfig::getPort() const { return _port; }
 
-int ServerConfig::getServerSocket() const { return _serverSocketFd; }
+int ServerConfig::getServerSocket() const { return _sockFd; }
+
+void ServerConfig::setServerSocket(const int val) { _sockFd = val; }
 
 std::string ServerConfig::getServerName() const { return _serverName; }
 
@@ -104,10 +110,6 @@ std::string ServerConfig::getContentType(const std::string &extension) const
 // {
 // 	return _locations;
 // }
-
-char *ServerConfig::getBuffer() const { return _buffer; }
-
-void ServerConfig::setBuffer(char *buf) { _buffer = buf; }
 
 // Obtiene la configuración de la ubicación correspondiente al path
 LocationResult ServerConfig::getLocationConfig(const std::string &path)

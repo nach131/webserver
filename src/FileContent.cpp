@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/29 09:23:43 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/01 13:44:15 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ int FileContent::checkServerKey(std::string &line)
 	if (i == std::string::npos ||
 		(i != std::string::npos && line.find("name") != std::string::npos))
 		return 0;
+	if (i == 0)
+		return 1;
 	for (; i >= 0; i--)
 		if (line[i] != ' ' && line[i] != '\t')
 			return 0;
@@ -141,10 +143,10 @@ void FileContent::createServers(std::vector<ServerConfig *> &servers)
 	int start = 0;
 	int count = 1;
 	std::vector<std::string> oneServer;
-	(void)servers;
 	for (size_t i = 0; i < _content.size(); i++)
 	{
 		// std::cout << "Content line: " << i + 1 << " " << _content[i] << std::endl;
+		// std::cout << "Count: " << count << std::endl;
 		if (checkServerKey(_content[i]))
 		{
 			if (count == 1)
@@ -153,11 +155,28 @@ void FileContent::createServers(std::vector<ServerConfig *> &servers)
 		}
 		if (count == -1 || i == _content.size() - 1)
 		{
+			// std::cout << "One server" << std::endl;
 			int diff = i == _content.size() - 1 ? i - start : i - start - 1;
 			oneServer = checkOneServer(start, diff);
 			createOneServer(servers, oneServer);
+			checkDuplicatePorts(servers);
 			start = i;
 			count++;
+		}
+	}
+}
+
+void FileContent::checkDuplicatePorts(std::vector<ServerConfig *> &servers)
+{
+	std::vector<int> ports;
+	for (std::vector<ServerConfig *>::iterator it = servers.begin(); it != servers.end(); it++)
+		ports.push_back((*it)->getPort());
+	for (std::vector<int>::iterator it = ports.begin(); it != ports.end(); it++)
+	{
+		for (std::vector<int>::iterator it2 = ports.begin(); it2 != ports.end(); it2++)
+		{
+			if (it2 != it && *it == *it2)
+				throw std::runtime_error("more than one server with the same port!");
 		}
 	}
 }

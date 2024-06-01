@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   AdminServer.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/31 23:45:25 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/06/01 20:34:31 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 // recargar la pagina, a veces me pone "client disconnected" y
 // "Error al enviar encabezado"
 
-AdminServer::AdminServer(const ServerConfig &config) : _config(config) {}
+AdminServer::AdminServer(std::vector<ServerConfig *> &config) : _config(config) {}
 
 AdminServer::~AdminServer() {}
 
@@ -92,6 +92,14 @@ struct client_data
 	std::string prePath;
 } clients[MAX_EVENTS];
 
+struct client_events
+{
+	struct kevent evSet;
+	struct kevent evList;
+	struct sockaddr_storage addr;
+	socklen_t socklen;
+} events[MAX_EVENTS];
+
 int getConnect(int fd)
 {
 	for (int i = 0; i < MAX_EVENTS; i++)
@@ -122,7 +130,26 @@ int delConnect(int fd)
 	return close(fd);
 }
 
-void AdminServer::run(int sockfd, int kq)
+int AdminServer::takeServer(struct kevent &event)
+{
+	std::cout << "Hola" << std::endl;
+	int *p = (int *)event.udata;
+	std::cout << "soy " << p << std::endl;
+	if (!p)
+		return 0;
+	int data = p[0];
+	std::cout << "Valerio" << std::endl;
+	std::cout << "Data value: " << data << std::endl;
+	for (std::vector<ServerConfig *>::iterator it = _config.begin(); it != _config.end(); it++)
+	{
+		std::cout << "It: " << (*it)->getData() << std::endl;
+		if ((*it)->getData() == data)
+			return data;
+	}
+	return 0;
+}
+
+void AdminServer::run(int kq)
 {
 	HTTPRequest request;
 	char buffer[MAX_MSG_SIZE];
@@ -131,29 +158,39 @@ void AdminServer::run(int sockfd, int kq)
 	_multi = false;
 	_send = false;
 
-	struct kevent evSet;
 	struct kevent evList[MAX_EVENTS];
-	struct sockaddr_storage addr;
-	socklen_t socklen = sizeof(addr);
+	memset(evList, 0, sizeof(evList));
+	memset(events, 0, sizeof(events));
+	for (int i = 0; i < MAX_EVENTS; i++)
+		events[i].socklen = sizeof(events[i].addr);
 
 	_flags = EV_ADD | EV_FLAG0; // Poner EV_FLAG1 si hay multipart
 
+	int loop = 0;
+	void *data;
 	while (42)
 	{
-		// bool checkEVFlag = false;
 		int num_events = kevent(kq, NULL, 0, evList, MAX_EVENTS, NULL);
 
 		for (int i = 0; i < num_events; i++)
 		{
+			loop++;
+			std::cout << "Event number: " << num_events << " Ident: " << evList[i].ident << std::endl;
+			int j = takeServer(evList[i]);
+			std::cout << MAGENTA << "Server number: " << j << " Socket " << _config[j]->getServerSocket() << RESET << std::endl;
 			// receive new connection
-			if (evList[i].ident == (unsigned long)sockfd)
+			events[j].evList = evList[i];
+			data = evList[i].udata;
+			// if ((evList[i].udata != NULL && evList[i].ident != (unsigned long)_config[j]->getServerSocket()) || loop == 15)
+			// 	exit(0);
+			if (evList[i].ident == (unsigned long)_config[j]->getServerSocket())
 			{
-				int fd = accept(evList[i].ident, (struct sockaddr *)&addr, &socklen);
+				std::cout << MAGENTA "Accept connection " << j << RESET << std::endl;
+				int fd = accept(events[j].evList.ident, (struct sockaddr *)&events[j].addr, &events[j].socklen);
 				if (addConnect(fd) == 0)
 				{
-
-					EV_SET(&evSet, fd, EVFILT_READ, _flags, 0, 0, NULL);
-					kevent(kq, &evSet, 1, NULL, 0, NULL);
+					EV_SET(&events[j].evSet, fd, EVFILT_READ, _flags, 0, 0, data);
+					kevent(kq, &events[j].evSet, 1, NULL, 0, NULL);
 					// _ref = false;
 					_ref = true;
 				}
@@ -163,29 +200,30 @@ void AdminServer::run(int sockfd, int kq)
 					close(fd);
 				}
 			} // client disconnected
-			else if (evList[i].flags & EV_EOF)
+			else if (events[j].evList.flags & EV_EOF)
 			{
-
-				int fd = evList[i].ident;
-				std::cout << "client #" << getConnect(fd) << " disconnected." << std::endl;
-				EV_SET(&evSet, fd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
-				kevent(kq, &evSet, 1, NULL, 0, NULL);
+				std::cout << MAGENTA "End connection " << j << RESET << std::endl;
+				int fd = events[j].evList.ident;
+				// std::cout << "client #" << getConnect(fd) << " disconnected." << std::endl;
+				EV_SET(&events[j].evSet, fd, EVFILT_READ, EV_DELETE, 0, 0, data);
+				kevent(kq, &events[j].evSet, 1, NULL, 0, NULL);
 				delConnect(fd);
 			} // read message from client
-			else if (evList[i].filter == EVFILT_READ)
+			else if (events[j].evList.filter == EVFILT_READ)
 			{
+				std::cout << MAGENTA "Read connection " << j << RESET << std::endl;
 				//=================DESDE AQUI==============================================
-				std::cout << RED << " [=================EVFILT_READ=================]" << std::endl;
-				std::cout << "_write: " << _write << RESET << std::endl;
+				// std::cout << RED << " [=================EVFILT_READ=================]" << std::endl;
+				// std::cout << "_write: " << _write << RESET << std::endl;
 				_send = false;
 
 				// Recibir datos del cliente
 				memset(buffer, 0, sizeof(buffer));
-				int n = recv(evList[i].ident, buffer, sizeof(buffer), 0);
+				int n = recv(events[j].evList.ident, buffer, sizeof(buffer), 0);
 				if (n < 0)
 				{
 					std::cerr << "Error al recibir datos: " << strerror(errno) << std::endl;
-					close(evList[i].ident);
+					close(events[j].evList.ident);
 					continue; // Continuar con el siguiente intento de aceptar conexiones
 				}
 				//===================PETICION==============================================
@@ -201,23 +239,23 @@ void AdminServer::run(int sockfd, int kq)
 				//=========================================================================
 
 				// HTTPBody body(request);
-				HTTPRes response(request, &_config, _ref, _write, _send);
+				HTTPRes response(request, _config[j], _ref, _write, _send);
 
 				// //=========================================================================
 
 				// Manejo de flags para la primera peticion
-				if (evSet.flags & EV_FLAG0)
+				if (events[j].evSet.flags & EV_FLAG0)
 				{
-					std::cout << "CON EV_FLAG0" << std::endl;
+					// std::cout << "CON EV_FLAG0" << std::endl;
 					_flags &= ~EV_FLAG0; // Eliminar EV_FLAG0
 
-					EV_SET(&evSet, evList[i].ident, EVFILT_READ, _flags, 0, 0, NULL);
-					kevent(kq, &evSet, 1, NULL, 0, NULL);
+					EV_SET(&events[j].evSet, events[j].evList.ident, EVFILT_READ, _flags, 0, 0, data);
+					kevent(kq, &events[j].evSet, 1, NULL, 0, NULL);
 					_ref = true;
 				}
 
-				EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, _flags, 0, 0, NULL);
-				kevent(kq, &evSet, 1, NULL, 0, NULL);
+				EV_SET(&events[j].evSet, events[j].evList.ident, EVFILT_WRITE, _flags, 0, 0, data);
+				kevent(kq, &events[j].evSet, 1, NULL, 0, NULL);
 
 				//=========================================================================
 				_header = response.getHeader();
@@ -227,18 +265,18 @@ void AdminServer::run(int sockfd, int kq)
 					request.cleanObject();
 			}
 			// Escribir en el socket cuando esté listo para escribir
-			else if (evList[i].filter == EVFILT_WRITE)
+			else if (events[j].evList.filter == EVFILT_WRITE)
 			{
-				std::cout << YELLOW;
-				std::cout << "ESTO ES EVFILT_WRITE" << std::endl;
-
+				// std::cout << YELLOW;
+				// std::cout << "ESTO ES EVFILT_WRITE" << std::endl;
+				std::cout << MAGENTA "Write connection " << j << RESET << std::endl;
 				if (!_multi)
-					sendResGet(evList[i].ident, _header, _content);
+					sendResGet(events[j].evList.ident, _header, _content);
 				else if (_multi && _send)
-					sendResGet(evList[i].ident, _header, _content);
+					sendResGet(events[j].evList.ident, _header, _content);
 
-				std::cout << YELLOW << " [=================EVFILT_WRITE=================]" << std::endl;
-				std::cout << " _write: " << _write << std::endl;
+				// std::cout << YELLOW << " [=================EVFILT_WRITE=================]" << std::endl;
+				// std::cout << " _write: " << _write << std::endl;
 
 				// TODO esto nunca pasas
 				if (_write)
@@ -246,19 +284,20 @@ void AdminServer::run(int sockfd, int kq)
 					_content.clear();
 					_header.clear();
 				}
-				int flags_tmp = evSet.flags; // para guardar los flags activos
+				int flags_tmp = events[j].evSet.flags; // para guardar los flags activos
 
 				// Después de enviar la respuesta, eliminar el evento EVFILT_WRITE
-				EV_SET(&evSet, evList[i].ident, EVFILT_WRITE, EV_DELETE, 0, 0, NULL);
-				kevent(kq, &evSet, 1, NULL, 0, NULL);
-				evSet.flags = flags_tmp; // asignamos los flags activos
+				EV_SET(&events[j].evSet, events[j].evList.ident, EVFILT_WRITE, EV_DELETE, 0, 0, data);
+				kevent(kq, &events[j].evSet, 1, NULL, 0, NULL);
+				events[j].evSet.flags = flags_tmp; // asignamos los flags activos
 				std::cout << RESET;
 			}
 		}
 	}
 
 	// Cerrar el socket del servidor (esto no se alcanzará)
-	close(_config.getServerSocket());
+	for (int i = 0; i < _config.size(); i++)
+		close(_config[i]->getServerSocket());
 }
 
 // 1. **Receive New Connection**:
