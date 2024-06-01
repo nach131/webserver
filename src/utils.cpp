@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/06/01 00:10:03 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/06/01 13:27:16 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,13 +75,13 @@ bool isFile(const std::string &path)
 }
 // #include <sys/stat.h>
 
-// bool isFile(const std::string& path) {
-//     struct stat statbuf;
-//     if (stat(path.c_str(), &statbuf) != 0) {
-//         return false; // No se pudo acceder a la ruta
-//     }
-//     return S_ISREG(statbuf.st_mode); // Verifica si es un archivo regular
-// }
+bool isFileExist(const std::string &path)
+{
+	struct stat statbuf;
+	if (stat(path.c_str(), &statbuf) != 0)
+		return false;									 // No se pudo acceder a la ruta
+	return S_ISREG(statbuf.st_mode); // Verifica si es un archivo regular
+}
 
 bool directoryExists(const std::string &path)
 {

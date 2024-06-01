@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:32 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/31 22:31:49 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/06/01 13:45:29 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ private:
 	void last();
 	void error404();
 	void error403();
+	void error405();
+
 	// void error501();
 
 	std::string const OtherPath() const;
@@ -58,7 +60,6 @@ private:
 	void methodGet();
 	void methodPost(const bool &autoindex);
 	void methodDelete(const bool &autoindex);
-	void methodErr();
 
 	void exploreFiles();
 	void execUpload(const std::string &pathFile);
