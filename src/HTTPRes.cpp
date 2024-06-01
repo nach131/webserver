@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/06/01 15:09:58 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/06/01 16:09:26 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,11 +204,14 @@ void HTTPRes::methodPost(const bool &autoindex)
 
 			std::string res = execPython(realPath, _request.getHeader("Content"));
 
-			std::cout << "res: " << res << std::endl;
-			si es 0 añadir las cookies;
-			res == "0\n"
-					? _header.addField("Location", "/web/wellcome.html")
-					: _header.addField("Location", "/web/login_err.html");
+			if (res == "0\n")
+			{
+				std::string cookie = "Authenticator=" + generateToken(32);
+				_header.addField("Set-Cookie", cookie);
+				_header.addField("Location", "/web/welcome.html");
+			}
+			else
+				_header.addField("Location", "/web/login_err.html");
 		}
 		else if (realPath.find("setcookie.py") != std::string::npos)
 		{

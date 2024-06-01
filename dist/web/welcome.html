@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <title>WebServer</title>
   <link rel="stylesheet" href="./style.css">
-  
+
 </head>
 
 <body>
@@ -37,7 +37,7 @@
 
     <script>
       // JavaScript to handle authentication state can go here
-      const isAuthenticated = false; // Replace this with actual authentication logic
+        const isAuthenticated = true; // Replace this with actual authentication logic
       const user = { username: 'Username' }; // Replace this with actual user data
 
       document.addEventListener('DOMContentLoaded', function () {
@@ -46,10 +46,10 @@
           nav.innerHTML = `
             <li>Welcome ${user.username}</li>
             <li>
-              <a href="/add-task" class="btn-link">Add Task</a>
+              <a href="/web/add-task" class="btn-link">Add Task</a>
             </li>
             <li>
-              <a href="/" class="btn-link" onclick="logout()">Logout</a>
+              <a href="/web" class="btn-link" onclick="logout()">Logout</a>
             </li>
           `;
         } else {
@@ -72,7 +72,7 @@
 
     <section class="bg-red-500 flex justify-center items-center">
       <header class="bg-zinc-800 p-10">
-        <h1 class="text-5xl py-2 font-bold">vduchi & nmota-bu</h1>
+        <h1 class="text-5xl py-2 font-bold">Welcome</h1>
         <p class="text-md text-slate-400">
           Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dignissimos
           fugit doloremque molestias recusandae labore repellat amet dicta tempore
@@ -87,7 +87,7 @@
         </a>
       </header>
     </section>
-    
+
   </main>
 
 </body>

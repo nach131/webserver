@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/06/01 13:27:16 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/06/01 16:16:08 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,7 +188,6 @@ std::string removeBeforeNumber(const std::string &url, const std::string &host)
 
 	std::string result = url;
 	// std::size_t pos = result.find("8080"); // Buscar el número "8080"
-	// TODO CUIDADO HARCODEADO
 	// std::size_t pos = result.find("localhost:8080"); // Buscar el número "8080"
 	std::size_t pos = result.find(host); // Buscar el número "8080"
 
@@ -343,4 +342,19 @@ std::map<std::string, std::string> parse_query_string(const std::string &query)
 	}
 
 	return query_map;
+}
+
+std::string generateToken(size_t length)
+{
+	const char hex_chars[] = "0123456789abcdef";
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> dis(0, 15);
+
+	std::stringstream ss;
+	for (size_t i = 0; i < length; ++i)
+	{
+		ss << hex_chars[dis(gen)];
+	}
+	return ss.str();
 }

@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/06/01 12:27:13 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/06/01 16:15:42 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,6 @@ void HTTPRequest::findFileName(const char *buf)
 		_fileType = _fileName.substr(_fileName.find_last_of(".") + 1,
 									 _fileName.length() - (_fileName.find(".") + 1));
 		std::cout << RED "Filename: -" << _fileName << "- FileType: -" << _fileType << "-" RESET << std::endl;
-		// TODO Y ESTE EXIT
-		// exit(0);
 	}
 }
 

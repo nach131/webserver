@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:34:48 by vduchi            #+#    #+#             */
-/*   Updated: 2024/06/01 13:27:34 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/06/01 15:50:40 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <sstream>
 #include <functional>
 #include <vector>
+#include <random>
 #include <sys/stat.h>
 
 #define MAX_EVENTS 32
@@ -54,4 +55,5 @@ bool isText(const std::string &str);
 std::string intToString(int number);
 bool isCookiepy(const std::string &str);
 std::map<std::string, std::string> parse_query_string(const std::string &query);
+std::string generateToken(size_t length);
 #endif
