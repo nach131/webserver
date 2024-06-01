@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/31 17:59:00 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/06/01 12:22:11 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,6 +186,7 @@ void HTTPRequest::takeBuffer(const char *buf, int len, bool &multi, bool &write)
 	std::vector<std::string> content;
 	if (!multi)
 	{
+		std::system("rm ./.tmpdir/.bin");
 		end = 0;
 		start = 0;
 		findFileName(buf);

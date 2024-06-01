@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/06/01 00:22:12 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/06/01 12:21:51 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,7 +289,6 @@ void HTTPRes::methodDelete(const bool &autoindex)
 
 void HTTPRes::execUpload(const std::string &pathFile)
 {
-
 	std::string res = execPython("./cgi_bin/upload.py", pathFile);
 
 	if (res == "0\n")
@@ -298,7 +297,7 @@ void HTTPRes::execUpload(const std::string &pathFile)
 		_header.addField("Content-Type", "text/html");
 		_content = readFile("./conf_web/error/basico/upload.html");
 	}
-	std::system("rm ./.tmpdir/.bin");
+	// std::system("rm ./.tmpdir/.bin");
 	_write = false;
 	_send = true;
 }
