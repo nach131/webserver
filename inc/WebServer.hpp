@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:34:48 by vduchi            #+#    #+#             */
-/*   Updated: 2024/05/31 13:00:31 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/01 11:45:36 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,12 @@
 
 #include "Colors.hpp"
 #include <map>
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <functional>
+#include <ctime>
 #include <vector>
+#include <fstream>
+#include <sstream>
+#include <iostream>
+#include <functional>
 #include <sys/stat.h>
 
 #define MAX_EVENTS 32
@@ -52,16 +53,42 @@ bool createDirectory(const std::string &path);
 bool isText(const std::string &str);
 std::string intToString(int number);
 
-class LogFile
+// enum
+// {
+// 	CONN,	// Connection error
+// 	RECV,	// Receive data error
+// 	FOPEN,	// File open error
+// 	PGERR,	// Page error
+// 	EXERR,	// Execution error
+// 	DISC,	// Client disconnected
+// 	GET,	// Get Method
+// 	POST,	// Post Method
+// 	DELETE, // Delete method
+// };
+
+enum
+{
+	ADM,
+	REQ,
+	RESP,
+	GET,
+	POST,
+	DEL
+};
+
+class Log
 {
 private:
-	LogFile();
-	~LogFile();
+	Log();
+	~Log();
 	std::fstream file;
-	static LogFile instance;
+	static Log instance;
 
 public:
-	static void print(std::string, std::string);
+	static void info(int, std::string);
+	static void warn(int, std::string);
+	static void error(int, std::string);
+	static void writeHtml(const std::string &value);
 };
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRes.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
+/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/31 10:38:21 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/06/01 10:52:42 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -273,18 +273,21 @@ void HTTPRes::methodErr()
 	std::cout << "==========methodErr==========\n";
 	_header.addOne(_request.getHeader("Version"), "405 Method Not Allowed");
 	_content = readFile("./conf_web/error/basico/405.html");
+	Log::warn(RESP, "Method not allowed!");
 }
 
 void HTTPRes::error404()
 {
 	_header.addOne(_request.getHeader("Version"), "404 Not Found");
 	_content = readFile("./conf_web/error/basico/404.html");
+	Log::warn(GET, "Not Found!");
 }
 
 void HTTPRes::error403()
 {
 	_header.addOne(_request.getHeader("Version"), "403 Forbidden");
 	_content = readFile("./conf_web/error/basico/403.html");
+	Log::warn(GET, "Forbidden!");
 }
 
 // void HTTPRes::error501()
