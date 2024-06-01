@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/06/01 18:47:55 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/06/02 00:16:56 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,8 @@ HTTPRes::~HTTPRes() {}
 void HTTPRes::createContent(std::string filePath)
 {
 
+	std::string toma = _request.getHeader("Path");
+
 	std::cout << "createContent" << std::endl;
 
 	std::string cookie = _request.getHeader("Cookie");
@@ -127,6 +129,16 @@ void HTTPRes::createContent(std::string filePath)
 	}
 	else if (extension == "php")
 		_content = execPython("./cgi_bin/php.py"); // error501();
+	else if (isValidToken(cookie, 32) && _request.getHeader("Path") == "/web/logout.html")
+	{
+		_header.addOne(_request.getHeader("Version"), "200 OK");
+		_header.addField("Content-Type", "text/html");
+
+		std::string cookie = "Authenticator=0000";
+		_header.addField("Set-Cookie", cookie);
+		_content = readFile("./dist/web/index.html");
+		return;
+	}
 	else if (_locationConf.getName() == "/web" && !cookie.empty() && isValidToken(cookie, 32) && extension == "html")
 		_content = readFile("./dist/web/welcome.html");
 	else
