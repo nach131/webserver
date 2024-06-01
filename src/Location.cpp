@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   location.cpp                                       :+:      :+:    :+:   */
+/*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 17:46:33 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/30 16:49:23 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/06/01 09:56:24 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,7 @@ void Location::init(const LocationResult &location, const std::string &path, con
 	std::cout << " path: " << path << std::endl;
 	std::cout << " referer: " << referer << std::endl;
 	std::cout << " _location.name: " << _location.name << std::endl;
-	// std::map<std::string, std::string>::iterator it = _location.config.find("allow_methods");
-	// std::cout << " metodos: " << it->second << std::endl;
+	std::cout << " pathFile: " << pathFile << std::endl;
 
 	std::cout << "==============\n";
 	// std::cout << "refer + path: " << _location.name + path << std::endl;
@@ -94,6 +93,7 @@ void Location::init(const LocationResult &location, const std::string &path, con
 	}
 	else
 	{
+
 		if (isFile(pathFile))
 		{
 			std::cout << "SI File: " << std::endl;
