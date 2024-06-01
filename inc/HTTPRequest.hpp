@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HTTPRequest.hpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 00:08:38 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/05/30 18:54:36 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/01 17:31:33 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ public:
     std::string getFileType();
     std::string getLocation();
     const std::map<std::string, std::string> &getMap() const;
-    const std::string &getHeader(const std::string name) const;
+    const std::string &getHeader(const std::string &name) const;
 
     void findFileName(const char *);
     void takeHeader(std::stringstream &, int &);

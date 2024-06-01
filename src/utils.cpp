@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/06/01 16:16:08 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/06/01 18:46:18 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,6 +169,11 @@ void removeLastSlash(std::string &str)
 void removeLastNewline(std::string &str)
 {
 	if (!str.empty() && str[str.length() - 1] == '\n')
+		str.erase(str.length() - 1);
+}
+void removeLastReturn(std::string &str)
+{
+	if (!str.empty() && str[str.length() - 1] == '\r')
 		str.erase(str.length() - 1);
 }
 
@@ -357,4 +362,18 @@ std::string generateToken(size_t length)
 		ss << hex_chars[dis(gen)];
 	}
 	return ss.str();
+}
+
+bool isValidToken(const std::string &token, size_t expectedLength)
+{
+	// Verificar la longitud del token
+	if (token.length() != expectedLength)
+		return false;
+
+	// Verificar si el token contiene solo caracteres hexadecimales
+	const std::regex hexPattern("^[0-9a-f]+$");
+	if (!std::regex_match(token, hexPattern))
+		return false;
+
+	return true;
 }

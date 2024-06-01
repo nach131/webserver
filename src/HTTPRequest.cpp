@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/06/01 16:15:42 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/06/01 17:32:47 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,11 +40,15 @@ std::string HTTPRequest::getFileType() { return _fileType; }
 
 const std::map<std::string, std::string> &HTTPRequest::getMap() const { return _map; }
 
-const std::string &HTTPRequest::getHeader(const std::string name) const
+const std::string &HTTPRequest::getHeader(const std::string &name) const
 {
+	std::map<std::string, std::string>::const_iterator it = _map.find(name);
 
-	std::string finded = _map.find(name)->second.empty() ? "" : _map.find(name)->second;
-	return _map.find(name)->second;
+	if (it != _map.end())
+		return it->second;
+
+	static const std::string emptyString;
+	return emptyString;
 }
 
 // esto esta mal hay que componerlo bien

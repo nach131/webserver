@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:34:48 by vduchi            #+#    #+#             */
-/*   Updated: 2024/06/01 15:50:40 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/06/01 18:45:34 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include <functional>
 #include <vector>
 #include <random>
+#include <regex>
 #include <sys/stat.h>
 
 #define MAX_EVENTS 32
@@ -39,8 +40,11 @@ bool directoryExists(const std::string &path);
 std::string getFileName(const std::string &path);
 std::vector<std::string> split(const std::string &str, char delimiter);
 bool isMainRoot(const std::string &str);
+
 void removeLastSlash(std::string &str);
 void removeLastNewline(std::string &str);
+void removeLastReturn(std::string &str);
+
 void removeDoubleSlashes(std::string &path);
 std::string removeBeforeNumber(const std::string &url, const std::string &host);
 std::string removeFileName(const std::string &path);
@@ -56,4 +60,6 @@ std::string intToString(int number);
 bool isCookiepy(const std::string &str);
 std::map<std::string, std::string> parse_query_string(const std::string &query);
 std::string generateToken(size_t length);
+bool isValidToken(const std::string &token, size_t expectedLength);
+
 #endif

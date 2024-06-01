@@ -6,7 +6,7 @@
 /*   By: nmota-bu <nmota-bu@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/06/01 16:09:26 by nmota-bu         ###   ########.fr       */
+/*   Updated: 2024/06/01 18:47:55 by nmota-bu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,8 +103,17 @@ HTTPRes::~HTTPRes() {}
 
 void HTTPRes::createContent(std::string filePath)
 {
-	std::string extension = getExtension(filePath);
 
+	std::cout << "createContent" << std::endl;
+
+	std::string cookie = _request.getHeader("Cookie");
+	if (!cookie.empty())
+	{
+		cookie = removeSubstring(cookie, "Authenticator=");
+		removeLastReturn(cookie);
+	}
+
+	std::string extension = getExtension(filePath);
 	std::cout << RED << "extension: " << extension << RESET << std::endl;
 
 	if (extension == "py")
@@ -118,6 +127,8 @@ void HTTPRes::createContent(std::string filePath)
 	}
 	else if (extension == "php")
 		_content = execPython("./cgi_bin/php.py"); // error501();
+	else if (_locationConf.getName() == "/web" && !cookie.empty() && isValidToken(cookie, 32) && extension == "html")
+		_content = readFile("./dist/web/welcome.html");
 	else
 		_content = readFile(filePath);
 
@@ -207,6 +218,8 @@ void HTTPRes::methodPost(const bool &autoindex)
 			if (res == "0\n")
 			{
 				std::string cookie = "Authenticator=" + generateToken(32);
+				cookie.append("; Path=/web");
+				cookie.append("; Secure=false");
 				_header.addField("Set-Cookie", cookie);
 				_header.addField("Location", "/web/welcome.html");
 			}
