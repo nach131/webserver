@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/06/02 12:34:38 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/02 12:53:41 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void FileContent::checkKeysAndValues(std::vector<std::string> &content, int &sta
 			std::stringstream ss(content[i]);
 			ss >> key;
 			ss >> value;
-			if (value.length() > 0 && value.find(";") == std::string::npos) // porque key = allow_methods;
+			if (value.length() > 0 && value.find(";") == std::string::npos)
 			{
 				while (ss >> el)
 				{
@@ -111,14 +111,11 @@ std::vector<std::string> FileContent::checkOneServer(int &start, int &len)
 	// Test for curly brackets
 	for (size_t i = 0; i < sCont.size(); i++)
 	{
-		// std::cout << "Server content line: " << sCont[i] << std::endl;
 		if (sCont[i].find("{") != std::string::npos)
 			brack++;
 		if (sCont[i].find("}") != std::string::npos)
 			brack--;
-		// std::cout << "Brack " << brack << std::endl;
 	}
-	// std::cout << "Brack " << brack << std::endl;
 	int lNum = sCont[sCont.size() - 1].find("}") != std::string::npos ? start + len + 1 : start + len;
 	if (brack > 0)
 		error("server block not closed at line ", lNum + 1);
@@ -149,8 +146,6 @@ void FileContent::createServers(std::vector<ServerConfig *> &servers)
 	std::vector<std::string> oneServer;
 	for (size_t i = 0; i < _content.size(); i++)
 	{
-		// std::cout << "Content line: " << i + 1 << " " << _content[i] << std::endl;
-		// std::cout << "Count: " << count << std::endl;
 		if (checkServerKey(_content[i]))
 		{
 			if (count == 1)
@@ -159,7 +154,6 @@ void FileContent::createServers(std::vector<ServerConfig *> &servers)
 		}
 		if (count == -1 || i == _content.size() - 1)
 		{
-			// std::cout << "One server" << std::endl;
 			int diff = i == _content.size() - 1 ? i - start : i - start - 1;
 			oneServer = checkOneServer(start, diff);
 			createOneServer(servers, oneServer, start);

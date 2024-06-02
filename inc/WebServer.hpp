@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:34:48 by vduchi            #+#    #+#             */
-/*   Updated: 2024/06/02 12:10:28 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/02 13:30:36 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,19 +29,15 @@
 #define MAX_EVENTS 32
 #define MAX_MSG_SIZE 8192
 
-int start();
-
 std::string DateField();
 std::string generateETag(const std::string &content);
 std::string readFile(const std::string &filePath);
 std::string getExtension(const std::string &path);
-std::string extractEndpoint(const std::string &url);
 bool isFile(const std::string &path);
 bool isFileExist(const std::string &path);
 bool directoryExists(const std::string &path);
 std::string getFileName(const std::string &path);
 std::vector<std::string> split(const std::string &str, char delimiter);
-bool isMainRoot(const std::string &str);
 
 void removeLastSlash(std::string &str);
 void removeLastNewline(std::string &str);
@@ -49,33 +45,15 @@ void removeLastReturn(std::string &str);
 
 void removeDoubleSlashes(std::string &path);
 std::string removeBeforeNumber(const std::string &url, const std::string &host);
-std::string removeFileName(const std::string &path);
 void takeOutSemiColumn(std::string &val);
-bool parseError(std::string str, int n);
 std::string removeSubstring(const std::string &str, const std::string &toRemove);
-std::string rmLocationToAPath(const std::string &path, const std::string &location);
 bool pathStartsWithLocation(const std::string &path, const std::string &location);
 
 bool createDirectory(const std::string &path);
-bool isText(const std::string &str);
 std::string intToString(int number);
-bool isCookiepy(const std::string &str);
 std::map<std::string, std::string> parse_query_string(const std::string &query);
 std::string generateToken(size_t length);
 bool isValidToken(const std::string &token, size_t expectedLength);
-
-// enum
-// {
-// 	CONN,	// Connection error
-// 	RECV,	// Receive data error
-// 	FOPEN,	// File open error
-// 	PGERR,	// Page error
-// 	EXERR,	// Execution error
-// 	DISC,	// Client disconnected
-// 	GET,	// Get Method
-// 	POST,	// Post Method
-// 	DELETE, // Delete method
-// };
 
 enum
 {

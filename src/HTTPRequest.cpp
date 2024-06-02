@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/06/02 11:34:55 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/02 13:38:02 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ const std::string &HTTPRequest::getHeader(const std::string &name) const
 	return emptyString;
 }
 
-// esto esta mal hay que componerlo bien
 std::string HTTPRequest::getLocation()
 {
 	std::string path = getHeader("Path");
@@ -68,11 +67,9 @@ void HTTPRequest::findFileName(const char *buf)
 	{
 		unsigned long start = input[input.find("filename=") + 9] == '\"' ? input.find("filename=") + 10 : input.find("filename=") + 9;
 		unsigned long end = start == input.find("filename=") + 10 ? input.find_first_of("\"", input.find("filename=") + 11) : input.find_first_of("\r", input.find("filename=") + 9);
-		std::cout << "FILENAME POS: " << input.find("filename=") << " " << start << " " << end << std::endl;
 		_fileName = input.substr(start, end - start);
 		_fileType = _fileName.substr(_fileName.find_last_of(".") + 1,
 									 _fileName.length() - (_fileName.find(".") + 1));
-		std::cout << RED "Filename: -" << _fileName << "- FileType: -" << _fileType << "-" RESET << std::endl;
 	}
 }
 
@@ -82,7 +79,6 @@ void HTTPRequest::takeHeader(std::stringstream &ss, int &start)
 	std::string first, el, line;
 	std::getline(ss, first);
 	start += first.length() + 1;
-	// std::cout << MAGENTA "First length: " << first.length() << " Start: " << start << RESET << std::endl;
 	std::stringstream ssFirst(first);
 	while (getline(ssFirst, el, ' '))
 	{
@@ -106,7 +102,6 @@ void HTTPRequest::takeHeader(std::stringstream &ss, int &start)
 	while (getline(ss, line))
 	{
 		start += line.length() + 1;
-		// std::cout << MAGENTA "Line length: " << line.length() << " Start: " << start << RESET << std::endl;
 		if (line.length() == 1)
 			break;
 		size_t pos = line.find(':');
@@ -123,7 +118,6 @@ void HTTPRequest::takeHeader(std::stringstream &ss, int &start)
 			it->second.find("multipart") != std::string::npos)
 		{
 			_boundary = it->second.substr(it->second.find("boundary") + 9, it->second.length() - (it->second.find("boundary") + 9) - 1);
-			std::cout << RED << "Boundary -> -" << _boundary << RESET << std::endl;
 			_last = true;
 			break;
 		}
@@ -139,7 +133,6 @@ void HTTPRequest::checkFirstBoundary(std::vector<std::string> &content, int &sta
 	for (std::vector<std::string>::iterator it = content.begin(); it != content.end() && count < 4;)
 	{
 		start += (*it).length();
-		// std::cout << MAGENTA "First boundary length: " << (*it).length() << " Start: " << start << " Line: " << (*it) << RESET << std::endl;
 		content.erase(it);
 		count++;
 	}
@@ -157,7 +150,6 @@ void HTTPRequest::checkLastBoundary(const char *buffer, int &start, int &end, in
 			{
 				for (int j = i; j < i + 8; j++)
 				{
-					// std::cout << ORANGE "J CHAR: " << buffer[j] << " J: " << j << RESET << std::endl;
 					if (buffer[j] != '-')
 					{
 						check = false;
@@ -168,10 +160,7 @@ void HTTPRequest::checkLastBoundary(const char *buffer, int &start, int &end, in
 					continue;
 				_last = false;
 				for (int j = i; buffer[j] != '\0'; j++)
-				{
 					end++;
-					// std::cout << MAGENTA "Char last boundary: " << buffer[j] << " End: " << end << RESET << std::endl;
-				}
 				end++;
 				break;
 			}
@@ -195,7 +184,6 @@ void HTTPRequest::takeBuffer(const char *buf, int len, bool &multi, bool &write)
 		takeHeader(ss, start);
 		while (getline(ss, line))
 			content.push_back(line + "\n");
-		// std::cout << ORANGE "Is multi" << _last << " And size: " << content.size() << RESET << std::endl;
 		if (content.size() > 0 && _last)
 		{
 			checkFirstBoundary(content, start);
@@ -213,13 +201,9 @@ void HTTPRequest::takeBuffer(const char *buf, int len, bool &multi, bool &write)
 			for (std::vector<std::string>::iterator it = content.begin(); it != content.end(); it++)
 				mapContent += *it;
 			_map["Content"] = mapContent;
-			std::cout << GREEN "Map Content: " << std::endl
-					  << _map["Content"] << RESET << std::endl;
 		}
 		setMulti(multi);
 		content.clear();
-		// std::cout << "No Multi Written characters: " << i - start << " I:" << i << " Start: " << start << std::endl;
-		std::cout << GREEN "Multi: " << multi << RESET << std::endl;
 	}
 	else
 	{
@@ -233,7 +217,6 @@ void HTTPRequest::takeBuffer(const char *buf, int len, bool &multi, bool &write)
 		std::ofstream out(".tmpdir/.bin", std::ios::app | std::ios::binary);
 		if (!out.good())
 			Log::error(REQ, "Temporary file not opened!");
-		// std::cout << "Multi Written characters: " << i - start << " I:" << i << " Start: " << start << std::endl;
 		out.write(&buf[start], len - start - end);
 		out.close();
 		setMulti(multi);
@@ -243,20 +226,6 @@ void HTTPRequest::takeBuffer(const char *buf, int len, bool &multi, bool &write)
 		_firstBound = false;
 		write = true;
 	}
-	// std::cout << RED << "Content: " << std::endl;
-	// std::cout << _map["Content"] << std::endl;
-}
-
-void HTTPRequest::print()
-{
-	std::cout << RED << "[ Request client ]" << std::endl;
-	for (std::map<std::string, std::string>::iterator it = _map.begin(); it != _map.end(); it++)
-	{
-		if (it->first == "Content")
-			continue;
-		std::cout << RED << it->first << ": " << GREEN << it->second << std::endl;
-	}
-	std::cout << RESET;
 }
 
 void HTTPRequest::cleanObject()

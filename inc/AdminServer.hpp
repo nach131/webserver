@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:26:56 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/06/02 11:38:33 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/02 13:10:13 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,15 +23,13 @@
 #include "HTTPRequest.hpp"
 #include "HTTPHeader.hpp"
 
-#include "HTTPRequestHandler.hpp"
-
 class ServerConfig;
 
 class AdminServer
 {
 private:
-	bool _ref;	 // EV_FLAG0
-	bool _multi; // EV_FLAG1
+	bool _ref;
+	bool _multi;
 	bool _write;
 	bool _send;
 	std::string _boundary;

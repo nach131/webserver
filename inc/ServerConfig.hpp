@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 14:42:46 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/06/02 10:56:13 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/02 13:21:58 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,22 +42,18 @@ public:
 	ServerConfig(const std::vector<std::string> &, const std::string &, int);
 	~ServerConfig();
 
-	LocationResult getLocationConfig(const std::string &path);
-
-	void print() const;
-
+	// void print() const;
 	int getData();
 	void setData(int *);
 	int getPort() const;
 	int getServerSocket() const;
 	void setServerSocket(const int);
 	std::string getServerName() const;
-	std::string getRootDirectory() const;
 	std::string getErrorPage(int errorCode) const;
 	std::string getContentType(const std::string &extension) const;
+	LocationResult getLocationConfig(const std::string &path);
 
 	int checkLine(const std::string &line);
-
 	void addValue(std::stringstream &, int);
 	void fillVariables(const std::vector<std::string> &, int);
 

@@ -6,90 +6,19 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/06/02 12:38:48 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/02 13:37:25 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "AdminServer.hpp"
 
-// #define NUM_CLIENTS 10
-// #define MAX_EVENTS 32
-// #define MAX_MSG_SIZE 8192
-
-// EV_FLAG0 - to ref
-// EV_FLAG1 - to multipas
-
-// TODO Controlar que el proceso sea correcto, porque al
-// recargar la pagina, a veces me pone "client disconnected" y
-// "Error al enviar encabezado"
-
 AdminServer::AdminServer(std::vector<ServerConfig *> &config) : _config(config) {}
 
 AdminServer::~AdminServer() {}
 
-void sendResGet(int newsockfd, const std::string &header, const std::string &content)
-{
-	std::cout << "[ sendResGet ]" << std::endl;
-
-	int n;
-	// Enviar la respuesta al cliente utilizando el descriptor de archivo correcto (newsockfd)
-	n = send(newsockfd, header.c_str(), header.length(), 0);
-	if (n < 0)
-	{
-		std::cerr << "Error al enviar encabezado HTTP: " << strerror(errno) << std::endl;
-		close(newsockfd);
-		return; // Continuar con el siguiente intento de aceptar conexiones
-	}
-
-	// Enviar el contenido HTML utilizando el descriptor de archivo correcto (newsockfd)
-	n = send(newsockfd, content.c_str(), content.length(), 0);
-	if (n < 0)
-	{
-		std::cerr << "Error al enviar contenido HTML: " << strerror(errno) << std::endl;
-		close(newsockfd);
-		return; // Continuar con el siguiente intento de aceptar conexiones
-	}
-	Log::info(GET, "200 OK");
-	std::cout << "Respuesta enviada al cliente." << std::endl;
-}
-
-//===============PRINT====================================================
-void printEvent(const struct kevent &event)
-{
-	std::cout << GREEN;
-	std::cout << "Identificador: " << event.ident << std::endl;
-	std::cout << "Filtro: " << event.filter << std::endl;
-	std::cout << "Flags: " << event.flags << std::endl;
-	std::cout << "Filtros específicos: " << event.fflags << std::endl;
-	std::cout << "Datos: " << event.data << std::endl;
-	std::cout << "Datos de usuario: " << event.udata << std::endl;
-	std::cout << RESET;
-}
-
-void printPeticion(const char *buffer)
-{
-	std::cout << CYAN "[ Mensaje del cliente: ]\n"
-			  << buffer << RESET << std::endl;
-}
-
-void printResponse(std::string header, std::string content)
-{
-	(void)content;
-	std::cout << YELLOW << "======[ RESPONSE ] ======" << std::endl;
-	std::cout << "[ HEADER ]" << std::endl;
-	std::cout << header << std::endl;
-	std::cout << "[ CONTENT ]" << std::endl;
-	std::cout << content << std::endl;
-	std::cout << "========================" << RESET << std::endl;
-}
-
-//=========================================================================
-
 struct client_data
 {
 	int fd;
-	// std::string path;
-	// std::string prePath;
 } clients[MAX_EVENTS];
 
 struct client_events
@@ -100,7 +29,7 @@ struct client_events
 	socklen_t socklen;
 } events[MAX_EVENTS];
 
-int getConnect(int fd)
+static int getConnect(int fd)
 {
 	for (int i = 0; i < MAX_EVENTS; i++)
 		if (clients[i].fd == fd)
@@ -108,7 +37,7 @@ int getConnect(int fd)
 	return -1;
 }
 
-int addConnect(int fd)
+static int addConnect(int fd)
 {
 	if (fd < 1)
 		return -1;
@@ -119,7 +48,7 @@ int addConnect(int fd)
 	return 0;
 }
 
-int delConnect(int fd)
+static int delConnect(int fd)
 {
 	if (fd < 1)
 		return -1;
@@ -128,6 +57,26 @@ int delConnect(int fd)
 		return -1;
 	clients[i].fd = 0;
 	return close(fd);
+}
+
+void sendResGet(int newsockfd, const std::string &header, const std::string &content)
+{
+	int n;
+	n = send(newsockfd, header.c_str(), header.length(), 0);
+	if (n < 0)
+	{
+		std::string err("Error sending HTML header");
+		close(newsockfd);
+		Log::error(GET, err);
+	}
+	n = send(newsockfd, content.c_str(), content.length(), 0);
+	if (n < 0)
+	{
+		std::string err("Error sending header");
+		close(newsockfd);
+		Log::error(GET, err);
+	}
+	Log::info(GET, "200 OK");
 }
 
 int AdminServer::takeServer(struct kevent &event)
@@ -146,8 +95,9 @@ int AdminServer::takeServer(struct kevent &event)
 
 void AdminServer::run(int kq)
 {
-	HTTPRequest request[MAX_EVENTS];
+	void *data;
 	char buffer[MAX_MSG_SIZE];
+	HTTPRequest request[MAX_EVENTS];
 
 	_write = false;
 	_multi = false;
@@ -159,9 +109,8 @@ void AdminServer::run(int kq)
 	for (int i = 0; i < MAX_EVENTS; i++)
 		events[i].socklen = sizeof(events[i].addr);
 
-	_flags = EV_ADD | EV_FLAG0; // Poner EV_FLAG1 si hay multipart
+	_flags = EV_ADD | EV_FLAG0;
 
-	void *data;
 	while (42)
 	{
 		int num_events = kevent(kq, NULL, 0, evList, MAX_EVENTS, NULL);
@@ -170,121 +119,73 @@ void AdminServer::run(int kq)
 		{
 			try
 			{
-				std::cout << MAGENTA "Event number: " << num_events << " Ident: " << evList[i].ident << RESET << std::endl;
 				int j = takeServer(evList[i]);
-				std::cout << MAGENTA << "Server number: " << j << " Socket " << _config[j]->getServerSocket() << RESET << std::endl;
-				// receive new connection
 				events[j].evList = evList[i];
 				data = evList[i].udata;
 				if (evList[i].ident == (unsigned long)_config[j]->getServerSocket())
 				{
-					std::cout << MAGENTA "Accept connection " << j << RESET << std::endl;
 					int fd = accept(events[j].evList.ident, (struct sockaddr *)&events[j].addr, &events[j].socklen);
 					if (addConnect(fd) == 0)
 					{
 						EV_SET(&events[j].evSet, fd, EVFILT_READ, _flags, 0, 0, data);
 						kevent(kq, &events[j].evSet, 1, NULL, 0, NULL);
-						// _ref = false;
 						_ref = true;
 					}
 					else
 					{
-						Log::error(ADM, "Connection refused!");
-						// std::cout << "connection refused." << std::endl;
 						close(fd);
+						Log::error(ADM, "Connection refused!");
 					}
-				} // client disconnected
+				}
 				else if (events[j].evList.flags & EV_EOF)
 				{
-					std::cout << MAGENTA "End connection " << j << RESET << std::endl;
 					int fd = events[j].evList.ident;
-					// std::cout << "client #" << getConnect(fd) << " disconnected." << std::endl;
 					EV_SET(&events[j].evSet, fd, EVFILT_READ, EV_DELETE, 0, 0, data);
 					kevent(kq, &events[j].evSet, 1, NULL, 0, NULL);
 					delConnect(fd);
 					Log::info(ADM, "Connection closed");
-				} // read message from client
+				}
 				else if (events[j].evList.filter == EVFILT_READ)
 				{
-					std::cout << MAGENTA "Read connection " << j << RESET << std::endl;
-					//=================DESDE AQUI==============================================
-					// std::cout << RED << " [=================EVFILT_READ=================]" << std::endl;
-					// std::cout << "_write: " << _write << RESET << std::endl;
 					_send = false;
-
-					// Recibir datos del cliente
 					memset(buffer, 0, sizeof(buffer));
 					int n = recv(events[j].evList.ident, buffer, sizeof(buffer), 0);
 					if (n < 0)
 					{
-						std::cerr << "Error al recibir datos: " << strerror(errno) << std::endl;
 						close(events[j].evList.ident);
 						Log::error(ADM, "Error receiving data!");
-						continue; // Continuar con el siguiente intento de aceptar conexiones
 					}
-					//===================PETICION==============================================
-					// TODO
-					// cliente peticion
-					printPeticion(buffer);
-					//===================PARSING==============================================
-					// HTTPRequest request(buffer);
 					request[j].takeBuffer(buffer, n, _multi, _write);
-					// [ Request client ]
-					request[j].print();
-
-					//=========================================================================
-
-					// HTTPBody body(request);
 					HTTPRes response(request[j], _config[j], _ref, _write, _send);
-
-					// //=========================================================================
-
-					// Manejo de flags para la primera peticion
 					if (events[j].evSet.flags & EV_FLAG0)
 					{
-						// std::cout << "CON EV_FLAG0" << std::endl;
-						_flags &= ~EV_FLAG0; // Eliminar EV_FLAG0
-
+						_flags &= ~EV_FLAG0;
 						EV_SET(&events[j].evSet, events[j].evList.ident, EVFILT_READ, _flags, 0, 0, data);
 						kevent(kq, &events[j].evSet, 1, NULL, 0, NULL);
 						_ref = true;
 					}
-
 					EV_SET(&events[j].evSet, events[j].evList.ident, EVFILT_WRITE, _flags, 0, 0, data);
 					kevent(kq, &events[j].evSet, 1, NULL, 0, NULL);
-
-					//=========================================================================
 					_header = response.getHeader();
 					_content = response.getContent();
-
 					if (!_multi)
 						request[j].cleanObject();
 				}
-				// Escribir en el socket cuando esté listo para escribir
 				else if (events[j].evList.filter == EVFILT_WRITE)
 				{
-					// std::cout << YELLOW;
-					// std::cout << "ESTO ES EVFILT_WRITE" << std::endl;
-					std::cout << MAGENTA "Write connection " << j << RESET << std::endl;
 					if (!_multi)
 						sendResGet(events[j].evList.ident, _header, _content);
 					else if (_multi && _send)
 						sendResGet(events[j].evList.ident, _header, _content);
-
-					// std::cout << YELLOW << " [=================EVFILT_WRITE=================]" << std::endl;
-					// std::cout << " _write: " << _write << std::endl;
-
 					if (_write)
 					{
 						_content.clear();
 						_header.clear();
 					}
-					int flags_tmp = events[j].evSet.flags; // para guardar los flags activos
-
-					// Después de enviar la respuesta, eliminar el evento EVFILT_WRITE
+					int flags_tmp = events[j].evSet.flags;
 					EV_SET(&events[j].evSet, events[j].evList.ident, EVFILT_WRITE, EV_DELETE, 0, 0, data);
 					kevent(kq, &events[j].evSet, 1, NULL, 0, NULL);
-					events[j].evSet.flags = flags_tmp; // asignamos los flags activos
+					events[j].evSet.flags = flags_tmp;
 					std::cout << RESET;
 				}
 			}
@@ -293,11 +194,11 @@ void AdminServer::run(int kq)
 				// No necesito catch porque siguo con el loop igualmente
 			}
 		}
-		// Cerrar el socket del servidor (esto no se alcanzará)
 	}
 	for (unsigned long i = 0; i < _config.size(); i++)
 		close(_config[i]->getServerSocket());
 }
+
 // 1. **Receive New Connection**:
 //    - Este caso se maneja cuando se recibe una nueva conexión en el socket principal (`sockfd`).
 //    - Se comprueba si la identificación (`ident`) del evento en `evList` es igual al identificador del socket principal (`sockfd`).
