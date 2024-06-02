@@ -25,6 +25,3 @@ def main():
 
 if __name__ == "__main__":
     print(main())
-    # print(0)
-
-# python3 up.py toma.jpg

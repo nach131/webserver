@@ -1,16 +1,16 @@
-Sunday Jun  2 2024 13:42:25	INFO:	GET		 -> 200 OK
-Sunday Jun  2 2024 13:42:25	INFO:	GET		 -> 200 OK
-Sunday Jun  2 2024 13:42:25	INFO:	GET		 -> 200 OK
-Sunday Jun  2 2024 13:42:25	INFO:	GET		 -> 200 OK
-Sunday Jun  2 2024 13:42:25	INFO:	GET		 -> 200 OK
-Sunday Jun  2 2024 13:42:25	INFO:	GET		 -> 200 OK
-Sunday Jun  2 2024 13:42:26	WARN:	GET		 -> 404 Not Found!
-Sunday Jun  2 2024 13:42:26	INFO:	GET		 -> 200 OK
-un  2 2024 13:35:17	INFO:	SERVER	 -> Connection closed
-Sunday Jun  2 2024 13:35:17	INFO:	GET		 -> 200 OK
-Sunday Jun  2 2024 13:35:17	INFO:	GET		 -> 200 OK
-Sunday Jun  2 2024 13:35:17	INFO:	GET		 -> 200 OK
-Sunday Jun  2 2024 13:35:17	INFO:	GET		 -> 200 OK
+Sunday Jun  2 2024 13:47:07	INFO:	GET		 -> 200 OK
+Sunday Jun  2 2024 13:47:07	INFO:	GET		 -> 200 OK
+Sunday Jun  2 2024 13:47:07	WARN:	GET		 -> 404 Not Found!
+Sunday Jun  2 2024 13:47:07	INFO:	GET		 -> 200 OK
+Sunday Jun  2 2024 13:47:09	INFO:	SERVER	 -> Connection closed
+Sunday Jun  2 2024 13:47:15	INFO:	POST	 -> 200 OK
+Sunday Jun  2 2024 13:47:15	INFO:	POST	 -> 200 OK
+Sunday Jun  2 2024 13:47:15	INFO:	GET		 -> 200 OK
+Sunday Jun  2 2024 13:47:15	WARN:	RESPONSE -> 405 Method not allowed!
+Sunday Jun  2 2024 13:47:15	INFO:	GET		 -> 200 OK
+Sunday Jun  2 2024 13:47:17	WARN:	GET		 -> 404 Not Found!
+Sunday Jun  2 2024 13:47:17	INFO:	GET		 -> 200 OK
+T		 -> 200 OK
 Sunday Jun  2 2024 13:35:17	INFO:	GET		 -> 200 OK
 Sunday Jun  2 2024 13:35:17	INFO:	GET		 -> 200 OK
 Sunday Jun  2 2024 13:35:25	INFO:	GET		 -> 200 OK
