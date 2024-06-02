@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/17 13:48:00 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/06/01 20:37:39 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/02 11:18:33 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,13 +75,13 @@ bool isFile(const std::string &path)
 }
 // #include <sys/stat.h>
 
-// bool isFile(const std::string& path) {
-//     struct stat statbuf;
-//     if (stat(path.c_str(), &statbuf) != 0) {
-//         return false; // No se pudo acceder a la ruta
-//     }
-//     return S_ISREG(statbuf.st_mode); // Verifica si es un archivo regular
-// }
+bool isFileExist(const std::string &path)
+{
+	struct stat statbuf;
+	if (stat(path.c_str(), &statbuf) != 0)
+		return false;				 // No se pudo acceder a la ruta
+	return S_ISREG(statbuf.st_mode); // Verifica si es un archivo regular
+}
 
 bool directoryExists(const std::string &path)
 {
@@ -171,6 +171,11 @@ void removeLastNewline(std::string &str)
 	if (!str.empty() && str[str.length() - 1] == '\n')
 		str.erase(str.length() - 1);
 }
+void removeLastReturn(std::string &str)
+{
+	if (!str.empty() && str[str.length() - 1] == '\r')
+		str.erase(str.length() - 1);
+}
 
 void removeDoubleSlashes(std::string &path)
 {
@@ -188,7 +193,6 @@ std::string removeBeforeNumber(const std::string &url, const std::string &host)
 
 	std::string result = url;
 	// std::size_t pos = result.find("8080"); // Buscar el número "8080"
-	// TODO CUIDADO HARCODEADO
 	// std::size_t pos = result.find("localhost:8080"); // Buscar el número "8080"
 	std::size_t pos = result.find(host); // Buscar el número "8080"
 
@@ -343,4 +347,33 @@ std::map<std::string, std::string> parse_query_string(const std::string &query)
 	}
 
 	return query_map;
+}
+
+std::string generateToken(size_t length)
+{
+	const char hex_chars[] = "0123456789abcdef";
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> dis(0, 15);
+
+	std::stringstream ss;
+	for (size_t i = 0; i < length; ++i)
+	{
+		ss << hex_chars[dis(gen)];
+	}
+	return ss.str();
+}
+
+bool isValidToken(const std::string &token, size_t expectedLength)
+{
+	// Verificar la longitud del token
+	if (token.length() != expectedLength)
+		return false;
+
+	// Verificar si el token contiene solo caracteres hexadecimales
+	const std::regex hexPattern("^[0-9a-f]+$");
+	if (!std::regex_match(token, hexPattern))
+		return false;
+
+	return true;
 }

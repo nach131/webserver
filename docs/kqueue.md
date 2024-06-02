@@ -44,15 +44,9 @@ En el contexto de `kqueue`, puedes usar varios eventos además de `EVFILT_READ`
 6. **EVFILT_PROC**: Este evento se utiliza para monitorear procesos. Puedes usarlo para recibir notificaciones cuando un proceso se inicia, se detiene o se cierra.
 <<<<<<< HEAD
 
-TODO ver este enlace para ver una guia sobre el kqueue
+ver este enlace para ver una guia sobre el kqueue
 https://habr.com/en/articles/600123/
 
-TODO
 
 CREO QUE PARA LOS CGI USAREMOS EVFILT_PROC
 =======
-=======
-TODO ver este enlace para ver una guia sobre el kqueue
-https://habr.com/en/articles/600123/
->>>>>>> 5fbc4ae91df505788fb1ab35c9b38a32ad4f70d8
->>>>>>> main

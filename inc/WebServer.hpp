@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:34:48 by vduchi            #+#    #+#             */
-/*   Updated: 2024/06/01 15:27:21 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/02 11:18:59 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 #include <sstream>
 #include <functional>
 #include <vector>
+#include <random>
+#include <regex>
 #include <sys/stat.h>
 
 #define MAX_EVENTS 32
@@ -33,12 +35,16 @@ std::string readFile(const std::string &filePath);
 std::string getExtension(const std::string &path);
 std::string extractEndpoint(const std::string &url);
 bool isFile(const std::string &path);
+bool isFileExist(const std::string &path);
 bool directoryExists(const std::string &path);
 std::string getFileName(const std::string &path);
 std::vector<std::string> split(const std::string &str, char delimiter);
 bool isMainRoot(const std::string &str);
+
 void removeLastSlash(std::string &str);
 void removeLastNewline(std::string &str);
+void removeLastReturn(std::string &str);
+
 void removeDoubleSlashes(std::string &path);
 std::string removeBeforeNumber(const std::string &url, const std::string &host);
 std::string removeFileName(const std::string &path);
@@ -53,4 +59,7 @@ bool isText(const std::string &str);
 std::string intToString(int number);
 bool isCookiepy(const std::string &str);
 std::map<std::string, std::string> parse_query_string(const std::string &query);
+std::string generateToken(size_t length);
+bool isValidToken(const std::string &token, size_t expectedLength);
+
 #endif

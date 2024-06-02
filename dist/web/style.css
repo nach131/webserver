@@ -669,3 +669,7 @@ video {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
   }
+
+  .btn-link.btn-nach {
+    background-color: #43a202;
+  }

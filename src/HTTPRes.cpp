@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/06/01 20:37:46 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/02 11:18:40 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &r
 	//=========================================================================
 
 	if (!_locationConf.methodAllowed(method))
-		methodErr();
+		error405();
 	else if (_locationConf.autoIndexOn())
 	{
 		std::cout << "EXPLORER\n";
@@ -79,17 +79,15 @@ HTTPRes::HTTPRes(const HTTPRequest &request, ServerConfig *config, const bool &r
 		std::cout << "WEB\n";
 		if (method == "GET")
 		{
-			std::cout << "realPath: " << _locationConf.realPath() << std::endl;
+			std::string filePath = _locationConf.realPath();
 
-			if (isFile(_locationConf.realPath()))
-				createContent(_locationConf.realPath());
-			else
+			if (!isFile(_request.getHeader("Path")) && !isFileExist(filePath))
 				error403();
+			else if (isFile(filePath))
+				createContent(filePath);
 		}
 		else if (method == "POST")
-		{
 			methodPost(false);
-		}
 		else if (method == "DELETE")
 			methodDelete(false);
 	}
@@ -105,8 +103,19 @@ HTTPRes::~HTTPRes() {}
 
 void HTTPRes::createContent(std::string filePath)
 {
-	std::string extension = getExtension(filePath);
 
+	std::string toma = _request.getHeader("Path");
+
+	std::cout << "createContent" << std::endl;
+
+	std::string cookie = _request.getHeader("Cookie");
+	if (!cookie.empty())
+	{
+		cookie = removeSubstring(cookie, "Authenticator=");
+		removeLastReturn(cookie);
+	}
+
+	std::string extension = getExtension(filePath);
 	std::cout << RED << "extension: " << extension << RESET << std::endl;
 
 	if (extension == "py")
@@ -120,30 +129,18 @@ void HTTPRes::createContent(std::string filePath)
 	}
 	else if (extension == "php")
 		_content = execPython("./cgi_bin/php.py"); // error501();
-	// else if (isCookiepy(filePath))
-	// {
-	// 	std::cout << "TOMA\n";
+	else if (isValidToken(cookie, 32) && _request.getHeader("Path") == "/web/logout.html")
+	{
+		_header.addOne(_request.getHeader("Version"), "200 OK");
+		_header.addField("Content-Type", "text/html");
 
-	// 	// std::string request = removeSubstring("/cgi_bin/setcookie.py?", filePath);
-
-	// 	// std::cout << "request: " << request << std::endl;
-
-	// 	std::map<std::string, std::string> query_map = parse_query_string(filePath);
-
-	// 	std::string key = query_map["key"];
-	// 	std::string value = query_map["value"];
-	// 	std::cout << "key: " << key << std::endl;
-	// 	std::cout << "value: " << value << std::endl;
-
-	// 	// std::string cookie = execPython(filePath, _request.getHeader("Content"));
-
-	// 	_header.addOne(_request.getHeader("Version"), "204 OK");
-	// 	_header.addField("Content-Type", "text/html");
-	// 	std::string res = "NombreCookie=" + value;
-
-	// 	// _header.addField("Set-Cookie", key + "=" + value);
-	// 	_header.addField("Set-Cookie", res);
-	// }
+		std::string cookie = "Authenticator=0000";
+		_header.addField("Set-Cookie", cookie);
+		_content = readFile("./dist/web/index.html");
+		return;
+	}
+	else if (_locationConf.getName() == "/web" && !cookie.empty() && isValidToken(cookie, 32) && extension == "html")
+		_content = readFile("./dist/web/welcome.html");
 	else
 		_content = readFile(filePath);
 
@@ -156,7 +153,7 @@ void HTTPRes::createContent(std::string filePath)
 			_header.addField("Content-Type", _config->getContentType(extension));
 	}
 	else
-		error403();
+		error404();
 	// file ? error404() : error403();
 }
 
@@ -230,8 +227,16 @@ void HTTPRes::methodPost(const bool &autoindex)
 
 			std::string res = execPython(realPath, _request.getHeader("Content"));
 
-			std::cout << "res: " << res << std::endl;
-			res == "0\n" ? _header.addField("Location", "/web/wellcome.html") : _header.addField("Location", "/web/login_err.html");
+			if (res == "0\n")
+			{
+				std::string cookie = "Authenticator=" + generateToken(32);
+				cookie.append("; Path=/web");
+				cookie.append("; Secure=false");
+				_header.addField("Set-Cookie", cookie);
+				_header.addField("Location", "/web/welcome.html");
+			}
+			else
+				_header.addField("Location", "/web/login_err.html");
 		}
 		else if (realPath.find("setcookie.py") != std::string::npos)
 		{
@@ -241,10 +246,6 @@ void HTTPRes::methodPost(const bool &autoindex)
 			_header.addOne(_request.getHeader("Version"), "204 OK");
 			_header.addField("Content-Type", "text/html");
 			_header.addField("Set-Cookie", cookie);
-
-			// _content += "<html><body>";
-			// _content += "<h1>Cookie has been set</h1>";
-			// _content += "</body></html>";
 		}
 	}
 	else
@@ -302,23 +303,25 @@ void HTTPRes::execUpload(const std::string &pathFile)
 	_send = true;
 }
 
-void HTTPRes::methodErr()
+void HTTPRes::error405()
 {
-	std::cout << "==========methodErr==========\n";
+	std::string custom = _config->getErrorPage(405);
 	_header.addOne(_request.getHeader("Version"), "405 Method Not Allowed");
-	_content = readFile("./conf_web/error/basico/405.html");
+	isFileExist(custom) ? _content = readFile(custom) : _content = readFile("./conf_web/error/basico/405.html");
 }
 
 void HTTPRes::error404()
 {
+	std::string custom = _config->getErrorPage(404);
 	_header.addOne(_request.getHeader("Version"), "404 Not Found");
-	_content = readFile("./conf_web/error/basico/404.html");
+	isFileExist(custom) ? _content = readFile(custom) : _content = readFile("./conf_web/error/basico/404.html");
 }
 
 void HTTPRes::error403()
 {
+	std::string custom = _config->getErrorPage(403);
 	_header.addOne(_request.getHeader("Version"), "403 Forbidden");
-	_content = readFile("./conf_web/error/basico/403.html");
+	isFileExist(custom) ? _content = readFile(custom) : _content = readFile("./conf_web/error/basico/403.html");
 }
 
 // void HTTPRes::error501()
@@ -330,4 +333,3 @@ void HTTPRes::error403()
 std::string const HTTPRes::getHeader() const { return _header.getHeader(); }
 
 std::string const HTTPRes::getContent() const { return _content; }
-

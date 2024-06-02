@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/06/01 13:45:21 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/02 11:18:45 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,11 +40,15 @@ std::string HTTPRequest::getFileType() { return _fileType; }
 
 const std::map<std::string, std::string> &HTTPRequest::getMap() const { return _map; }
 
-const std::string &HTTPRequest::getHeader(const std::string name) const
+const std::string &HTTPRequest::getHeader(const std::string &name) const
 {
+	std::map<std::string, std::string>::const_iterator it = _map.find(name);
 
-	std::string finded = _map.find(name)->second.empty() ? "" : _map.find(name)->second;
-	return _map.find(name)->second;
+	if (it != _map.end())
+		return it->second;
+
+	static const std::string emptyString;
+	return emptyString;
 }
 
 // esto esta mal hay que componerlo bien
@@ -69,8 +73,6 @@ void HTTPRequest::findFileName(const char *buf)
 		_fileType = _fileName.substr(_fileName.find_last_of(".") + 1,
 									 _fileName.length() - (_fileName.find(".") + 1));
 		std::cout << RED "Filename: -" << _fileName << "- FileType: -" << _fileType << "-" RESET << std::endl;
-		// TODO Y ESTE EXIT
-		// exit(0);
 	}
 }
 
@@ -118,7 +120,7 @@ void HTTPRequest::takeHeader(std::stringstream &ss, int &start)
 	for (std::map<std::string, std::string>::iterator it = _map.begin(); it != _map.end(); it++)
 	{
 		if (it->first.find("Content-Type") != std::string::npos &&
-				it->second.find("multipart") != std::string::npos)
+			it->second.find("multipart") != std::string::npos)
 		{
 			_boundary = it->second.substr(it->second.find("boundary") + 9, it->second.length() - (it->second.find("boundary") + 9) - 1);
 			std::cout << RED << "Boundary -> -" << _boundary << RESET << std::endl;
@@ -212,7 +214,7 @@ void HTTPRequest::takeBuffer(const char *buf, int len, bool &multi, bool &write)
 				mapContent += *it;
 			_map["Content"] = mapContent;
 			std::cout << GREEN "Map Content: " << std::endl
-								<< _map["Content"] << RESET << std::endl;
+					  << _map["Content"] << RESET << std::endl;
 		}
 		setMulti(multi);
 		content.clear();

@@ -14,7 +14,7 @@ def createCookie(query_string):
 	key = data.get('key')
 	value = data.get('value')
 
-	cookie = key + '=' + '\"' + value + '\"'
+	cookie = key + '=' +  value 
 
 	return cookie
 
