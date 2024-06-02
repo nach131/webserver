@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/06/02 10:40:30 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/02 12:38:48 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void sendResGet(int newsockfd, const std::string &header, const std::string &con
 		close(newsockfd);
 		return; // Continuar con el siguiente intento de aceptar conexiones
 	}
-
+	Log::info(GET, "200 OK");
 	std::cout << "Respuesta enviada al cliente." << std::endl;
 }
 
@@ -88,8 +88,8 @@ void printResponse(std::string header, std::string content)
 struct client_data
 {
 	int fd;
-	std::string path;
-	std::string prePath;
+	// std::string path;
+	// std::string prePath;
 } clients[MAX_EVENTS];
 
 struct client_events
@@ -168,129 +168,136 @@ void AdminServer::run(int kq)
 
 		for (int i = 0; i < num_events; i++)
 		{
-			std::cout << MAGENTA "Event number: " << num_events << " Ident: " << evList[i].ident << RESET << std::endl;
-			int j = takeServer(evList[i]);
-			std::cout << MAGENTA << "Server number: " << j << " Socket " << _config[j]->getServerSocket() << RESET << std::endl;
-			// receive new connection
-			events[j].evList = evList[i];
-			data = evList[i].udata;
-			if (evList[i].ident == (unsigned long)_config[j]->getServerSocket())
+			try
 			{
-				std::cout << MAGENTA "Accept connection " << j << RESET << std::endl;
-				int fd = accept(events[j].evList.ident, (struct sockaddr *)&events[j].addr, &events[j].socklen);
-				if (addConnect(fd) == 0)
+				std::cout << MAGENTA "Event number: " << num_events << " Ident: " << evList[i].ident << RESET << std::endl;
+				int j = takeServer(evList[i]);
+				std::cout << MAGENTA << "Server number: " << j << " Socket " << _config[j]->getServerSocket() << RESET << std::endl;
+				// receive new connection
+				events[j].evList = evList[i];
+				data = evList[i].udata;
+				if (evList[i].ident == (unsigned long)_config[j]->getServerSocket())
 				{
-					EV_SET(&events[j].evSet, fd, EVFILT_READ, _flags, 0, 0, data);
+					std::cout << MAGENTA "Accept connection " << j << RESET << std::endl;
+					int fd = accept(events[j].evList.ident, (struct sockaddr *)&events[j].addr, &events[j].socklen);
+					if (addConnect(fd) == 0)
+					{
+						EV_SET(&events[j].evSet, fd, EVFILT_READ, _flags, 0, 0, data);
+						kevent(kq, &events[j].evSet, 1, NULL, 0, NULL);
+						// _ref = false;
+						_ref = true;
+					}
+					else
+					{
+						Log::error(ADM, "Connection refused!");
+						// std::cout << "connection refused." << std::endl;
+						close(fd);
+					}
+				} // client disconnected
+				else if (events[j].evList.flags & EV_EOF)
+				{
+					std::cout << MAGENTA "End connection " << j << RESET << std::endl;
+					int fd = events[j].evList.ident;
+					// std::cout << "client #" << getConnect(fd) << " disconnected." << std::endl;
+					EV_SET(&events[j].evSet, fd, EVFILT_READ, EV_DELETE, 0, 0, data);
 					kevent(kq, &events[j].evSet, 1, NULL, 0, NULL);
-					// _ref = false;
-					_ref = true;
-				}
-				else
+					delConnect(fd);
+					Log::info(ADM, "Connection closed");
+				} // read message from client
+				else if (events[j].evList.filter == EVFILT_READ)
 				{
-					std::cout << "connection refused." << std::endl;
-					close(fd);
-				}
-			} // client disconnected
-			else if (events[j].evList.flags & EV_EOF)
-			{
-				std::cout << MAGENTA "End connection " << j << RESET << std::endl;
-				int fd = events[j].evList.ident;
-				// std::cout << "client #" << getConnect(fd) << " disconnected." << std::endl;
-				EV_SET(&events[j].evSet, fd, EVFILT_READ, EV_DELETE, 0, 0, data);
-				kevent(kq, &events[j].evSet, 1, NULL, 0, NULL);
-				delConnect(fd);
-			} // read message from client
-			else if (events[j].evList.filter == EVFILT_READ)
-			{
-				std::cout << MAGENTA "Read connection " << j << RESET << std::endl;
-				//=================DESDE AQUI==============================================
-				// std::cout << RED << " [=================EVFILT_READ=================]" << std::endl;
-				// std::cout << "_write: " << _write << RESET << std::endl;
-				_send = false;
+					std::cout << MAGENTA "Read connection " << j << RESET << std::endl;
+					//=================DESDE AQUI==============================================
+					// std::cout << RED << " [=================EVFILT_READ=================]" << std::endl;
+					// std::cout << "_write: " << _write << RESET << std::endl;
+					_send = false;
 
-				// Recibir datos del cliente
-				memset(buffer, 0, sizeof(buffer));
-				int n = recv(events[j].evList.ident, buffer, sizeof(buffer), 0);
-				if (n < 0)
-				{
-					std::cerr << "Error al recibir datos: " << strerror(errno) << std::endl;
-					close(events[j].evList.ident);
-					continue; // Continuar con el siguiente intento de aceptar conexiones
-				}
-				//===================PETICION==============================================
-				// TODO
-				// cliente peticion
-				printPeticion(buffer);
-				//===================PARSING==============================================
-				// HTTPRequest request(buffer);
-				request[j].takeBuffer(buffer, n, _multi, _write);
-				// [ Request client ]
-				request[j].print();
+					// Recibir datos del cliente
+					memset(buffer, 0, sizeof(buffer));
+					int n = recv(events[j].evList.ident, buffer, sizeof(buffer), 0);
+					if (n < 0)
+					{
+						std::cerr << "Error al recibir datos: " << strerror(errno) << std::endl;
+						close(events[j].evList.ident);
+						Log::error(ADM, "Error receiving data!");
+						continue; // Continuar con el siguiente intento de aceptar conexiones
+					}
+					//===================PETICION==============================================
+					// TODO
+					// cliente peticion
+					printPeticion(buffer);
+					//===================PARSING==============================================
+					// HTTPRequest request(buffer);
+					request[j].takeBuffer(buffer, n, _multi, _write);
+					// [ Request client ]
+					request[j].print();
 
-				//=========================================================================
+					//=========================================================================
 
-				// HTTPBody body(request);
-				HTTPRes response(request[j], _config[j], _ref, _write, _send);
+					// HTTPBody body(request);
+					HTTPRes response(request[j], _config[j], _ref, _write, _send);
 
-				// //=========================================================================
+					// //=========================================================================
 
-				// Manejo de flags para la primera peticion
-				if (events[j].evSet.flags & EV_FLAG0)
-				{
-					// std::cout << "CON EV_FLAG0" << std::endl;
-					_flags &= ~EV_FLAG0; // Eliminar EV_FLAG0
+					// Manejo de flags para la primera peticion
+					if (events[j].evSet.flags & EV_FLAG0)
+					{
+						// std::cout << "CON EV_FLAG0" << std::endl;
+						_flags &= ~EV_FLAG0; // Eliminar EV_FLAG0
 
-					EV_SET(&events[j].evSet, events[j].evList.ident, EVFILT_READ, _flags, 0, 0, data);
+						EV_SET(&events[j].evSet, events[j].evList.ident, EVFILT_READ, _flags, 0, 0, data);
+						kevent(kq, &events[j].evSet, 1, NULL, 0, NULL);
+						_ref = true;
+					}
+
+					EV_SET(&events[j].evSet, events[j].evList.ident, EVFILT_WRITE, _flags, 0, 0, data);
 					kevent(kq, &events[j].evSet, 1, NULL, 0, NULL);
-					_ref = true;
+
+					//=========================================================================
+					_header = response.getHeader();
+					_content = response.getContent();
+
+					if (!_multi)
+						request[j].cleanObject();
 				}
+				// Escribir en el socket cuando esté listo para escribir
+				else if (events[j].evList.filter == EVFILT_WRITE)
+				{
+					// std::cout << YELLOW;
+					// std::cout << "ESTO ES EVFILT_WRITE" << std::endl;
+					std::cout << MAGENTA "Write connection " << j << RESET << std::endl;
+					if (!_multi)
+						sendResGet(events[j].evList.ident, _header, _content);
+					else if (_multi && _send)
+						sendResGet(events[j].evList.ident, _header, _content);
 
-				EV_SET(&events[j].evSet, events[j].evList.ident, EVFILT_WRITE, _flags, 0, 0, data);
-				kevent(kq, &events[j].evSet, 1, NULL, 0, NULL);
+					// std::cout << YELLOW << " [=================EVFILT_WRITE=================]" << std::endl;
+					// std::cout << " _write: " << _write << std::endl;
 
-				//=========================================================================
-				_header = response.getHeader();
-				_content = response.getContent();
+					if (_write)
+					{
+						_content.clear();
+						_header.clear();
+					}
+					int flags_tmp = events[j].evSet.flags; // para guardar los flags activos
 
-				if (!_multi)
-					request[j].cleanObject();
+					// Después de enviar la respuesta, eliminar el evento EVFILT_WRITE
+					EV_SET(&events[j].evSet, events[j].evList.ident, EVFILT_WRITE, EV_DELETE, 0, 0, data);
+					kevent(kq, &events[j].evSet, 1, NULL, 0, NULL);
+					events[j].evSet.flags = flags_tmp; // asignamos los flags activos
+					std::cout << RESET;
+				}
 			}
-			// Escribir en el socket cuando esté listo para escribir
-			else if (events[j].evList.filter == EVFILT_WRITE)
+			catch (const std::runtime_error &e)
 			{
-				// std::cout << YELLOW;
-				// std::cout << "ESTO ES EVFILT_WRITE" << std::endl;
-				std::cout << MAGENTA "Write connection " << j << RESET << std::endl;
-				if (!_multi)
-					sendResGet(events[j].evList.ident, _header, _content);
-				else if (_multi && _send)
-					sendResGet(events[j].evList.ident, _header, _content);
-
-				// std::cout << YELLOW << " [=================EVFILT_WRITE=================]" << std::endl;
-				// std::cout << " _write: " << _write << std::endl;
-
-				// TODO esto nunca pasas
-				if (_write)
-				{
-					_content.clear();
-					_header.clear();
-				}
-				int flags_tmp = events[j].evSet.flags; // para guardar los flags activos
-
-				// Después de enviar la respuesta, eliminar el evento EVFILT_WRITE
-				EV_SET(&events[j].evSet, events[j].evList.ident, EVFILT_WRITE, EV_DELETE, 0, 0, data);
-				kevent(kq, &events[j].evSet, 1, NULL, 0, NULL);
-				events[j].evSet.flags = flags_tmp; // asignamos los flags activos
-				std::cout << RESET;
+				// No necesito catch porque siguo con el loop igualmente
 			}
 		}
+		// Cerrar el socket del servidor (esto no se alcanzará)
 	}
-
-	// Cerrar el socket del servidor (esto no se alcanzará)
 	for (unsigned long i = 0; i < _config.size(); i++)
 		close(_config[i]->getServerSocket());
 }
-
 // 1. **Receive New Connection**:
 //    - Este caso se maneja cuando se recibe una nueva conexión en el socket principal (`sockfd`).
 //    - Se comprueba si la identificación (`ident`) del evento en `evList` es igual al identificador del socket principal (`sockfd`).

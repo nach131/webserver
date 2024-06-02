@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:34:48 by vduchi            #+#    #+#             */
-/*   Updated: 2024/06/02 11:18:59 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/02 12:10:28 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,11 @@
 
 #include "Colors.hpp"
 #include <map>
+#include <ctime>
+#include <vector>
 #include <fstream>
-#include <iostream>
 #include <sstream>
+#include <iostream>
 #include <functional>
 #include <vector>
 #include <random>
@@ -61,5 +63,43 @@ bool isCookiepy(const std::string &str);
 std::map<std::string, std::string> parse_query_string(const std::string &query);
 std::string generateToken(size_t length);
 bool isValidToken(const std::string &token, size_t expectedLength);
+
+// enum
+// {
+// 	CONN,	// Connection error
+// 	RECV,	// Receive data error
+// 	FOPEN,	// File open error
+// 	PGERR,	// Page error
+// 	EXERR,	// Execution error
+// 	DISC,	// Client disconnected
+// 	GET,	// Get Method
+// 	POST,	// Post Method
+// 	DELETE, // Delete method
+// };
+
+enum
+{
+	ADM,
+	REQ,
+	RESP,
+	GET,
+	POST,
+	DEL,
+	PY
+};
+
+class Log
+{
+private:
+	Log();
+	~Log();
+	std::fstream file;
+	static Log instance;
+
+public:
+	static void info(int, std::string);
+	static void warn(int, std::string);
+	static void error(int, std::string);
+};
 
 #endif

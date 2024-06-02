@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 15:05:47 by vduchi            #+#    #+#             */
-/*   Updated: 2024/06/02 11:18:45 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/02 11:34:55 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,7 +203,7 @@ void HTTPRequest::takeBuffer(const char *buf, int len, bool &multi, bool &write)
 			checkLastBoundary(buf, start, end, len);
 			std::ofstream out(".tmpdir/.bin", std::ios::app | std::ios::binary);
 			if (!out.good())
-				exit(0);
+				Log::error(REQ, "Temporary file not opened!");
 			out.write(&buf[start], len - start - end);
 			out.close();
 		}
@@ -232,7 +232,7 @@ void HTTPRequest::takeBuffer(const char *buf, int len, bool &multi, bool &write)
 		checkLastBoundary(buf, start, end, len);
 		std::ofstream out(".tmpdir/.bin", std::ios::app | std::ios::binary);
 		if (!out.good())
-			exit(0);
+			Log::error(REQ, "Temporary file not opened!");
 		// std::cout << "Multi Written characters: " << i - start << " I:" << i << " Start: " << start << std::endl;
 		out.write(&buf[start], len - start - end);
 		out.close();
@@ -265,7 +265,4 @@ void HTTPRequest::cleanObject()
 	_boundary.clear();
 	_fileName.clear();
 	_fileType.clear();
-	// _boundary = "";
-	// _fileName = "";
-	// _fileType = "";
 }

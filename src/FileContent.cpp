@@ -6,16 +6,20 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/06/02 10:40:06 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/02 12:34:38 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "FileContent.hpp"
 
-FileContent::FileContent(const char *file)
+FileContent::FileContent() {}
+
+void FileContent::openFile(const char *file)
 {
 	std::string line;
 	std::ifstream in(file);
+	if (!in.good())
+		throw std::runtime_error("configuration file not opened correctly!");
 	while (getline(in, line))
 		_content.push_back(line);
 }

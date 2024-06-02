@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/06/02 10:35:56 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/02 12:33:18 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,10 @@ private:
 	std::vector<std::string> _content;
 
 public:
-	FileContent(const char *);
+	FileContent();
 	~FileContent();
 
+	void openFile(const char *);
 	int checkLine(std::string &line);
 	int checkServerKey(std::string &line);
 

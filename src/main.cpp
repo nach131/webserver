@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/06/02 10:38:50 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/02 12:38:14 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,9 @@ void checkArg(int argc, char **argv)
 {
 	std::ifstream in;
 	std::string name, line;
-	if (argc != 2)
+	if (argc == 1)
+		return;
+	if (argc > 2)
 		throw std::logic_error(CYAN "Usage: ./webserv [config file]" RESET);
 	else
 	{
@@ -90,7 +92,7 @@ void createSocket(std::vector<ServerConfig *> servers)
 		int *data = (int *)calloc(1, sizeof(int));
 		data[0] = i;
 		(*it)->setData(data);
-		std::cout << "Set data: " << i << " Pointer: " << data << std::endl;
+		// std::cout << "Set data: " << i << " Pointer: " << data << std::endl;
 		// char *data = strdup();
 		EV_SET(&eventSet[i], (*it)->getServerSocket(), EVFILT_READ, EV_ADD, 0, 0, data);
 		kevent(kq, &eventSet[i], 1, NULL, 0, NULL);
@@ -116,31 +118,19 @@ int main(int argc, char **argv)
 	try
 	{
 		signal(SIGINT, &setSignals);
-		// checkArg(argc, argv);
-		(void)argv;
-		(void)argc;
+		checkArg(argc, argv);
 		std::vector<ServerConfig *> servers;
-		// FileContent fc(argv[1]);
-		FileContent fc("./conf_web/default.conf");
+		FileContent fc;
+		if (argv[1])
+			fc.openFile(argv[1]);
+		else
+			fc.openFile("./conf_web/default.conf");
 		fc.createServers(servers);
 		printServers(servers);
-		std::cout << "Parsing ok" << std::endl;
-
-		// TODO
 		AdminServer server(servers);
 		createKqueue();
 		createSocket(servers);
-
-		// // Configurar evento para el socket de escucha
-		// struct kevent eventSet[10];
-		// for (unsigned long i = 0; i < servers.size(); i++)
-		// {
-		// 	EV_SET(&eventSet[i], servers[i]->getServerSocket(), EVFILT_READ, EV_ADD, 0, 0, NULL);
-		// 	kevent(kq, &eventSet[i], 1, NULL, 0, NULL);
-		// }
-
 		server.run(kq);
-		// config.print();
 	}
 	catch (const FileContent::ConfErrorException &e)
 	{

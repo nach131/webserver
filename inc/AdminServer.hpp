@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:26:56 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/06/01 18:16:47 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/02 11:38:33 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@
 #include "HTTPRes.hpp"
 #include "HTTPRequest.hpp"
 #include "HTTPHeader.hpp"
-#include "LogFile.hpp"
 
 #include "HTTPRequestHandler.hpp"
 
@@ -38,7 +37,6 @@ private:
 	std::string _boundary;
 
 	int _flags;
-	LogFile _log;
 	std::string _header;
 	std::string _content;
 	std::vector<ServerConfig *> _config;

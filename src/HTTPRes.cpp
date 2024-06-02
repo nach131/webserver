@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:54:23 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/06/02 11:18:40 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/02 12:03:40 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,6 +137,7 @@ void HTTPRes::createContent(std::string filePath)
 		std::string cookie = "Authenticator=0000";
 		_header.addField("Set-Cookie", cookie);
 		_content = readFile("./dist/web/index.html");
+		Log::info(GET, "200 OK");
 		return;
 	}
 	else if (_locationConf.getName() == "/web" && !cookie.empty() && isValidToken(cookie, 32) && extension == "html")
@@ -151,6 +152,7 @@ void HTTPRes::createContent(std::string filePath)
 			_header.addField("Content-Type", "text/html");
 		else
 			_header.addField("Content-Type", _config->getContentType(extension));
+		Log::info(GET, "200 OK");
 	}
 	else
 		error404();
@@ -172,6 +174,7 @@ void HTTPRes::exploreFiles()
 			std::string root = _locationConf.getRoot().empty() ? _locationConf.getAlias() : _locationConf.getRoot();
 
 			_content = execPython(py, realPath, root);
+			Log::info(GET, "200 OK");
 		}
 		else
 			error404();
@@ -205,8 +208,7 @@ void HTTPRes::methodPost(const bool &autoindex)
 				if (!fileName.empty())
 					execUpload("./upload" + ref + "/" + fileName);
 				else
-					// TODO CUIDAD AQUI SALE DE WEBSERVER
-					throw std::runtime_error("FILENAME empty!");
+					Log::error(RESP, "Filename empty");
 			}
 
 			std::cout << RESET << std::endl;
@@ -219,6 +221,7 @@ void HTTPRes::methodPost(const bool &autoindex)
 			_header.addField("Content-Type", "text/html");
 			std::string res = execPython(realPath, _request.getHeader("Content"));
 			res == "0\n" ? _header.addField("Location", "/web/register_ok.html") : _header.addField("Location", "/web/register_err.html");
+			Log::info(POST, "301 Moved Permanently");
 		}
 		else if (realPath.find("login.py") != std::string::npos)
 		{
@@ -237,15 +240,17 @@ void HTTPRes::methodPost(const bool &autoindex)
 			}
 			else
 				_header.addField("Location", "/web/login_err.html");
+			Log::info(POST, "301 Moved Permanently");
 		}
 		else if (realPath.find("setcookie.py") != std::string::npos)
 		{
 
 			std::string cookie = execPython(realPath, _request.getHeader("Content"));
 
-			_header.addOne(_request.getHeader("Version"), "204 OK");
+			_header.addOne(_request.getHeader("Version"), "204 No Content");
 			_header.addField("Content-Type", "text/html");
 			_header.addField("Set-Cookie", cookie);
+			Log::info(POST, "204 No Content");
 		}
 	}
 	else
@@ -261,8 +266,7 @@ void HTTPRes::methodPost(const bool &autoindex)
 			if (!fileName.empty())
 				execUpload(realPath + "/" + fileName);
 			else
-				// TODO CUIDAD AQUI SALE DE WEBSERVER
-				throw std::runtime_error("FILENAME empty!");
+				Log::error(RESP, "Filename empty");
 		}
 	}
 }
@@ -286,6 +290,7 @@ void HTTPRes::methodDelete(const bool &autoindex)
 
 	_header.addOne(_request.getHeader("Version"), "200 OK");
 	_header.addField("Content-Type", "text/html");
+	Log::error(DEL, "200 OK");
 }
 
 void HTTPRes::execUpload(const std::string &pathFile)
@@ -298,7 +303,7 @@ void HTTPRes::execUpload(const std::string &pathFile)
 		_header.addField("Content-Type", "text/html");
 		_content = readFile("./conf_web/error/basico/upload.html");
 	}
-	// std::system("rm ./.tmpdir/.bin");
+	Log::info(POST, "200 OK");
 	_write = false;
 	_send = true;
 }
@@ -308,6 +313,7 @@ void HTTPRes::error405()
 	std::string custom = _config->getErrorPage(405);
 	_header.addOne(_request.getHeader("Version"), "405 Method Not Allowed");
 	isFileExist(custom) ? _content = readFile(custom) : _content = readFile("./conf_web/error/basico/405.html");
+	Log::warn(RESP, "405 Method not allowed!");
 }
 
 void HTTPRes::error404()
@@ -315,6 +321,7 @@ void HTTPRes::error404()
 	std::string custom = _config->getErrorPage(404);
 	_header.addOne(_request.getHeader("Version"), "404 Not Found");
 	isFileExist(custom) ? _content = readFile(custom) : _content = readFile("./conf_web/error/basico/404.html");
+	Log::warn(GET, "404 Not Found!");
 }
 
 void HTTPRes::error403()
@@ -322,6 +329,7 @@ void HTTPRes::error403()
 	std::string custom = _config->getErrorPage(403);
 	_header.addOne(_request.getHeader("Version"), "403 Forbidden");
 	isFileExist(custom) ? _content = readFile(custom) : _content = readFile("./conf_web/error/basico/403.html");
+	Log::warn(GET, "403 Forbidden!");
 }
 
 // void HTTPRes::error501()
