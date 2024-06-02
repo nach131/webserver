@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 16:49:47 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/06/01 20:34:31 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/02 10:40:30 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,17 +132,12 @@ int delConnect(int fd)
 
 int AdminServer::takeServer(struct kevent &event)
 {
-	std::cout << "Hola" << std::endl;
 	int *p = (int *)event.udata;
-	std::cout << "soy " << p << std::endl;
 	if (!p)
 		return 0;
 	int data = p[0];
-	std::cout << "Valerio" << std::endl;
-	std::cout << "Data value: " << data << std::endl;
 	for (std::vector<ServerConfig *>::iterator it = _config.begin(); it != _config.end(); it++)
 	{
-		std::cout << "It: " << (*it)->getData() << std::endl;
 		if ((*it)->getData() == data)
 			return data;
 	}
@@ -151,7 +146,7 @@ int AdminServer::takeServer(struct kevent &event)
 
 void AdminServer::run(int kq)
 {
-	HTTPRequest request;
+	HTTPRequest request[MAX_EVENTS];
 	char buffer[MAX_MSG_SIZE];
 
 	_write = false;
@@ -166,7 +161,6 @@ void AdminServer::run(int kq)
 
 	_flags = EV_ADD | EV_FLAG0; // Poner EV_FLAG1 si hay multipart
 
-	int loop = 0;
 	void *data;
 	while (42)
 	{
@@ -174,15 +168,12 @@ void AdminServer::run(int kq)
 
 		for (int i = 0; i < num_events; i++)
 		{
-			loop++;
-			std::cout << "Event number: " << num_events << " Ident: " << evList[i].ident << std::endl;
+			std::cout << MAGENTA "Event number: " << num_events << " Ident: " << evList[i].ident << RESET << std::endl;
 			int j = takeServer(evList[i]);
 			std::cout << MAGENTA << "Server number: " << j << " Socket " << _config[j]->getServerSocket() << RESET << std::endl;
 			// receive new connection
 			events[j].evList = evList[i];
 			data = evList[i].udata;
-			// if ((evList[i].udata != NULL && evList[i].ident != (unsigned long)_config[j]->getServerSocket()) || loop == 15)
-			// 	exit(0);
 			if (evList[i].ident == (unsigned long)_config[j]->getServerSocket())
 			{
 				std::cout << MAGENTA "Accept connection " << j << RESET << std::endl;
@@ -232,14 +223,14 @@ void AdminServer::run(int kq)
 				printPeticion(buffer);
 				//===================PARSING==============================================
 				// HTTPRequest request(buffer);
-				request.takeBuffer(buffer, n, _multi, _write);
+				request[j].takeBuffer(buffer, n, _multi, _write);
 				// [ Request client ]
-				request.print();
+				request[j].print();
 
 				//=========================================================================
 
 				// HTTPBody body(request);
-				HTTPRes response(request, _config[j], _ref, _write, _send);
+				HTTPRes response(request[j], _config[j], _ref, _write, _send);
 
 				// //=========================================================================
 
@@ -262,7 +253,7 @@ void AdminServer::run(int kq)
 				_content = response.getContent();
 
 				if (!_multi)
-					request.cleanObject();
+					request[j].cleanObject();
 			}
 			// Escribir en el socket cuando esté listo para escribir
 			else if (events[j].evList.filter == EVFILT_WRITE)
@@ -296,7 +287,7 @@ void AdminServer::run(int kq)
 	}
 
 	// Cerrar el socket del servidor (esto no se alcanzará)
-	for (int i = 0; i < _config.size(); i++)
+	for (unsigned long i = 0; i < _config.size(); i++)
 		close(_config[i]->getServerSocket());
 }
 

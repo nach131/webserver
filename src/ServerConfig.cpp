@@ -6,17 +6,16 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 15:05:34 by nmota-bu          #+#    #+#             */
-/*   Updated: 2024/06/01 18:18:47 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/02 10:58:13 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ServerConfig.hpp"
 
-ServerConfig::ServerConfig(const std::vector<std::string> &content, const std::string &mimeFilePath) : _port(8080), _apiPort(3000), _apiForward("192.168.1.20"), _mime(mimeFilePath) // Valores por defecto
+ServerConfig::ServerConfig(const std::vector<std::string> &content, const std::string &mimeFilePath, int len) : _port(8080), _apiPort(3000), _apiForward("192.168.1.20"), _mime(mimeFilePath) // Valores por defecto
 {
-	fillVariables(content);
+	fillVariables(content, len);
 
-	(void)_serverAddress;
 	// memset(&_serverAddress, 0, sizeof(_serverAddress));
 	// _serverAddress.sin_family = AF_INET;
 	// _serverAddress.sin_port = htons(_port);				// Puerto del servidor
@@ -142,7 +141,7 @@ int ServerConfig::checkLine(const std::string &line)
 	return 0;
 }
 
-void ServerConfig::addValue(std::stringstream &ss)
+void ServerConfig::addValue(std::stringstream &ss, int lineNum)
 {
 	std::string key, err, value;
 	ss >> key;
@@ -172,10 +171,10 @@ void ServerConfig::addValue(std::stringstream &ss)
 		_rootDirectory = value;
 		break;
 	case 1:
-		// TODO alias: Ver lo que hay que hacer aqui
+		error("alias not in location at line ", lineNum + 1);
 		break;
 	case 2:
-		// TODO index: Ver lo que hay que hacer aqui
+		error("index not in location at line ", lineNum + 1);
 		break;
 	case 3:
 		_port = std::atoi(value.c_str());
@@ -184,7 +183,7 @@ void ServerConfig::addValue(std::stringstream &ss)
 		_apiPort = std::atoi(value.c_str());
 		break;
 	case 5:
-		// TODO autoindex: Ver lo que hay que hacer aqui
+		error("autoindex not in location at line ", lineNum + 1);
 		break;
 	case 6:
 		_errorPages[std::atoi(err.c_str())] = value;
@@ -193,15 +192,15 @@ void ServerConfig::addValue(std::stringstream &ss)
 		_serverName = value;
 		break;
 	case 8:
-		// TODO allow_methods: Ver lo que hay que hacer aqui
+		error("allow_methods not in location at line ", lineNum + 1);
 		break;
 	default:
-		// TODO client_max_body_size: Ver lo que hay que hacer aqui
+		_maxBody = std::atol(value.c_str());
 		break;
 	}
 }
 
-void ServerConfig::fillVariables(const std::vector<std::string> &arr)
+void ServerConfig::fillVariables(const std::vector<std::string> &arr, int len)
 {
 	std::string el;
 	for (size_t i = 0; i < arr.size(); i++)
@@ -238,7 +237,17 @@ void ServerConfig::fillVariables(const std::vector<std::string> &arr)
 		else
 		{
 			std::stringstream ss(arr[i]);
-			addValue(ss);
+			addValue(ss, len + i);
 		}
 	}
 }
+
+void ServerConfig::error(const std::string msg, int lineNum)
+{
+	std::stringstream ss;
+	ss << msg << lineNum;
+	throw e_cee(ss.str());
+}
+
+ServerConfig::ConfErrorException::ConfErrorException(const std::string &msg)
+	: std::runtime_error("\033[0;31mError: " + msg) {}

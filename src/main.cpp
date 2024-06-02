@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/06/01 19:16:36 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/02 10:38:50 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ int main(int argc, char **argv)
 		(void)argc;
 		std::vector<ServerConfig *> servers;
 		// FileContent fc(argv[1]);
-		FileContent fc("./conf_web/test.conf");
+		FileContent fc("./conf_web/default.conf");
 		fc.createServers(servers);
 		printServers(servers);
 		std::cout << "Parsing ok" << std::endl;
@@ -143,6 +143,11 @@ int main(int argc, char **argv)
 		// config.print();
 	}
 	catch (const FileContent::ConfErrorException &e)
+	{
+		std::cerr << e.what() << std::endl;
+		return EXIT_FAILURE;
+	}
+	catch (const ServerConfig::ConfErrorException &e)
 	{
 		std::cerr << e.what() << std::endl;
 		return EXIT_FAILURE;

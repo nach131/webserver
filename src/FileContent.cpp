@@ -6,7 +6,7 @@
 /*   By: vduchi <vduchi@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/12 15:32:24 by vduchi            #+#    #+#             */
-/*   Updated: 2024/06/01 13:44:15 by vduchi           ###   ########.fr       */
+/*   Updated: 2024/06/02 10:40:06 by vduchi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,9 @@ int FileContent::checkServerKey(std::string &line)
 	return 1;
 }
 
-void FileContent::createOneServer(std::vector<ServerConfig *> &servers, std::vector<std::string> &content)
+void FileContent::createOneServer(std::vector<ServerConfig *> &servers, std::vector<std::string> &content, int len)
 {
-	ServerConfig *sc = new ServerConfig(content, "./conf_web/mime.type");
+	ServerConfig *sc = new ServerConfig(content, "./conf_web/mime.type", len);
 	servers.push_back(sc);
 }
 
@@ -158,7 +158,7 @@ void FileContent::createServers(std::vector<ServerConfig *> &servers)
 			// std::cout << "One server" << std::endl;
 			int diff = i == _content.size() - 1 ? i - start : i - start - 1;
 			oneServer = checkOneServer(start, diff);
-			createOneServer(servers, oneServer);
+			createOneServer(servers, oneServer, start);
 			checkDuplicatePorts(servers);
 			start = i;
 			count++;
